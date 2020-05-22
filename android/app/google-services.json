@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "978838588425",
+    "firebase_url": "https://orbital2020-godutch.firebaseio.com",
+    "project_id": "orbital2020-godutch",
+    "storage_bucket": "orbital2020-godutch.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978838588425:android:6f460e2f99889a2808fcd8",
+        "android_client_info": {
+          "package_name": "com.GoDutch.Orbital"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "978838588425-1bs40t2n79uc676eb623qrtl754352p0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.GoDutch.Orbital",
+            "certificate_hash": "cab73647f2c486364f6b10c6ffb8f5596adbc720"
+          }
+        },
+        {
+          "client_id": "978838588425-mv6u7pkhfejc251udvsmlfh5akf4npg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgGK-mCOz0_KL9RjcCPwDfb1f0D4hwQ2Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "978838588425-mv6u7pkhfejc251udvsmlfh5akf4npg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

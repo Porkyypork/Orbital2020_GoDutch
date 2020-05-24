@@ -14,6 +14,7 @@ class _RegisterState extends State<Register> {
   String email = '';
   String password = '';
   String error = '';
+  String confirmPassword = '';
   bool loading = false;
 
   final AuthService _auth = AuthService();
@@ -121,19 +122,25 @@ class _RegisterState extends State<Register> {
                     child: OutlineButton(
                       splashColor: Colors.grey,
                       onPressed: () async {
-                       if (_formKey.currentState.validate()) {
-                         setState(() => loading = true);
+                        if (_formKey.currentState.validate()) {
+                          setState(() => loading = true);
                           dynamic result = await _auth
                               .registerWithEmailAndPassword(email, password);
-                          if (result == null) {
+                          if (result.getUid() == 'Error_1') {
                             setState(() {
-                            error = 'Please supply a valid email';
-                            loading = false;
+                              error = 'Email already in use';
+                              loading = false;
+                            });
+                          } else if (result == null) {
+                            setState(() {
+                              error = 'Please supply a valid email';
+                              loading = false;
                             });
                           }
-                        } 
+                        }
                       },
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40)),
                       highlightElevation: 0,
                       borderSide: BorderSide(color: Colors.grey),
                       child: Padding(
@@ -157,7 +164,7 @@ class _RegisterState extends State<Register> {
                       ),
                     ),
                   ),
-                  SizedBox(height:10),
+                  SizedBox(height: 10),
                   SizedBox(
                       height: 16,
                       child: Text(error,

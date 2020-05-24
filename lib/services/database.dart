@@ -8,15 +8,19 @@ class DataBaseService {
   DataBaseService({ this.uid });
   
   //collection reference 
-  final CollectionReference userContacts = Firestore.instance.collection('Contacts');
+  
   final CollectionReference userGroups = Firestore.instance.collection('Groups');
 
   Future updateGroups(String name, int number) async {
-    return await userContacts.document(uid).setData({
+    return await userGroups.document(uid).setData({
       'name' : name,
       'number' : number
     });
-  }
+  } 
 
+  // get data stream
+  Stream<QuerySnapshot> get groups {
+    return userGroups.snapshots();
+  }
 
 }

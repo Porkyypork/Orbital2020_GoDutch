@@ -30,7 +30,7 @@ class AuthService {
   }
 
   //sign in with email and passowrd
-  Future signInWithEmailAndPassword(String email, String password) async {
+  Future<User> signInWithEmailAndPassword(String email, String password) async {
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -57,14 +57,16 @@ class AuthService {
   }
 
   // register with email and password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future<User> registerWithEmailAndPassword(String email, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
       User user = _userFromFirebaseUser(result.user);
       return user;
-    } catch (e) {
-      print(e.toString());
+    } catch (error) {
+      if (error.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+        return User(uid : 'Error_1');
+      }
       return null;
     }
   }

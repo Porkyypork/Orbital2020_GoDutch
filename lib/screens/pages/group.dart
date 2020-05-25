@@ -19,17 +19,24 @@ class _GroupState extends State<Group> {
     String groupName = data.groupName;
 
     return Scaffold(
-      backgroundColor: Colors.yellow[50],
+      backgroundColor: Colors.indigo[100],
       appBar: AppBar(
         title: Text(groupName),
         elevation: 0,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.indigo,
         centerTitle: true,
       ),
 
       endDrawer: _buildDrawerMenu(context),
 
-      body: Text('this is the groups page'),
+      body: Center(
+        child: RaisedButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/contacts');
+          },
+          child: Text("add members"),
+          ),
+      ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {},

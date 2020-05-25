@@ -1,8 +1,12 @@
-class UserContact {
+//might not be needed
+
+class UserDetails {
+
   final String name;
   final String number;
+  final String email;
 
-  UserContact({this.name, this.number});
+  UserDetails({this.name, this.number, this.email});
 
   String get userName {
     return name;

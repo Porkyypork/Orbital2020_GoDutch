@@ -9,10 +9,11 @@ class _AboutUsState extends State<AboutUs> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo[100],
       appBar: AppBar(
         title: Text('About Us'),
         elevation: 0,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.indigo,
         centerTitle: true,
       ),
 

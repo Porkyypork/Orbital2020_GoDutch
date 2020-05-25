@@ -1,4 +1,5 @@
 import 'package:app/constants/loading.dart';
+import 'package:app/models/UserDetails.dart';
 import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
 
@@ -11,14 +12,102 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  String name = '';
+  String phoneNumber = '';
   String email = '';
   String password = '';
-  String error = '';
   String confirmPassword = '';
+  String error = '';
   bool loading = false;
 
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+
+  Widget _buildNameField() {
+    return ListTile(
+      leading: const Icon(Icons.create),
+      title: TextFormField(
+        validator: (val) => val.isEmpty ? 'Enter your name' : null,
+        decoration: new InputDecoration(
+          hintText: 'Please enter your name',
+          labelText: 'Name',
+        ),
+        onChanged: (val) {
+          setState(() => name = val);
+        },
+      ),
+    );
+  }
+
+  Widget _buildPhoneNumberField() {
+    return ListTile(
+      leading: const Icon(Icons.phone),
+      title: TextFormField(
+        validator: (val) => val.isEmpty ? 'Enter your mobile phone number' : null,
+        decoration: new InputDecoration(
+          hintText: 'Please enter your mobile phone number',
+          labelText: 'Phone number',
+        ),
+        onChanged: (val) {
+          setState(() => phoneNumber = val);
+        },
+      ),
+    );
+  }
+
+  Widget _buildEmailField() {
+    return ListTile(
+      leading: const Icon(Icons.person),
+      title: TextFormField(
+        validator: (val) => val.isEmpty ? 'Enter an Email' : null,
+        decoration: new InputDecoration(
+          hintText: 'Please enter your email address',
+          labelText: 'Email address',
+        ),
+        onChanged: (val) {
+          setState(() => email = val);
+        },
+      ),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return ListTile(
+      leading: const Icon(Icons.lock),
+      title: TextFormField(
+        decoration: new InputDecoration(
+          hintText: 'Please enter your password',
+          labelText: 'Password',
+        ),
+        validator: (val) => val.length < 6
+            ? 'Enter a password with 6 or more characters'
+            : null,
+        onChanged: (val) {
+          setState(() => password = val);
+        },
+        obscureText: true,
+      ),
+    );
+  }
+
+  Widget _buildConfirmPasswordField() {
+    return ListTile(
+      leading: const Icon(Icons.priority_high),
+      title: TextFormField(
+        decoration: new InputDecoration(
+          hintText: 'Please re-enter your password',
+          labelText: 'Re-enter password',
+        ),
+        validator: (val) => val != password
+            ? 'Your passwords do not match'
+            : null,
+        onChanged: (val) {
+          setState(() => confirmPassword = val);
+        },
+        obscureText: true,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +138,7 @@ class _RegisterState extends State<Register> {
               ),
               Center(
                 child: Container(
-                  height: 340,
+                  height: 500,
                   child: Opacity(
                     opacity: 0.7,
                     child: Card(
@@ -74,36 +163,11 @@ class _RegisterState extends State<Register> {
                             key: _formKey,
                             child: Column(
                               children: <Widget>[
-                                ListTile(
-                                  leading: const Icon(Icons.person),
-                                  title: TextFormField(
-                                    validator: (val) =>
-                                        val.isEmpty ? 'Enter an Email' : null,
-                                    decoration: new InputDecoration(
-                                      hintText: 'Please enter email',
-                                      labelText: 'Enter Your Email address',
-                                    ),
-                                    onChanged: (val) {
-                                      setState(() => email = val);
-                                    },
-                                  ),
-                                ),
-                                ListTile(
-                                  leading: const Icon(Icons.lock),
-                                  title: TextFormField(
-                                    decoration: new InputDecoration(
-                                      hintText: 'Please enter password',
-                                      labelText: 'Enter Your Password',
-                                    ),
-                                    validator: (val) => val.length < 6
-                                        ? 'Enter a password with 6 or more characters'
-                                        : null,
-                                    onChanged: (val) {
-                                      setState(() => password = val);
-                                    },
-                                    obscureText: true,
-                                  ),
-                                ),
+                                _buildNameField(),
+                                _buildPhoneNumberField(),
+                                _buildEmailField(),
+                                _buildPasswordField(),
+                                _buildConfirmPasswordField(),
                               ],
                             ),
                           ),
@@ -118,14 +182,16 @@ class _RegisterState extends State<Register> {
                   Container(
                     height: 420,
                   ),
+                  SizedBox(height: 80),
                   Center(
                     child: OutlineButton(
                       splashColor: Colors.grey,
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           setState(() => loading = true);
+                          UserDetails newUser = new UserDetails(name: name, number: phoneNumber, email: email);
                           dynamic result = await _auth
-                              .registerWithEmailAndPassword(email, password);
+                              .registerWithEmailAndPassword(newUser, password);
                           if (result.id == 'Error_1') {
                             setState(() {
                               error = 'Email already in use';

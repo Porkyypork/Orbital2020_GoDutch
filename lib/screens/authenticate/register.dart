@@ -126,7 +126,7 @@ class _RegisterState extends State<Register> {
                           setState(() => loading = true);
                           dynamic result = await _auth
                               .registerWithEmailAndPassword(email, password);
-                          if (result.getUid() == 'Error_1') {
+                          if (result.id == 'Error_1') {
                             setState(() {
                               error = 'Email already in use';
                               loading = false;

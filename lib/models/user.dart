@@ -3,7 +3,7 @@ class User {
 
   User({ this.uid});
 
-  String getUid() {
-    return this.uid;
+  String get id {
+    return uid;
   }
 }

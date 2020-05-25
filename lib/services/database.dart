@@ -1,26 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app/models/UserContact.dart';
 
 
 class DataBaseService {
   
-  final String uid;
+  List<UserContact> groupMembers;
+    
+  final Firestore databaseReference = Firestore.instance;
 
-  DataBaseService({ this.uid });
-  
-  //collection reference 
-  
-  final CollectionReference userGroups = Firestore.instance.collection('Groups');
-
-  Future updateGroups(String name, int number) async {
-    return await userGroups.document(uid).setData({
-      'name' : name,
-      'number' : number
-    });
-  } 
-
-  // get data stream
-  Stream<QuerySnapshot> get groups {
-    return userGroups.snapshots();
+  Future<void> addGroupMembers(String groupName, UserContact contact) async {
+    return await databaseReference.collection(groupName)
+                                  .document(contact.name)
+                                  .setData({
+                                    'name' : contact.name,
+                                    'number' : contact.number
+                                  });
   }
 
 }

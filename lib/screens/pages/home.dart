@@ -1,26 +1,44 @@
 import 'package:app/models/groupdata.dart';
 import 'package:app/services/auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../pages/group.dart';
-
-// i wanna add a when u scroll up, search bar comes out and swipe to delete
-// using high contrast colors rn just to tell the difference between what
-// is what
 
 class _HomeState extends State<Home> {
   static List<GroupData> _groups = [];
   AuthService _auth = AuthService();
+  final db = Firestore.instance;
+
+  String name;
+  String email;
+
+  void _getCurrentUserData() async {
+    final uid = await _auth.getCurrentUID();
+    await db.collection("users").document(uid).get().then((value) => {
+          setState(() {
+            name = value["name"];
+            email = value["email"];
+          })
+        });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
     final String _title = 'GoDutch';
 
     return Scaffold(
-      backgroundColor: Colors.yellow[50],
+      backgroundColor: Colors.indigo[100],
       appBar: AppBar(
         title: Text(_title),
         elevation: 0,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.indigo,
         centerTitle: true,
       ),
 
@@ -32,10 +50,10 @@ class _HomeState extends State<Home> {
               itemCount: _groups.length,
               itemBuilder: (context, index) => _buildListTile(context, index),
             )
-          : Text("You are not part of any groups"),
+          : _buildNoGroupsHomeScreen(),
 
       bottomNavigationBar: BottomAppBar(
-        color: Colors.blueAccent,
+        color: Colors.indigo,
         shape: CircularNotchedRectangle(),
         child: Container(height: 50),
       ),
@@ -48,15 +66,13 @@ class _HomeState extends State<Home> {
 
   Widget _buildCreateGroupButton() {
     return FloatingActionButton(
-      onPressed: () {
+      onPressed: () { // change to async function where they can cancel
         Navigator.pushNamed(context, '/group_creation');
         print("proceeding to group creation page\n");
         setState(() {
-          // instantiate new group object with what they give and create and add
           GroupData newGroup = new GroupData(
               "I CANT CHANGE THE NAME FML"); // method for group creation here
-          _groups.add(
-              newGroup); //implement feature to take in unique group name first, then work from there
+          _groups.add(newGroup);
         });
       },
       backgroundColor: Colors.teal[300],
@@ -64,14 +80,34 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget _buildNoGroupsHomeScreen() {
+    return Container(
+      child: Center(
+        child: Text(
+          "You are not currently in any groups",
+          style: TextStyle(
+            fontSize: 24.0,
+          ),
+        )
+      )
+    );
+  }
+
+/* TODO: 
+1. Fix deletion to update properly and not return an error
+2. properly update the database for proper group creation
+3. turn off left swipe first
+*/
   Dismissible _buildListTile(BuildContext context, int index) {
     return Dismissible(
       key: Key(_groups[index].groupName),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {
-          String groupName = _groups[index].groupName;
-          _removeGroup(index);
-          _deletionMessage(context, groupName);
+          setState(() {
+            String groupName = _groups[index].groupName;
+            _removeGroup(index);
+            _deletionMessage(context, groupName);
+          });
         } else {
           // do something else likely implementation of google vision
         }
@@ -134,8 +170,8 @@ class _HomeState extends State<Home> {
       child: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text("John Doe"),
-            accountEmail: Text("johndoe@gmail.com"),
+            accountName: Text(name),
+            accountEmail: Text(email),
             currentAccountPicture: GestureDetector(
               // onTap: () {}, can further implement features if we decide to
               child: CircleAvatar(

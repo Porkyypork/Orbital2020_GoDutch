@@ -1,19 +1,20 @@
 import 'package:app/models/groupdata.dart';
+import 'package:app/services/auth.dart';
+import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
-
-
-//after we exit this page by confirming or by exiting, need to refresh
-//the states for homepage.
 
 class _GroupCreationState extends State<GroupCreation> {
 
-  //final _user = TestUser(); // fortesting purposes
+  AuthService _auth = AuthService();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _name;
 
- final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  Widget _buildGroupPictureField() {
 
-  Widget _buildName() { // format is generally the same across all formfield methods
+  }
+
+  Widget _buildNameField() { // format is generally the same across all formfield methods
     return TextFormField(
       decoration: InputDecoration(labelText: "Group Name"),
       maxLength: 22,
@@ -28,13 +29,18 @@ class _GroupCreationState extends State<GroupCreation> {
     );
   }
 
+  Widget _buildMemberListField() {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo[100],
       appBar: AppBar(
         title: Text('this is the group creation page'),
         elevation: 0,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.indigo,
         centerTitle: true,
       ),
 
@@ -45,7 +51,9 @@ class _GroupCreationState extends State<GroupCreation> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              _buildName(),
+              //_buildGroupPictureField(),
+              _buildNameField(),
+              //_buildMemberList(),
               // any further fields that we need to add ==> Add a group member list
               SizedBox(height: 50.0),
 
@@ -59,20 +67,20 @@ class _GroupCreationState extends State<GroupCreation> {
                     return;
                   }
                   _formKey.currentState.save();
-                  GroupData newGroup = new GroupData(_name);
-                  print("Name: [$_name] is saved");
-                  print("Returning to homescreen");
-                  Navigator.of(context).pushReplacementNamed('/home');
+                  _createGroup();
                 },
-
               ),
             ],
           ),
         ),
       ),
-
-
     );
+  }
+
+  void _createGroup() async {
+    final uid = await _auth.getCurrentUID();
+    await DataBaseService().createGroupData(this._name, uid);
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 }
 

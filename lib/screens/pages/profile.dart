@@ -5,14 +5,25 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo[100],
       appBar: AppBar(
         title: Text('this is the profile page'),
         elevation: 0,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.indigo,
         centerTitle: true,
       ),
 
-      body: Text('this is the profile page')
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          CircleAvatar(
+
+          ),
+          Container(
+            child: Text("This is for the name")
+          ),
+        ],
+      ),
     );
   }
 }

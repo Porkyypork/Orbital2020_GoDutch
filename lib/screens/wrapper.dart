@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 
 import 'authenticate/authenticate.dart';
 
+// controls which page is shown to users depending on authentication state
+
 class Wrapper extends StatelessWidget {
   
   /* return home page if the user is signed in else return login page

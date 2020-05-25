@@ -1,20 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:app/models/UserContact.dart';
+import 'package:app/models/UserDetails.dart';
 
 
 class DataBaseService {
-  
-  List<UserContact> groupMembers;
+
+  final String uid;
+  DataBaseService({ this.uid });
     
   final Firestore databaseReference = Firestore.instance;
 
-  Future<void> addGroupMembers(String groupName, UserContact contact) async {
-    return await databaseReference.collection(groupName)
-                                  .document(contact.name)
-                                  .setData({
-                                    'name' : contact.name,
-                                    'number' : contact.number
-                                  });
+  Future<void> updateUserData(String name, String email) async {
+    List<String> groups = List();
+    await databaseReference.collection('users')
+      .document(this.uid).setData({
+        "name": name,
+        "email": email,
+        "groups": groups,
+      });
+  }
+
+  Future<void> createGroupData(String groupName, String uid) async {
+    List<String> members = List();
+    members.add(uid); // only need to know the uid of individual members, not all their details
+    await databaseReference.collection('groups')
+      .add(
+        {
+          "groupName" : groupName,
+          "groupAdmin": uid,
+          "members": members,
+      });
+
+    //TODO: Update the individual user's groups list by adding this one
+
+  }
+
+  Future<void> updateGroupDate() async {
+    //TODO
   }
 
 }

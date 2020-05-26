@@ -10,8 +10,8 @@ class _HomeState extends State<Home> {
   AuthService _auth = AuthService();
   final db = Firestore.instance;
 
-  String name;
-  String email;
+  String name = "";
+  String email = "";
 
   void _getCurrentUserData() async {
     final uid = await _auth.getCurrentUID();

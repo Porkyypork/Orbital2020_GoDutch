@@ -1,12 +1,18 @@
-//might not be needed
-
 class UserDetails {
 
-  final String name;
-  final String number;
-  final String email;
+  String name;
+  String number;
+  String email;
+  List<String> groups;
+  
+  UserDetails.loadingUser() {
+    this.name = "";
+    this.number = "";
+    this.email = "";
+    this.groups = [];
+  }
 
-  UserDetails({this.name, this.number, this.email});
+  UserDetails({this.name, this.number, this.email, this.groups});
 
   String get userName {
     return name;
@@ -14,5 +20,13 @@ class UserDetails {
 
   String get userNumber {
     return number;
+  }
+
+  String get userEmail {
+    return email;
+  }
+
+  List<String> get userGroups {
+    return this.groups;
   }
 }

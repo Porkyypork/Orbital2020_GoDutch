@@ -1,26 +1,24 @@
-import 'package:app/models/groupdata.dart';
+import 'package:app/models/UserDetails.dart';
+import 'package:app/models/GroupDetails.dart';
 import 'package:app/services/auth.dart';
+import 'package:app/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../pages/group.dart';
 
 class _HomeState extends State<Home> {
-  static List<GroupData> _groups = [];
+  static List<GroupDetails> _groups = [];
   AuthService _auth = AuthService();
   final db = Firestore.instance;
 
-  String name = "";
-  String email = "";
+  UserDetails currentUser = UserDetails.loadingUser();
 
   void _getCurrentUserData() async {
     final uid = await _auth.getCurrentUID();
-    await db.collection("users").document(uid).get().then((value) => {
-          setState(() {
-            name = value["name"];
-            email = value["email"];
-          })
-        });
+    UserDetails user = await DataBaseService().getCurrentUser(uid);
+    setState(()  {
+      currentUser = user;
+    });
   }
 
   @override
@@ -70,8 +68,9 @@ class _HomeState extends State<Home> {
         Navigator.pushNamed(context, '/group_creation');
         print("proceeding to group creation page\n");
         setState(() {
-          GroupData newGroup = new GroupData(
-              "I CANT CHANGE THE NAME FML"); // method for group creation here
+          GroupDetails newGroup = new GroupDetails(
+            groupName: "A",
+          ); // method for group creation here
           _groups.add(newGroup);
         });
       },
@@ -93,14 +92,9 @@ class _HomeState extends State<Home> {
     );
   }
 
-/* TODO: 
-1. Fix deletion to update properly and not return an error
-2. properly update the database for proper group creation
-3. turn off left swipe first
-*/
   Dismissible _buildListTile(BuildContext context, int index) {
     return Dismissible(
-      key: Key(_groups[index].groupName),
+      key: UniqueKey(),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {
           setState(() {
@@ -170,8 +164,8 @@ class _HomeState extends State<Home> {
       child: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text(name),
-            accountEmail: Text(email),
+            accountName: Text(currentUser.name),
+            accountEmail: Text(currentUser.email),
             currentAccountPicture: GestureDetector(
               // onTap: () {}, can further implement features if we decide to
               child: CircleAvatar(

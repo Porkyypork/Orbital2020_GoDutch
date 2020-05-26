@@ -1,4 +1,4 @@
-import 'package:app/models/groupdata.dart';
+import 'package:app/models/GroupDetails.dart';
 import 'package:flutter/material.dart';
 
 
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 
 class _GroupState extends State<Group> {
 
-  GroupData data;
+  GroupDetails data;
   _GroupState(this.data);
 
   @override
@@ -101,7 +101,7 @@ class _GroupState extends State<Group> {
 
 class Group extends StatefulWidget {
 
-  GroupData data;
+  GroupDetails data;
   Group({this.data});
 
   @override

@@ -1,4 +1,4 @@
-import 'package:app/models/groupdata.dart';
+import 'package:app/models/GroupDetails.dart';
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';

@@ -20,7 +20,7 @@ class DataBaseService {
   }
 
   Future<void> createGroupData(String groupName, String uid) async {
-    List<String> members = List();
+    List<String> members = List(); // this list of strings stores unique uids, so a separate class is not needed
     members.add(uid); // only need to know the uid of individual members, not all their details
     await databaseReference.collection('groups')
       .add(

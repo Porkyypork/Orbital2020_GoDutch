@@ -11,6 +11,12 @@ class _ContactsPageState extends State<ContactsPage> {
 
   Iterable<Contact> _contacts;
 
+
+  void initState() {
+    getContacts();
+    super.initState();
+  }
+
   Future<void> getContacts() async {
     final Iterable<Contact> contacts = await ContactsService.getContacts();
     setState(() => {
@@ -41,7 +47,7 @@ class _ContactsPageState extends State<ContactsPage> {
             backgroundColor: Theme.of(context).accentColor,
             ),
           title: Text(contact.displayName ?? ''),
-          subtitle: Text(contact.phones.elementAt(0).toString() ?? ""),
+          subtitle: Text(contact.phones.first.value.toString()),
           trailing: IconButton(
             icon: Icon(Icons.add),
             onPressed: () {

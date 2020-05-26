@@ -10,9 +10,9 @@ class DataBaseService {
   final Firestore db = Firestore.instance;
 
   // returns the current user details
-  Future<UserDetails> getCurrentUser(String uid) async {
+  Future<UserDetails> getCurrentUser(String userUID) async {
     UserDetails currentUser;
-    await db.collection("users").document(uid).get().then((user) => {
+    await db.collection("users").document(userUID).get().then((user) => {
       currentUser = new UserDetails(
         name: user["name"],
         number: "818181",
@@ -23,8 +23,18 @@ class DataBaseService {
     return currentUser;
   }
 
-  Future<GroupDetails> getGroupDetails() async {
-
+  // returns the group details for a given uid
+  Future<GroupDetails> getGroupDetails(String groupUID) async {
+    GroupDetails currentGroup;
+    await db.collection("groups").document(groupUID).get().then((group) => {
+      currentGroup = new GroupDetails(
+        uid: groupUID,
+        uidGroupAdmin: group["groupAdmin"],
+        groupName: group["groupName"],
+        members: group["members"],
+      ),
+    });
+    return currentGroup;
   }
 
   // creates the user data in the database

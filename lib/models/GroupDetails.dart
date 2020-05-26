@@ -1,10 +1,9 @@
-import 'package:app/models/UserDetails.dart';
-
 class GroupDetails {
 
   String uid;
+  String uidGroupAdmin;
   String groupName;
-  List<UserDetails> members = new List();
+  List<dynamic> members = [];
 
-  GroupDetails({this.groupName});
+  GroupDetails({this.uid, this.uidGroupAdmin, this.groupName, this.members});
 }

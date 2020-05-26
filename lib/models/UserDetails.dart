@@ -6,7 +6,7 @@ class UserDetails {
   List<dynamic> groups;
   
   UserDetails.loadingUser() {
-    this.name = "asdfasdf";
+    this.name = "USER IS LOADING";
     this.number = "";
     this.email = "";
     this.groups = [];

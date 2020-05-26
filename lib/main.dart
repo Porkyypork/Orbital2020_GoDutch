@@ -4,13 +4,12 @@ import 'package:app/screens/pages/aboutus.dart';
 import 'package:app/screens/pages/debts.dart';
 import 'package:app/screens/pages/group.dart';
 import 'package:app/screens/pages/group_creation.dart';
+import 'package:app/screens/pages/homepage/home.dart';
 import 'package:app/screens/pages/profile.dart';
 import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import 'screens/pages/home.dart';
 
 void main() => runApp(GoDutch());
 

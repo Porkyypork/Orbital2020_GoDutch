@@ -1,18 +1,17 @@
+import 'package:app/constants/loading.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/models/GroupDetails.dart';
+import 'package:app/screens/pages/homepage/GroupListView.dart';
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
-import '../pages/group.dart';
+import '../group.dart';
 
 class _HomeState extends State<Home> {
   static List<GroupDetails> _groups = [];
   AuthService _auth = AuthService();
+  
   UserDetails currentUser = UserDetails.loadingUser();
-
-  String name = "";
-  String email = "";
-  List<String> groupsUID = [];
 
   void _getCurrentUserData() async {
     final uid = await _auth.getCurrentUID();
@@ -24,8 +23,8 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    super.initState();
     _getCurrentUserData();
+    super.initState();
   }
 
   @override
@@ -35,7 +34,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.indigo[100],
       appBar: AppBar(
-        title: Text(_title),
+        title: Text("Actual user: ${currentUser.name}\nNumber of groups: ${currentUser.groups.length}"), //change back to _title after debugging
         elevation: 0,
         backgroundColor: Colors.indigo,
         centerTitle: true,
@@ -43,13 +42,34 @@ class _HomeState extends State<Home> {
 
       endDrawer: _buildDrawerMenu(context), //end drawer menu
 
+      /*TODO:
+      encapsulate the creation of the body widget into another class called
+      GroupListView ==> PROBLEMS: Was not passing the user correctly to the new class
+      proof of concept done here, so the code is working just fine, but only user is not
+      being passed*/
       body: (_groups.length > 0)
           ? ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-              itemCount: _groups.length,
-              itemBuilder: (context, index) => _buildListTile(context, index),
-            )
-          : _buildNoGroupsHomeScreen(),
+        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+        itemCount: currentUser.groups.length,
+        itemBuilder: (context, index) => FutureBuilder(
+          future: _buildGroupTile(context, currentUser.groups[index]),
+          builder: (context, snapshot) {
+            switch (snapshot.connectionState) { // gotta figure out a way to send to loading page rather than each indiv list tile loading
+              case ConnectionState.none:
+                return Loading();
+              case ConnectionState.active:
+                return Loading();
+              case ConnectionState.waiting:
+                return Loading();
+              case ConnectionState.done:
+                return snapshot.data;
+                break;
+              default:
+                return Text("default, it shouldnt reach here");
+            }
+          }
+        ))
+        : _buildNoGroupsHomeScreen(),
 
       bottomNavigationBar: BottomAppBar(
         color: Colors.indigo,
@@ -91,14 +111,17 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Dismissible _buildListTile(BuildContext context, int index) {
+  Future<Widget> _buildGroupTile(BuildContext context, String groupUID) async {
+
+    GroupDetails group = await DataBaseService().getGroupDetails(groupUID);
+
     return Dismissible(
       key: UniqueKey(),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {
           setState(() {
-            String groupName = _groups[index].groupName;
-            _removeGroup(index);
+            String groupName = group.groupName;
+            //_removeGroup(index);
             _deletionMessage(context, groupName);
           });
         } else {
@@ -112,7 +135,7 @@ class _HomeState extends State<Home> {
             color:
                 Colors.black), // replaced with their own personal photo later
         title: Text(
-          _groups[index].groupName,
+          group.groupName,
           style: TextStyle(
             fontSize: 18.0,
             letterSpacing: 1.5,
@@ -121,7 +144,7 @@ class _HomeState extends State<Home> {
 
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Group(data: _groups[index]),
+            builder: (context) => Group(data: group),
           ));
         },
       ),
@@ -148,7 +171,7 @@ class _HomeState extends State<Home> {
 
   void _removeGroup(index) {
     setState(() {
-      _groups.removeAt(index);
+      //_groups.removeAt(index);
     });
   }
 

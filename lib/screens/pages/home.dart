@@ -2,21 +2,22 @@ import 'package:app/models/UserDetails.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../pages/group.dart';
 
 class _HomeState extends State<Home> {
   static List<GroupDetails> _groups = [];
   AuthService _auth = AuthService();
-  final db = Firestore.instance;
-
   UserDetails currentUser = UserDetails.loadingUser();
+
+  String name = "";
+  String email = "";
+  List<String> groupsUID = [];
 
   void _getCurrentUserData() async {
     final uid = await _auth.getCurrentUID();
     UserDetails user = await DataBaseService().getCurrentUser(uid);
-    setState(()  {
+    setState(() {
       currentUser = user;
     });
   }
@@ -68,9 +69,7 @@ class _HomeState extends State<Home> {
         Navigator.pushNamed(context, '/group_creation');
         print("proceeding to group creation page\n");
         setState(() {
-          GroupDetails newGroup = new GroupDetails(
-            groupName: "A",
-          ); // method for group creation here
+          GroupDetails newGroup = new GroupDetails(groupName: "A"); // method for group creation here
           _groups.add(newGroup);
         });
       },

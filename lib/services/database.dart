@@ -12,12 +12,12 @@ class DataBaseService {
   // returns the current user details
   Future<UserDetails> getCurrentUser(String uid) async {
     UserDetails currentUser;
-    await db.collection("users").document(uid).get().then((value) => {
+    await db.collection("users").document(uid).get().then((user) => {
       currentUser = new UserDetails(
-        name: value["name"],
+        name: user["name"],
         number: "818181",
-        email: value["email"],
-        groups: value["groups"],
+        email: user["email"],
+        groups: user["groups"],
       ),
     });
     return currentUser;

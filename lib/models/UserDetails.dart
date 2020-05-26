@@ -3,10 +3,10 @@ class UserDetails {
   String name;
   String number;
   String email;
-  List<String> groups;
+  List<dynamic> groups;
   
   UserDetails.loadingUser() {
-    this.name = "";
+    this.name = "asdfasdf";
     this.number = "";
     this.email = "";
     this.groups = [];
@@ -21,6 +21,7 @@ class UserDetails {
   String get userNumber {
     return number;
   }
+
 
   String get userEmail {
     return email;

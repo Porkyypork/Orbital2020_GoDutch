@@ -3,6 +3,7 @@ import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
+
   final Function toogleView;
   SignIn({this.toogleView});
 
@@ -11,6 +12,7 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  
   final AuthService _auth = AuthService();
   String email = '';
   String password = '';

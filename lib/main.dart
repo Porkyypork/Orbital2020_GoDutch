@@ -1,4 +1,4 @@
-import 'package:app/models/user.dart';
+import 'package:app/models/UserDetails.dart';
 import 'package:app/screens/pages/ContactsPage.dart';
 import 'package:app/screens/pages/aboutus.dart';
 import 'package:app/screens/pages/debts.dart';
@@ -16,7 +16,7 @@ void main() => runApp(GoDutch());
 class GoDutch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
+    return StreamProvider<UserDetails>.value(
       value: AuthService().user,
       child: MaterialApp(
         routes: {

@@ -1,4 +1,4 @@
-import 'package:app/models/user.dart';
+import 'package:app/models/UserDetails.dart';
 import 'package:app/screens/pages/homepage/home.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +13,7 @@ class Wrapper extends StatelessWidget {
      first page the user will see after launching the app*/
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserDetails>(context);
     if (user == null) {
       return Authenticate(); 
     }

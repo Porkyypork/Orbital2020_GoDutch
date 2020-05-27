@@ -1,5 +1,4 @@
 import 'package:app/models/UserDetails.dart';
-import 'package:app/models/user.dart';
 import 'package:app/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -10,7 +9,7 @@ class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // auth change user stream
-  Stream<User> get user {
+  Stream<UserDetails> get user {
     return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
   }
 
@@ -21,12 +20,18 @@ class AuthService {
   }
 
   // create user object base on FirebaseUser
-  User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
+  UserDetails _userFromFirebaseUser(FirebaseUser user) {
+    return user != null ? UserDetails(
+      name: user.displayName,
+      uid: user.uid,
+      email: user.email,
+      number: user.phoneNumber,
+      groups : []
+      ) : null;
   }
 
   // sign in anon
-  Future<User> signInAnon() async {
+  Future<UserDetails> signInAnon() async {
     try {
       AuthResult result = await _auth.signInAnonymously();
       FirebaseUser user = result.user;
@@ -38,11 +43,11 @@ class AuthService {
   }
 
   //sign in with email and passowrd
-  Future<User> signInWithEmailAndPassword(String email, String password) async {
+  Future<UserDetails> signInWithEmailAndPassword(String email, String password) async {
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      User user = _userFromFirebaseUser(result.user);
+      UserDetails user = _userFromFirebaseUser(result.user);
       return user;
     } catch (e) {
       print(e.toString());
@@ -51,7 +56,7 @@ class AuthService {
   }
 
   //sign in with google
-  Future<User> signInWithGoogle() async {
+  Future<UserDetails> signInWithGoogle() async {
     FirebaseUser user;
 
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
@@ -61,25 +66,28 @@ class AuthService {
         accessToken: googleAuth.accessToken, 
         idToken: googleAuth.idToken,
       );
-    user = (await _auth.signInWithCredential(credential)).user;
-    await DataBaseService(uid: user.uid).updateUserData(user.displayName, user.email);
 
+    AuthResult _authResult = await _auth.signInWithCredential(credential);
+    user = _authResult.user;
+    if (_authResult.additionalUserInfo.isNewUser) {
+      await DataBaseService(uid: user.uid).updateUserData(user.displayName, user.email);
+    }
     return _userFromFirebaseUser(user);
   }
 
   // register with email and password
-  Future<User> registerWithEmailAndPassword(UserDetails newUser, String password) async {
+  Future<UserDetails> registerWithEmailAndPassword(UserDetails newUser, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
           email: newUser.email, 
           password: password,
         );
-      User user = _userFromFirebaseUser(result.user);
+      UserDetails user = _userFromFirebaseUser(result.user);
       await DataBaseService(uid: result.user.uid).updateUserData(newUser.name, newUser.email);
       return user;
     } catch (error) {
       if (error.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
-        return User(uid : 'Error_1');
+        return UserDetails(uid : 'Error_1');
       }
       return null;
     }

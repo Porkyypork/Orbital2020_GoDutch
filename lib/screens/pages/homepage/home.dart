@@ -5,12 +5,14 @@ import 'package:app/screens/pages/homepage/GroupListView.dart';
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../group.dart';
 
 class _HomeState extends State<Home> {
+
   static List<GroupDetails> _groups = [];
   AuthService _auth = AuthService();
-  
+
   UserDetails currentUser = UserDetails.loadingUser();
 
   void _getCurrentUserData() async {
@@ -21,6 +23,8 @@ class _HomeState extends State<Home> {
     });
   }
 
+  //TODO
+  // add method for fetching data from database
   @override
   void initState() {
     _getCurrentUserData();
@@ -34,7 +38,8 @@ class _HomeState extends State<Home> {
     return Scaffold(
       backgroundColor: Colors.indigo[100],
       appBar: AppBar(
-        title: Text("Actual user: ${currentUser.name}\nNumber of groups: ${currentUser.groups.length}"), //change back to _title after debugging
+        title: Text(
+            "Actual user: ${currentUser.name}\nNumber of groups: ${currentUser.groups.length}"), //change back to _title after debugging
         elevation: 0,
         backgroundColor: Colors.indigo,
         centerTitle: true,
@@ -49,27 +54,27 @@ class _HomeState extends State<Home> {
       being passed*/
       body: (_groups.length > 0)
           ? ListView.builder(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-        itemCount: currentUser.groups.length,
-        itemBuilder: (context, index) => FutureBuilder(
-          future: _buildGroupTile(context, currentUser.groups[index]),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) { // gotta figure out a way to send to loading page rather than each indiv list tile loading
-              case ConnectionState.none:
-                return Loading();
-              case ConnectionState.active:
-                return Loading();
-              case ConnectionState.waiting:
-                return Loading();
-              case ConnectionState.done:
-                return snapshot.data;
-                break;
-              default:
-                return Text("default, it shouldnt reach here");
-            }
-          }
-        ))
-        : _buildNoGroupsHomeScreen(),
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+              itemCount: currentUser.groups.length,
+              itemBuilder: (context, index) => FutureBuilder(
+                  future: _buildGroupTile(context, currentUser.groups[index]),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      // gotta figure out a way to send to loading page rather than each indiv list tile loading
+                      case ConnectionState.none:
+                        return Loading();
+                      case ConnectionState.active:
+                        return Loading();
+                      case ConnectionState.waiting:
+                        return Loading();
+                      case ConnectionState.done:
+                        return snapshot.data;
+                        break;
+                      default:
+                        return Text("default, it shouldnt reach here");
+                    }
+                  }))
+          : _buildNoGroupsHomeScreen(),
 
       bottomNavigationBar: BottomAppBar(
         color: Colors.indigo,
@@ -85,11 +90,13 @@ class _HomeState extends State<Home> {
 
   Widget _buildCreateGroupButton() {
     return FloatingActionButton(
-      onPressed: () { // change to async function where they can cancel
+      onPressed: () {
+        // change to async function where they can cancel
         Navigator.pushNamed(context, '/group_creation');
         print("proceeding to group creation page\n");
         setState(() {
-          GroupDetails newGroup = new GroupDetails(groupName: "A"); // method for group creation here
+          GroupDetails newGroup = new GroupDetails(
+              groupName: "A"); // method for group creation here
           _groups.add(newGroup);
         });
       },
@@ -100,19 +107,16 @@ class _HomeState extends State<Home> {
 
   Widget _buildNoGroupsHomeScreen() {
     return Container(
-      child: Center(
-        child: Text(
-          "You are not currently in any groups",
-          style: TextStyle(
-            fontSize: 24.0,
-          ),
-        )
-      )
-    );
+        child: Center(
+            child: Text(
+      "You are not currently in any groups",
+      style: TextStyle(
+        fontSize: 24.0,
+      ),
+    )));
   }
 
   Future<Widget> _buildGroupTile(BuildContext context, String groupUID) async {
-
     GroupDetails group = await DataBaseService().getGroupDetails(groupUID);
 
     return Dismissible(
@@ -226,6 +230,8 @@ class _HomeState extends State<Home> {
           ListTile(
             title: Text("Sign out"),
             onTap: () async {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/');
               await _auth.signOut();
             },
             trailing: Icon(Icons.exit_to_app),

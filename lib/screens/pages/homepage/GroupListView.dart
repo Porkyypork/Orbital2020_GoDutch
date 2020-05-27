@@ -1,9 +1,8 @@
-import 'package:app/constants/loading.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/screens/pages/group.dart';
-import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class _GroupListViewState extends State<GroupListView> {
 
@@ -13,39 +12,22 @@ class _GroupListViewState extends State<GroupListView> {
   @override
   Widget build(BuildContext context) {
 
-    List<dynamic> _groupsUID = currentUser.groups;
+    final groups = Provider.of<List<GroupDetails>>(context);
 
-    if(_groupsUID.length > 0) {
+    if (groups.length > 0) { // if there are groups
       return ListView.builder(
         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-        itemCount: _groupsUID.length,
-        itemBuilder: (context, index) => FutureBuilder(
-          future: _buildGroupTile(context, _groupsUID[index]),
-          builder: (context, snapshot) {
-            switch (snapshot.connectionState) { // gotta figure out a way to send to loading page rather than each indiv list tile loading
-              case ConnectionState.none:
-                return Loading();
-              case ConnectionState.active:
-                return Loading();
-              case ConnectionState.waiting:
-                return Loading();
-              case ConnectionState.done:
-                return snapshot.data;
-                break;
-              default:
-                return Text("default, it shouldnt reach here");
-            }
-          }),
-        // next attribute if needed starts here
+        itemCount:groups.length,
+        itemBuilder: (context, index) {
+          return _buildGroupTile(groups[index]);
+        }
       );
     } else {
       return _buildNoGroupDisplay();
     }
   }
 
-  Future<Widget> _buildGroupTile(BuildContext context, String groupUID) async {
-
-    GroupDetails group = await DataBaseService().getGroupDetails(groupUID);
+  Widget _buildGroupTile(GroupDetails group) {
 
     return Dismissible(
       key: UniqueKey(),
@@ -53,7 +35,7 @@ class _GroupListViewState extends State<GroupListView> {
         if (direction == DismissDirection.endToStart) {
           setState(() {
             String groupName = group.groupName;
-            //_removeGroup(index);
+            //_removeGroup(index); figure out later
             _deletionMessage(context, groupName);
           });
         } else {
@@ -87,8 +69,7 @@ class _GroupListViewState extends State<GroupListView> {
     return Container(
       child: Center(
         child: Text(
-          "You are not currently in any groups\nLoaded user: ${currentUser.name}",
-          // error is that it is passing the UserDetails.loading() user rather than the active user
+          "You are not currently in any groups",
           style: TextStyle(
             fontSize: 24.0,
           ),
@@ -115,11 +96,21 @@ class _GroupListViewState extends State<GroupListView> {
     );
   }
 
-  void _removeGroup(index) {
-    setState(() {
-      //_groups.removeAt(index);
-    });
-  }
+  //TODO: deletion method!
+  // void _removeGroup(int index, String groupUID) async {
+  //   final user = Provider.of<UserDetails>(context);
+  //   List<dynamic> updatedGroups = await usersCollection
+  //       .document(user.uid)
+  //       .get()
+  //       .then((user) => user['groups']);
+  //   updatedGroups.removeAt(index);
+  //   usersCollection.document(user.uid).updateData({'groups': updatedGroups});
+
+  //   await groupsCollection.document(groupUID).delete();
+  //   setState(() {
+  //     _groups.removeAt(index);
+  //   });
+  // }
 
   void _deletionMessage(context, String groupName) {
     Scaffold.of(context).showSnackBar(SnackBar(

@@ -8,8 +8,16 @@ class DataBaseService {
 
   DataBaseService({this.uid});
 
+  Future getUserGroups(String userUID) async {
+    List<dynamic> groups;
+    await db.collection("users").document(userUID).get().then((user) => {
+      groups = user["groups"],
+    });
+    return groups;
+  }
+
   // returns the current user details
-  Future<UserDetails> getCurrentUser(String userUID) async {
+  Future<UserDetails> getCurrentUserDetails(String userUID) async {
     UserDetails currentUser;
     await db.collection("users").document(userUID).get().then((user) => {
           currentUser = new UserDetails(
@@ -23,49 +31,37 @@ class DataBaseService {
     return currentUser;
   }
 
-  // returns the group details for a given uid
-  Future<GroupDetails> getGroupDetails(String groupUID) async {
 
-    GroupDetails currentGroup;
-    try{
-      await db.collection("groups").document(groupUID).get().then((group) => {
-            currentGroup = new GroupDetails(
-              uid: groupUID,
-              uidGroupAdmin: group["groupAdmin"],
-              groupName: group["groupName"],
-              members: group["members"],
-            ),
-          });
-    } catch (e) {
-      print(e.toString);
-    }
-    return currentGroup;
-  }
 
   // creates the user data in the database
   Future<void> updateUserData(String name, String email) async {
-    List<String> groups = List();
+    //List<String> groups = List();
     await db.collection('users').document(this.uid).setData({
       "name": name,
       "email": email,
-      "groups": groups,
+      //"groups": groups,
     });
   }
 
-  // creates the group datas in the database
   Future<void> createGroupData(String groupName, String uid) async {
-    List<dynamic> members = List();
-    members.add(uid);
-    DocumentReference _docRef = await db.collection('groups').add({
-      "groupName": groupName,
-      "groupAdmin": uid,
-      "members": members,
-    });
-    String groupUID = _docRef.documentID;
-    List<String> newGroups = List();
-    newGroups.add(groupUID);
-    await db.collection("users").document(uid).updateData({
-      "groups": FieldValue.arrayUnion(newGroups),
-    });
-  }  
+    List<String> groupMembers = List();
+    await db.collection("users").document(uid)
+      .collection("groups").document().setData({
+        "groupName": groupName,
+        "members": groupMembers,
+      });
+  }
+
+  List<GroupDetails> _groupDetailsFromSnapshot(QuerySnapshot snap) {
+    return snap.documents.map((doc) {
+      return new GroupDetails(
+        groupName: doc.data['groupName'] ?? 'No name exists',
+        members: doc.data['members'] ?? ['no members'],
+      );
+    }).toList();
+  }
+
+  Stream<List<GroupDetails>> get groups {
+    return db.collection("users").document(this.uid).collection("groups").snapshots().map(_groupDetailsFromSnapshot);
+  }
 }

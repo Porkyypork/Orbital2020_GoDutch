@@ -1,223 +1,73 @@
-import 'dart:async';
-
-import 'package:app/constants/loading.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/screens/pages/homepage/GroupListView.dart';
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../group.dart';
+import '../../../services/database.dart';
 
 class _HomeState extends State<Home> {
-  static List<GroupDetails> _groups = [];
   AuthService _auth = AuthService();
-  final CollectionReference usersCollection =
-      Firestore.instance.collection('users');
-  final CollectionReference groupsCollection =
-      Firestore.instance.collection('groups');
-
-  UserDetails currentUser = UserDetails.loadingUser();
-
-  void _getCurrentUserData() async {
-    final uid = await _auth.getCurrentUID();
-    UserDetails user = await DataBaseService().getCurrentUser(uid);
-    setState(() {
-      currentUser = user;
-    });
-  }
-
-  //TODO
-  // add method for fetching data from database
-  @override
-  void initState() {
-    _getCurrentUserData();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     final String _title = 'GoDutch';
+    final user = Provider.of<UserDetails>(context);
 
-    return Scaffold(
-      backgroundColor: Colors.indigo[100],
-      appBar: AppBar(
-        title: Text(
-            "Actual user: ${currentUser.name}\nNumber of groups: ${currentUser.groups.length}"), //change back to _title after debugging
-        elevation: 0,
-        backgroundColor: Colors.indigo,
-        centerTitle: true,
+    return StreamProvider<List<GroupDetails>>.value(
+      value: DataBaseService(uid: user.uid).groups,
+      child: Scaffold(
+        backgroundColor: Colors.indigo[100],
+        appBar: AppBar(
+          title: Text(_title),
+          elevation: 0,
+          backgroundColor: Colors.indigo,
+          centerTitle: true,
+        ),
+
+        endDrawer: _buildDrawerMenu(context), //end drawer menu
+
+        body: GroupListView(),
+
+        bottomNavigationBar: BottomAppBar(
+          color: Colors.indigo,
+          shape: CircularNotchedRectangle(),
+          child: Container(height: 50),
+        ),
+
+        floatingActionButton: _buildCreateGroupButton(),
+
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
-
-      endDrawer: _buildDrawerMenu(context), //end drawer menu
-
-      /*TODO:
-      encapsulate the creation of the body widget into another class called
-      GroupListView ==> PROBLEMS: Was not passing the user correctly to the new class
-      proof of concept done here, so the code is working just fine, but only user is not
-      being passed*/
-      body: (_groups.length > 0)
-          ? ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-              itemCount: currentUser.groups.length,
-              itemBuilder: (context, index) => FutureBuilder(
-                  future: _buildGroupTile(
-                      context, currentUser.groups[index], index),
-                  builder: (context, snapshot) {
-                    switch (snapshot.connectionState) {
-                      // gotta figure out a way to send to loading page rather than each indiv list tile loading
-                      case ConnectionState.none:
-                        return Loading();
-                      case ConnectionState.active:
-                        return Loading();
-                      case ConnectionState.waiting:
-                        return Loading();
-                      case ConnectionState.done:
-                        return snapshot.data;
-                        break;
-                      default:
-                        return Text("default, it shouldnt reach here");
-                    }
-                  }))
-          : _buildNoGroupsHomeScreen(),
-
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.indigo,
-        shape: CircularNotchedRectangle(),
-        child: Container(height: 50),
-      ),
-
-      floatingActionButton: _buildCreateGroupButton(),
-
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
   Widget _buildCreateGroupButton() {
     return FloatingActionButton(
       onPressed: () {
-        // change to async function where they can cancel
         Navigator.pushNamed(context, '/group_creation');
         print("proceeding to group creation page\n");
-        setState(() {
-          GroupDetails newGroup = new GroupDetails(
-              groupName: "A"); // method for group creation here
-          _groups.add(newGroup);
-        });
       },
       backgroundColor: Colors.teal[300],
       child: Icon(Icons.add),
     );
   }
 
-  Widget _buildNoGroupsHomeScreen() {
-    return Container(
-        child: Center(
-            child: Text(
-      "You are not currently in any groups",
-      style: TextStyle(
-        fontSize: 24.0,
-      ),
-    )));
-  }
-
-  Future<Widget> _buildGroupTile(
-      BuildContext context, String groupUID, int index) async {
-    GroupDetails group = await DataBaseService().getGroupDetails(groupUID);
-    if (group == null) {
-      return _buildNoGroupsHomeScreen();
-    } else {
-      return Dismissible(
-        key: UniqueKey(),
-        onDismissed: (direction) {
-          if (direction == DismissDirection.endToStart) {
-            setState(() {
-              String groupName = group.groupName;
-              _removeGroup(index, groupUID);
-              _deletionMessage(context, groupName);
-            });
-          } else {
-            // do something else likely implementation of google vision
-          }
-        },
-        background: _secondaryBackground(),
-        secondaryBackground: _deletionBackground(),
-        child: ListTile(
-          leading: Icon(Icons.group,
-              color:
-                  Colors.black), // replaced with their own personal photo later
-          title: Text(
-            group.groupName,
-            style: TextStyle(
-              fontSize: 18.0,
-              letterSpacing: 1.5,
-            ),
-          ),
-
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => Group(data: group),
-            ));
-          },
-        ),
-      );
-    }
-  }
-
-  Widget _deletionBackground() {
-    return Container(
-      alignment: AlignmentDirectional.centerEnd,
-      padding: EdgeInsets.only(right: 15.0),
-      color: Colors.red[600],
-      child: Icon(Icons.delete, color: Colors.black),
-    );
-  }
-
-  Widget _secondaryBackground() {
-    return Container(
-      alignment: AlignmentDirectional.centerStart,
-      padding: EdgeInsets.only(left: 15.0),
-      color: Colors.yellow[400],
-      child: Icon(Icons.photo_camera, color: Colors.black),
-    );
-  }
-
-  void _removeGroup(int index, String groupUID) async {
-    List<dynamic> updatedGroups = await usersCollection
-        .document(currentUser.uid)
-        .get()
-        .then((user) => user['groups']);
-    updatedGroups.removeAt(index);
-    usersCollection
-        .document(currentUser.uid)
-        .updateData({'groups': updatedGroups});
-
-    await groupsCollection.document(groupUID).delete();
-    setState(() {
-      _groups.removeAt(index);
-    });
-  }
-
-  void _deletionMessage(context, String groupName) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text("You have left $groupName"),
-    ));
-  }
-
   Drawer _buildDrawerMenu(BuildContext context) {
+    final user = Provider.of<UserDetails>(context);
+
     return Drawer(
       child: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text(currentUser.name),
-            accountEmail: Text(currentUser.email),
+            accountName: Text(user.name),
+            accountEmail: Text(user.email),
             currentAccountPicture: GestureDetector(
               // onTap: () {}, can further implement features if we decide to
               child: CircleAvatar(
-                backgroundImage:
-                    NetworkImage("https://i.imgflip.com/1pl7m4.jpg"),
+                backgroundImage: NetworkImage(
+                    "https://res.cloudinary.com/fleetnation/image/private/c_fit,w_1120/g_south,l_text:style_gothic2:%C2%A9%20Erik%20Reis,o_20,y_10/g_center,l_watermark4,o_25,y_50/v1454956714/jcz04ojmkyyz4wq5wvqf.jpg"),
               ),
             ),
             decoration: BoxDecoration(
@@ -227,7 +77,7 @@ class _HomeState extends State<Home> {
                 fit: BoxFit.fill,
                 // can easily change
                 image: NetworkImage(
-                    "https://www.hitc.com/static/uploads/hitcn/1641/smudge_the_cat_1390117.jpg"),
+                    "https://images.wallpapersden.com/image/wxl-minimal-sunset-purple-mountains-and-birds_61310.jpg"),
               ),
             ),
           ),

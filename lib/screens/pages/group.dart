@@ -1,6 +1,5 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:flutter/material.dart';
-
 import '../../services/AccessContacts.dart';
 
 // Everyone else starts with a balance of 0, and as people pay, their value decreases, while others increase.
@@ -17,7 +16,7 @@ class _GroupState extends State<Group> {
   Widget build(BuildContext context) {
 
     String groupName = data.groupName;
-    String groupUID = data.uid;
+    //String groupUID = data.uid;
 
     return Scaffold(
       backgroundColor: Colors.indigo[100],
@@ -27,60 +26,92 @@ class _GroupState extends State<Group> {
         backgroundColor: Colors.indigo,
         centerTitle: true,
         actions: <Widget>[
-          AccessContacts(groupUID : groupUID),
+          IconButton(
+            icon: Icon(Icons.person_add),
+            onPressed: () {
+              AccessContacts();
+            },
+          ),
         ],
       ),
-      endDrawer: _buildDrawerMenu(context),
+      body: _buildGroupPageBody(),
+      //endDrawer: _buildDrawerMenu(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.camera_alt, color: Colors.white),
-        backgroundColor: Colors.blueAccent,
-      ),
+            onPressed: () {
+              // go to camera functions
+            },
+            child: Icon(Icons.camera_alt, color: Colors.white),
+            backgroundColor: Colors.blueAccent,
+          ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
-  Drawer _buildDrawerMenu(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        children: <Widget>[
-          Container( 
-            color: Colors.white10,
-            child: ListTile (
-              title: Text (
-                "Member List",
-                style: TextStyle(fontSize: 20.0),
-              ),
-              trailing: Icon(Icons.group),
+  Widget _buildGroupPageBody() {
+    return ListView.builder(
+      itemCount: 5,
+      itemBuilder: (context, index) =>_buildMemberTile(),
+    );
+  }
+
+  Widget _buildMemberTile() {
+    return Card(
+          child: ListTile(
+            leading: Icon(Icons.important_devices),
+            title: Text('Member goes here'),
+            subtitle: Text('Owed amount goes here'),
+            trailing: DropdownButton<Widget>(
+              items: null, 
+              onChanged: null,
+              icon: Icon(Icons.more_vert),
             ),
-          ),
-          Divider(),
-          ListTile(
-            title: Text("This is the dailou"),
-            trailing: Icon(Icons.star),
-          ),
-          ListTile(
-            title: Text("Member 1"),
-            trailing: Icon(Icons.person),
-          ),
-          ListTile(
-            title: Text("Member 2"),
-            trailing: Icon(Icons.person),
-          ),
-          ListTile(
-            title: Text("Member 3"),
-            trailing: Icon(Icons.person),
-          ),
-          Divider(),
-          ListTile(
-            title: Text("Close"),
-            trailing: Icon(Icons.cancel),
-            onTap: () => Navigator.of(context).pop(),
-          ),
-        ],
       ),
     );
   }
+
+
+  // Probably irrelevant now, check with weilin
+  // Drawer _buildDrawerMenu(BuildContext context) {
+  //   return Drawer(
+  //     child: ListView(
+  //       children: <Widget>[
+  //         Container( 
+  //           color: Colors.white10,
+  //           child: ListTile (
+  //             title: Text (
+  //               "Member List",
+  //               style: TextStyle(fontSize: 20.0),
+  //             ),
+  //             trailing: Icon(Icons.group),
+  //           ),
+  //         ),
+  //         Divider(),
+  //         ListTile(
+  //           title: Text("This is the dailou"),
+  //           trailing: Icon(Icons.star),
+  //         ),
+  //         ListTile(
+  //           title: Text("Member 1"),
+  //           trailing: Icon(Icons.person),
+  //         ),
+  //         ListTile(
+  //           title: Text("Member 2"),
+  //           trailing: Icon(Icons.person),
+  //         ),
+  //         ListTile(
+  //           title: Text("Member 3"),
+  //           trailing: Icon(Icons.person),
+  //         ),
+  //         Divider(),
+  //         ListTile(
+  //           title: Text("Close"),
+  //           trailing: Icon(Icons.cancel),
+  //           onTap: () => Navigator.of(context).pop(),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }
 
 class Group extends StatefulWidget {

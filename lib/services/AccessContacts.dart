@@ -4,14 +4,19 @@ import 'package:app/screens/pages/ContactsPage.dart';
 
 
 class AccessContacts extends StatelessWidget {
+
+  final String groupUID;
+
+  AccessContacts({this.groupUID});
+
   @override
   Widget build(BuildContext context) {
-    return IconButton(
+    return IconButton(                                                                                  
       onPressed: () async {
         final PermissionStatus status = await _getPermission();
         if (status == PermissionStatus.granted) {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ContactsPage()));
+              context, MaterialPageRoute(builder: (context) => ContactsPage(groupUID: groupUID)));
         } else {
           AlertDialog(
             title : Text('Permission Error!'),

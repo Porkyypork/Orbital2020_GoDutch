@@ -25,15 +25,20 @@ class DataBaseService {
 
   // returns the group details for a given uid
   Future<GroupDetails> getGroupDetails(String groupUID) async {
+
     GroupDetails currentGroup;
-    await db.collection("groups").document(groupUID).get().then((group) => {
-          currentGroup = new GroupDetails(
-            uid: groupUID,
-            uidGroupAdmin: group["groupAdmin"],
-            groupName: group["groupName"],
-            members: group["members"],
-          ),
-        });
+    try{
+      await db.collection("groups").document(groupUID).get().then((group) => {
+            currentGroup = new GroupDetails(
+              uid: groupUID,
+              uidGroupAdmin: group["groupAdmin"],
+              groupName: group["groupName"],
+              members: group["members"],
+            ),
+          });
+    } catch (e) {
+      print(e.toString);
+    }
     return currentGroup;
   }
 
@@ -49,7 +54,7 @@ class DataBaseService {
 
   // creates the group datas in the database
   Future<void> createGroupData(String groupName, String uid) async {
-    List<String> members = List();
+    List<dynamic> members = List();
     members.add(uid);
     DocumentReference _docRef = await db.collection('groups').add({
       "groupName": groupName,
@@ -62,10 +67,5 @@ class DataBaseService {
     await db.collection("users").document(uid).updateData({
       "groups": FieldValue.arrayUnion(newGroups),
     });
-  }
-
-  // updates
-  Future<void> updateGroupData() async {
-    //TODO
-  }
+  }  
 }

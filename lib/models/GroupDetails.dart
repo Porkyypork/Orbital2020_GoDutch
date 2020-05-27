@@ -6,4 +6,5 @@ class GroupDetails {
   List<dynamic> members = [];
 
   GroupDetails({this.uid, this.uidGroupAdmin, this.groupName, this.members});
+  
 }

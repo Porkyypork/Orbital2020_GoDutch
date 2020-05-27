@@ -1,15 +1,27 @@
 import 'package:app/constants/loading.dart';
+import 'package:app/models/UserDetails.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:provider/provider.dart';
 
 class ContactsPage extends StatefulWidget {
+  
+  final String groupUID;
+
+  ContactsPage({this.groupUID});
+
   @override
-  _ContactsPageState createState() => _ContactsPageState();
+  _ContactsPageState createState() => _ContactsPageState(groupUID: groupUID);
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  
+
+  final String groupUID;
   Iterable<Contact> _contacts;
+  final Firestore db = Firestore.instance;
+
+  _ContactsPageState({this.groupUID});
 
   void initState() {
     getContacts();
@@ -36,7 +48,7 @@ class _ContactsPageState extends State<ContactsPage> {
                   key: UniqueKey(),
                   background: _addBackground(),
                   onDismissed: (direction) {
-                    //add to groups
+                    updateGroupData(contact, groupUID);
                     _addMessage(context, contact.displayName);
                   },
                   child: ListTile(
@@ -74,5 +86,13 @@ class _ContactsPageState extends State<ContactsPage> {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text("Added $contact"),
     ));
+  }
+
+  void updateGroupData(Contact contact, String uid) async {
+    DocumentReference doc = db.collection('groups')
+                              .document(uid);
+    List<dynamic> members = await doc.get().then((data) => data['members']);
+    members.add(contact.displayName);
+    await doc.updateData({'members' : members});
   }
 }

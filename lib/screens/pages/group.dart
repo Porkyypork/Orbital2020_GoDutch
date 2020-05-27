@@ -15,7 +15,9 @@ class _GroupState extends State<Group> {
 
   @override
   Widget build(BuildContext context) {
+
     String groupName = data.groupName;
+    String groupUID = data.uid;
 
     return Scaffold(
       backgroundColor: Colors.indigo[100],
@@ -25,7 +27,7 @@ class _GroupState extends State<Group> {
         backgroundColor: Colors.indigo,
         centerTitle: true,
         actions: <Widget>[
-          AccessContacts(),
+          AccessContacts(groupUID : groupUID),
         ],
       ),
       endDrawer: _buildDrawerMenu(context),
@@ -42,10 +44,10 @@ class _GroupState extends State<Group> {
     return Drawer(
       child: ListView(
         children: <Widget>[
-          Container(
+          Container( 
             color: Colors.white10,
-            child: ListTile(
-              title: Text(
+            child: ListTile (
+              title: Text (
                 "Member List",
                 style: TextStyle(fontSize: 20.0),
               ),
@@ -82,7 +84,7 @@ class _GroupState extends State<Group> {
 }
 
 class Group extends StatefulWidget {
-  GroupDetails data;
+  final GroupDetails data;
   Group({this.data});
 
   @override

@@ -1,17 +1,23 @@
+import 'dart:async';
+
 import 'package:app/constants/loading.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/screens/pages/homepage/GroupListView.dart';
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../group.dart';
 
 class _HomeState extends State<Home> {
-
   static List<GroupDetails> _groups = [];
   AuthService _auth = AuthService();
+  final CollectionReference usersCollection =
+      Firestore.instance.collection('users');
+  final CollectionReference groupsCollection =
+      Firestore.instance.collection('groups');
 
   UserDetails currentUser = UserDetails.loadingUser();
 
@@ -57,7 +63,8 @@ class _HomeState extends State<Home> {
               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
               itemCount: currentUser.groups.length,
               itemBuilder: (context, index) => FutureBuilder(
-                  future: _buildGroupTile(context, currentUser.groups[index]),
+                  future: _buildGroupTile(
+                      context, currentUser.groups[index], index),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       // gotta figure out a way to send to loading page rather than each indiv list tile loading
@@ -116,43 +123,47 @@ class _HomeState extends State<Home> {
     )));
   }
 
-  Future<Widget> _buildGroupTile(BuildContext context, String groupUID) async {
+  Future<Widget> _buildGroupTile(
+      BuildContext context, String groupUID, int index) async {
     GroupDetails group = await DataBaseService().getGroupDetails(groupUID);
-
-    return Dismissible(
-      key: UniqueKey(),
-      onDismissed: (direction) {
-        if (direction == DismissDirection.endToStart) {
-          setState(() {
-            String groupName = group.groupName;
-            //_removeGroup(index);
-            _deletionMessage(context, groupName);
-          });
-        } else {
-          // do something else likely implementation of google vision
-        }
-      },
-      background: _secondaryBackground(),
-      secondaryBackground: _deletionBackground(),
-      child: ListTile(
-        leading: Icon(Icons.group,
-            color:
-                Colors.black), // replaced with their own personal photo later
-        title: Text(
-          group.groupName,
-          style: TextStyle(
-            fontSize: 18.0,
-            letterSpacing: 1.5,
-          ),
-        ),
-
-        onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => Group(data: group),
-          ));
+    if (group == null) {
+      return _buildNoGroupsHomeScreen();
+    } else {
+      return Dismissible(
+        key: UniqueKey(),
+        onDismissed: (direction) {
+          if (direction == DismissDirection.endToStart) {
+            setState(() {
+              String groupName = group.groupName;
+              _removeGroup(index, groupUID);
+              _deletionMessage(context, groupName);
+            });
+          } else {
+            // do something else likely implementation of google vision
+          }
         },
-      ),
-    );
+        background: _secondaryBackground(),
+        secondaryBackground: _deletionBackground(),
+        child: ListTile(
+          leading: Icon(Icons.group,
+              color:
+                  Colors.black), // replaced with their own personal photo later
+          title: Text(
+            group.groupName,
+            style: TextStyle(
+              fontSize: 18.0,
+              letterSpacing: 1.5,
+            ),
+          ),
+
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => Group(data: group),
+            ));
+          },
+        ),
+      );
+    }
   }
 
   Widget _deletionBackground() {
@@ -173,9 +184,19 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _removeGroup(index) {
+  void _removeGroup(int index, String groupUID) async {
+    List<dynamic> updatedGroups = await usersCollection
+        .document(currentUser.uid)
+        .get()
+        .then((user) => user['groups']);
+    updatedGroups.removeAt(index);
+    usersCollection
+        .document(currentUser.uid)
+        .updateData({'groups': updatedGroups});
+
+    await groupsCollection.document(groupUID).delete();
     setState(() {
-      //_groups.removeAt(index);
+      _groups.removeAt(index);
     });
   }
 

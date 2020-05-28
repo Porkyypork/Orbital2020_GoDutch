@@ -1,12 +1,18 @@
 import 'package:app/models/GroupDetails.dart';
+import 'package:app/models/MemberDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app/models/UserDetails.dart';
+import 'package:contacts_service/contacts_service.dart';
+
+import '../models/UserDetails.dart';
 
 class DataBaseService {
+
   final String uid;
   final Firestore db = Firestore.instance;
+  final String groupUID;
 
-  DataBaseService({this.uid});
+  DataBaseService({this.uid, this.groupUID});
 
   Future getUserGroups(String userUID) async {
     List<dynamic> groups;
@@ -32,30 +38,41 @@ class DataBaseService {
   }
 
 
-
   // creates the user data in the database
-  Future<void> updateUserData(String name, String email) async {
+  Future<void> updateUserData(String name, String email, String number) async {
     //List<String> groups = List();
     await db.collection('users').document(this.uid).setData({
       "name": name,
       "email": email,
+      'Number' : number
       //"groups": groups,
     });
   }
 
-  Future<void> createGroupData(String groupName, String uid) async {
-    List<String> groupMembers = List();
-    await db.collection("users").document(uid)
-      .collection("groups").document().setData({
+  Future<void> createGroupData(String groupName, UserDetails user) async {
+    CollectionReference groupsReference = db.collection("users").document(user.uid)
+                                        .collection("groups");
+    DocumentReference groups = groupsReference.document();
+    String groupUID = groups.documentID;
+    groups.setData({
         "groupName": groupName,
-        "members": groupMembers,
       });
+    DocumentReference userReference = db.collection("users").document(user.uid)
+                                        .collection("groups")
+                                        .document(groupUID)
+                                        .collection('members').document();
+    userReference.setData({
+      'Name' : user.name,
+      'Number' : user.number,
+      'Email' : user.email
+    });
   }
 
   List<GroupDetails> _groupDetailsFromSnapshot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new GroupDetails(
         groupName: doc.data['groupName'] ?? 'No name exists',
+        groupUID : doc.documentID,
         members: doc.data['members'] ?? ['no members'],
       );
     }).toList();
@@ -63,5 +80,23 @@ class DataBaseService {
 
   Stream<List<GroupDetails>> get groups {
     return db.collection("users").document(this.uid).collection("groups").snapshots().map(_groupDetailsFromSnapshot);
+  }
+
+  List<MemberDetails> _memberDetailsFromSnapShot(QuerySnapshot snap) {
+    return snap.documents.map((doc) {
+      return new MemberDetails(
+        name : doc.data['Name'] ?? '',
+        number : doc.data['Number'] ?? '',
+        email : doc.data['Email'] ?? '',
+        memberID: doc.documentID
+      );
+    }).toList();
+  }
+
+  Stream<List<MemberDetails>> get members{
+        return db.collection("users").document(this.uid).collection("groups")
+              .document(this.groupUID)
+              .collection('members')
+              .snapshots().map(_memberDetailsFromSnapShot);
   }
 }

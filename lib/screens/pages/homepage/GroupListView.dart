@@ -1,17 +1,21 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/screens/pages/group.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class _GroupListViewState extends State<GroupListView> {
 
+  final Firestore db = Firestore.instance;
   UserDetails currentUser;
+
   _GroupListViewState({this.currentUser});
 
   @override
   Widget build(BuildContext context) {
 
+    
     final groups = Provider.of<List<GroupDetails>>(context);
 
     if (groups.length > 0) { // if there are groups
@@ -35,7 +39,7 @@ class _GroupListViewState extends State<GroupListView> {
         if (direction == DismissDirection.endToStart) {
           setState(() {
             String groupName = group.groupName;
-            //_removeGroup(index); figure out later
+            _removeGroup(group.groupUID);
             _deletionMessage(context, groupName);
           });
         } else {
@@ -97,20 +101,25 @@ class _GroupListViewState extends State<GroupListView> {
   }
 
   //TODO: deletion method!
-  // void _removeGroup(int index, String groupUID) async {
-  //   final user = Provider.of<UserDetails>(context);
-  //   List<dynamic> updatedGroups = await usersCollection
-  //       .document(user.uid)
-  //       .get()
-  //       .then((user) => user['groups']);
-  //   updatedGroups.removeAt(index);
-  //   usersCollection.document(user.uid).updateData({'groups': updatedGroups});
+  void _removeGroup(String groupUID) {
+    final user = Provider.of<UserDetails>(context);
 
-  //   await groupsCollection.document(groupUID).delete();
-  //   setState(() {
-  //     _groups.removeAt(index);
-  //   });
-  // }
+    CollectionReference groupsReference = db.collection('users').document(user.uid)
+                                          .collection('groups');
+    groupsReference.document(groupUID).delete();
+
+    // List<dynamic> updatedGroups = await usersCollection
+    //     .document(user.uid)
+    //     .get()
+    //     .then((user) => user['groups']);
+    // updatedGroups.removeAt(index);
+    // usersCollection.document(user.uid).updateData({'groups': updatedGroups});
+
+    // await groupsCollection.document(groupUID).delete();
+    // setState(() {
+    //   _groups.removeAt(index);
+    // });
+  }
 
   void _deletionMessage(context, String groupName) {
     Scaffold.of(context).showSnackBar(SnackBar(

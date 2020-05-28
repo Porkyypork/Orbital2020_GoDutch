@@ -8,10 +8,12 @@ import 'package:provider/provider.dart';
 import '../../../services/database.dart';
 
 class _HomeState extends State<Home> {
+  
   AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
+
     final String _title = 'GoDutch';
     final user = Provider.of<UserDetails>(context);
 

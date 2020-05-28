@@ -33,7 +33,7 @@ class AccessContacts extends StatelessWidget {
           );
         }
       },
-      icon: Icon(Icons.add),
+      icon: Icon(Icons.person_add),
     );
   }
 

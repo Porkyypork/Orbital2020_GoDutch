@@ -1,6 +1,9 @@
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../../models/UserDetails.dart';
 
 class _GroupCreationState extends State<GroupCreation> {
 
@@ -77,8 +80,8 @@ class _GroupCreationState extends State<GroupCreation> {
   }
 
   void _createGroup() async {
-    final uid = await _auth.getCurrentUID();
-    await DataBaseService().createGroupData(this._name, uid);
+    final user = Provider.of<UserDetails>(context);
+    await DataBaseService().createGroupData(this._name, user);
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
   }
 }

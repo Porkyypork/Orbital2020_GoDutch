@@ -20,6 +20,7 @@ class _ContactsPageState extends State<ContactsPage> {
   final String groupUID;
   Iterable<Contact> _contacts;
   final Firestore db = Firestore.instance;
+  
 
   _ContactsPageState({this.groupUID});
 
@@ -37,8 +38,16 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final user = Provider.of<UserDetails>(context);
+
     return Scaffold(
-      appBar: AppBar(title: Text('Contacts')),
+      appBar: AppBar(title: Text('Contacts'),
+        actions: <Widget>[
+          // doneButton(),
+        ],
+      ),
+      
       body: _contacts != null
           ? ListView.builder(
               itemCount: _contacts?.length ?? 0,
@@ -48,7 +57,7 @@ class _ContactsPageState extends State<ContactsPage> {
                   key: UniqueKey(),
                   background: _addBackground(),
                   onDismissed: (direction) {
-                    updateGroupData(contact, groupUID);
+                    addGroupMember(contact, groupUID, user.uid);
                     _addMessage(context, contact.displayName);
                   },
                   child: ListTile(
@@ -82,17 +91,31 @@ class _ContactsPageState extends State<ContactsPage> {
     );
   }
 
+  //lead to calculation page
+  Widget doneButton() {
+    return FlatButton(
+      child: Text('Done'),
+      onPressed : () {
+        // implement function
+      }
+    );
+  }
+
   void _addMessage(context, String contact) {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text("Added $contact"),
     ));
   }
 
-  void updateGroupData(Contact contact, String uid) async {
-    DocumentReference doc = db.collection('groups')
-                              .document(uid);
-    List<dynamic> members = await doc.get().then((data) => data['members']);
-    members.add(contact.displayName);
-    await doc.updateData({'members' : members});
+  void addGroupMember(Contact contact, String groupUID, String userUID) async {
+    DocumentReference doc = db.collection('users')
+                              .document(userUID).collection('groups')
+                              .document(groupUID)
+                              .collection('members').document();
+    doc.setData({
+      'Name' : contact.displayName,
+      'Number' : contact.phones.first.value.toString(),
+      'Email' : contact.emails.first.value.toString(),
+    });
   }
 }

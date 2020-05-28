@@ -68,8 +68,7 @@ class AuthService {
 
     AuthResult _authResult = await _auth.signInWithCredential(credential);
     user = _authResult.user;
-    await DataBaseService(uid: user.uid).updateUserData(user.displayName, user.email);
-
+    await DataBaseService(uid: user.uid).updateUserData(user.displayName, user.email, user.phoneNumber);
     return _userFromFirebaseUser(user);
   }
 
@@ -81,7 +80,7 @@ class AuthService {
           password: password,
         );
       UserDetails user = _userFromFirebaseUser(result.user);
-      await DataBaseService(uid: result.user.uid).updateUserData(newUser.name, newUser.email);
+      await DataBaseService(uid: result.user.uid).updateUserData(newUser.name, newUser.email, "");
       return user;
     } catch (error) {
       if (error.code == 'ERROR_EMAIL_ALREADY_IN_USE') {

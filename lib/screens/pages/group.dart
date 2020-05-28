@@ -1,5 +1,6 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
+import 'package:app/screens/pages/ContactListView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,15 +15,18 @@ import '../../services/database.dart';
 // 3. etc...
 
 class _GroupState extends State<Group> {
-  GroupDetails data;
-  final Firestore db = Firestore.instance;
 
-  _GroupState(this.data);
+  GroupDetails groupdata;
+  final Firestore db = Firestore.instance;
+  
+
+  _GroupState({this.groupdata});
 
   @override
   Widget build(BuildContext context) {
-    String groupName = data.groupName;
-    String groupUID = data.groupUID;
+
+    String groupName = groupdata.groupName;
+    String groupUID = groupdata.groupUID;
 
     final user = Provider.of<UserDetails>(context);
 
@@ -39,7 +43,7 @@ class _GroupState extends State<Group> {
             AccessContacts(groupUID: groupUID),
           ],
         ),
-        body: _buildGroupPageBody(),
+        body: ContactListView(groupdata: this.groupdata),
         //endDrawer: _buildDrawerMenu(context),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -52,71 +56,6 @@ class _GroupState extends State<Group> {
       ),
     );
   }
-
-  Widget _buildGroupPageBody() {
-    return ListView.builder(
-      itemCount: data.members.length,
-      itemBuilder: (context, index) =>
-          _buildMemberTile(data.members[index], index),
-    );
-  }
-
-  Widget _buildMemberTile(name, index) {
-    return Dismissible(
-      key: UniqueKey(),
-      onDismissed: (direction) {
-        _removeGroupMember(index);
-      },
-      background: _deletionBackground(),
-      child: Card(
-        child: ListTile(
-          leading: Icon(Icons.important_devices),
-          title: Text(name),
-          subtitle: Text('Owed amount goes here'),
-          trailing: DropdownButton<Widget>(
-            items: null,
-            onChanged: null,
-            icon: Icon(Icons.more_vert),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _removeGroupMember(index) async {
-    final user = Provider.of<UserDetails>(context);
-    List<dynamic> members = await db
-        .collection('users')
-        .document(user.uid)
-        .collection('groups')
-        .document(data.groupUID)
-        .get()
-        .then((group) => group['members']);
-
-    // buffer time to update for database
-    try {
-      members.removeAt(index);
-    } catch (e) {
-      members.removeAt(index - 1);
-    }
-
-    await db
-        .collection('users')
-        .document(user.uid)
-        .collection('groups')
-        .document(data.groupUID)
-        .updateData({'members': members});
-  }
-
-  Widget _deletionBackground() {
-    return Container(
-      alignment: AlignmentDirectional.centerEnd,
-      padding: EdgeInsets.only(right: 15.0),
-      color: Colors.red[600],
-      child: Icon(Icons.delete, color: Colors.black),
-    );
-  }
-
   // Probably irrelevant now, check with weilin
   // Drawer _buildDrawerMenu(BuildContext context) {
   //   return Drawer(
@@ -166,5 +105,5 @@ class Group extends StatefulWidget {
   Group({this.data});
 
   @override
-  _GroupState createState() => _GroupState(data);
+  _GroupState createState() => _GroupState(groupdata: data);
 }

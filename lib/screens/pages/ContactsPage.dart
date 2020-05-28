@@ -108,14 +108,18 @@ class _ContactsPageState extends State<ContactsPage> {
   }
 
   void addGroupMember(Contact contact, String groupUID, String userUID) async {
-    DocumentReference doc = db.collection('users')
-                              .document(userUID).collection('groups')
-                              .document(groupUID)
-                              .collection('members').document();
-    doc.setData({
-      'Name' : contact.displayName,
-      'Number' : contact.phones.first.value.toString(),
-      'Email' : contact.emails.first.value.toString(),
-    });
+    print(userUID + " " + groupUID + " " + contact.displayName);
+    try{
+     await db.collection('users')
+      .document(userUID).collection('groups')
+      .document(groupUID)
+      .collection('members')
+      .add({
+        'Name' : contact.displayName,
+        'Number' : contact.phones.first.value.toString(),
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

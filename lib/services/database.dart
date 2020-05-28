@@ -50,13 +50,16 @@ class DataBaseService {
   }
 
   Future<void> createGroupData(String groupName, UserDetails user) async {
+
     CollectionReference groupsReference = db.collection("users").document(user.uid)
                                         .collection("groups");
     DocumentReference groups = groupsReference.document();
     String groupUID = groups.documentID;
+
     groups.setData({
         "groupName": groupName,
       });
+
     DocumentReference userReference = db.collection("users").document(user.uid)
                                         .collection("groups")
                                         .document(groupUID)
@@ -64,7 +67,6 @@ class DataBaseService {
     userReference.setData({
       'Name' : user.name,
       'Number' : user.number,
-      'Email' : user.email
     });
   }
 
@@ -73,7 +75,6 @@ class DataBaseService {
       return new GroupDetails(
         groupName: doc.data['groupName'] ?? 'No name exists',
         groupUID : doc.documentID,
-        members: doc.data['members'] ?? ['no members'],
       );
     }).toList();
   }

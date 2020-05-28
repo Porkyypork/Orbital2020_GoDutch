@@ -6,7 +6,6 @@ import 'package:contacts_service/contacts_service.dart';
 import 'package:provider/provider.dart';
 
 class ContactsPage extends StatefulWidget {
-  
   final String groupUID;
 
   ContactsPage({this.groupUID});
@@ -16,67 +15,114 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-
   final String groupUID;
-  Iterable<Contact> _contacts;
+  Iterable<Contact> _contactsAll;
   final Firestore db = Firestore.instance;
-  
+  List<Contact> contactsFiltered = [];
+  TextEditingController searchController = new TextEditingController();
 
   _ContactsPageState({this.groupUID});
 
   void initState() {
     getContacts();
     super.initState();
+    searchController.addListener(() {
+      filterContacts();
+    });
   }
 
   Future<void> getContacts() async {
     final Iterable<Contact> contacts = await ContactsService.getContacts();
     setState(() => {
-          _contacts = contacts,
+          _contactsAll = contacts,
         });
+  }
+
+  filterContacts() {
+    List<Contact> _contacts = [];
+    _contacts.addAll(_contactsAll);
+    if (searchController.text.isNotEmpty) {
+      _contacts.retainWhere((contact) {
+        String searchTerm = searchController.text.toLowerCase();
+        String contactName = contact.displayName.toLowerCase();
+        return contactName.contains(searchTerm);
+      });
+      setState(() {
+        contactsFiltered = _contacts;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-
     final user = Provider.of<UserDetails>(context);
+    bool isSearching = searchController.text.isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(title: Text('Contacts'),
+      appBar: AppBar(
+        title: Text('Contacts'),
         actions: <Widget>[
           // doneButton(),
         ],
       ),
-      
-      body: _contacts != null
-          ? ListView.builder(
-              itemCount: _contacts?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                Contact contact = _contacts?.elementAt(index);
-                return Dismissible(
-                  key: UniqueKey(),
-                  background: _addBackground(),
-                  onDismissed: (direction) {
-                    addGroupMember(contact, groupUID, user.uid);
-                    _addMessage(context, contact.displayName);
-                  },
-                  child: ListTile(
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 2, horizontal: 18),
-                    leading:
-                        (contact.avatar != null && contact.avatar.isNotEmpty)
-                            ? CircleAvatar(
-                                backgroundImage: MemoryImage(contact.avatar),
-                              )
-                            : CircleAvatar(
-                                child: Text(contact.initials()),
-                                backgroundColor: Theme.of(context).accentColor,
-                              ),
-                    title: Text(contact.displayName ?? ''),
-                    subtitle: Text(contact.phones.first.value.toString()),
+      body: _contactsAll != null
+          ? Container(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        labelText: 'Search',
+                        border: new OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(1000)),
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                      ),
+                    ),
                   ),
-                );
-              },
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: isSearching
+                          ? contactsFiltered.length
+                          : _contactsAll.length ?? 0,
+                      itemBuilder: (BuildContext context, int index) {
+                        Contact contact = isSearching
+                            ? contactsFiltered[index]
+                            : _contactsAll.elementAt(index);
+                        return Dismissible(
+                          key: UniqueKey(),
+                          background: _addBackground(),
+                          onDismissed: (direction) {
+                            addGroupMember(contact, groupUID, user.uid);
+                            _addMessage(context, contact.displayName);
+                          },
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 2, horizontal: 18),
+                            leading: (contact.avatar != null &&
+                                    contact.avatar.isNotEmpty)
+                                ? CircleAvatar(
+                                    backgroundImage:
+                                        MemoryImage(contact.avatar),
+                                  )
+                                : CircleAvatar(
+                                    child: Text(contact.initials()),
+                                    backgroundColor:
+                                        Theme.of(context).accentColor,
+                                  ),
+                            title: Text(contact.displayName ?? ''),
+                            subtitle:
+                                Text(contact.phones.first.value.toString()),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             )
           : Center(child: Loading()),
     );
@@ -94,11 +140,10 @@ class _ContactsPageState extends State<ContactsPage> {
   //lead to calculation page
   Widget doneButton() {
     return FlatButton(
-      child: Text('Done'),
-      onPressed : () {
-        // implement function
-      }
-    );
+        child: Text('Done'),
+        onPressed: () {
+          // implement function
+        });
   }
 
   void _addMessage(context, String contact) {
@@ -109,14 +154,16 @@ class _ContactsPageState extends State<ContactsPage> {
 
   void addGroupMember(Contact contact, String groupUID, String userUID) async {
     print(userUID + " " + groupUID + " " + contact.displayName);
-    try{
-     await db.collection('users')
-      .document(userUID).collection('groups')
-      .document(groupUID)
-      .collection('members')
-      .add({
-        'Name' : contact.displayName,
-        'Number' : contact.phones.first.value.toString(),
+    try {
+      await db
+          .collection('users')
+          .document(userUID)
+          .collection('groups')
+          .document(groupUID)
+          .collection('members')
+          .add({
+        'Name': contact.displayName,
+        'Number': contact.phones.first.value.toString(),
       });
     } catch (e) {
       print(e.toString());

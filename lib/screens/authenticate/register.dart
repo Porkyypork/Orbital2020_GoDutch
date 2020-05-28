@@ -12,6 +12,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  
   String name = '';
   String phoneNumber = '';
   String email = '';

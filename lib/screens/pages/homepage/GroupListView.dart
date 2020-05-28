@@ -18,16 +18,16 @@ class _GroupListViewState extends State<GroupListView> {
     
     final groups = Provider.of<List<GroupDetails>>(context);
 
-    if (groups.length > 0) { // if there are groups
-      return ListView.builder(
+    if (groups == null || groups.length == 0) { // if there are groups
+     return _buildNoGroupDisplay();
+    } else {
+     return ListView.builder(
         padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
         itemCount:groups.length,
         itemBuilder: (context, index) {
           return _buildGroupTile(groups[index]);
         }
       );
-    } else {
-      return _buildNoGroupDisplay();
     }
   }
 

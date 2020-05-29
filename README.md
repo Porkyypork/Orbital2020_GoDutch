@@ -19,7 +19,7 @@ https://developer.android.com/studio
 
 1. Create your desired destination folder where files for the application will be stored.
 2. Clone this repository into said destination folder using the following command:
-   git clone https://github.com/Porkyypork/Orbital2020_GoDutch/
+   "git clone https://github.com/Porkyypork/Orbital2020_GoDutch/"
 3. Using your terminal, navigate to the file you cloned this repository into.
 4. Run the command "flutter pub get" to install all flutter dependencies required for
    the application to run smoothly.

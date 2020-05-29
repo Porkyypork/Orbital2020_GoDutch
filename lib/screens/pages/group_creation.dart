@@ -19,7 +19,7 @@ class _GroupCreationState extends State<GroupCreation> {
   Widget _buildNameField() { // format is generally the same across all formfield methods
     return TextFormField(
       decoration: InputDecoration(labelText: "Group Name"),
-      maxLength: 22,
+      maxLength: 24,
       validator: (String value) {
         if (value.isEmpty) {
           return "Group name is required";

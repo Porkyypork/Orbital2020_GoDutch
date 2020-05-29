@@ -6,35 +6,53 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class _GroupListViewState extends State<GroupListView> {
-
   final Firestore db = Firestore.instance;
   UserDetails currentUser;
+  TextEditingController searchController = new TextEditingController();
 
   _GroupListViewState({this.currentUser});
 
   @override
   Widget build(BuildContext context) {
-
-    
     final groups = Provider.of<List<GroupDetails>>(context);
 
-    if (groups == null || groups.length == 0) { // if there are groups
-     return _buildNoGroupDisplay();
+    if (groups == null || groups.length == 0) {
+      return _buildNoGroupDisplay();
     } else {
-     return ListView.builder(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-        itemCount:groups.length,
-        itemBuilder: (context, index) {
-          return _buildGroupTile(groups[index]);
-        }
+      return Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(10),
+            child: TextField(
+              controller: searchController,
+              decoration: InputDecoration(
+                labelText: 'Search *not working yet*',
+                border: new OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(1000)),
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+                prefixIcon: Icon(Icons.search),
+              ),
+            ),
+          ),
+          Divider(),
+          Expanded(
+            child: ListView.builder(
+                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+                itemCount: groups.length,
+                itemBuilder: (context, index) {
+                  return _buildGroupTile(groups[index]);
+                }),
+          ),
+        ],
       );
     }
   }
 
   Widget _buildGroupTile(GroupDetails group) {
-
     return Dismissible(
       key: UniqueKey(),
+      direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart) {
           setState(() {
@@ -47,47 +65,95 @@ class _GroupListViewState extends State<GroupListView> {
         }
       },
       background: _secondaryBackground(),
-      secondaryBackground: _deletionBackground(),
-      child: ListTile(
-        leading: Icon(Icons.group,
-            color:
-                Colors.black), // replaced with their own personal photo later
-        title: Text(
-          group.groupName,
-          style: TextStyle(
-            fontSize: 18.0,
-            letterSpacing: 1.5,
-          ),
-        ),
-
+      secondaryBackground: _deletionBackground(group.groupName),
+      child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => Group(data: group),
           ));
         },
+        child: Container(
+          margin: new EdgeInsets.all(10.0),
+          decoration: new BoxDecoration(
+            borderRadius: new BorderRadius.all(new Radius.circular(10.0)),
+            border: Border.all(),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, right: 15.0),
+                  child: Icon(Icons.group, color: Colors.black),
+                ),
+                Expanded(
+                  child: Row(
+                    children: <Widget>[
+                      SizedBox(
+                        width: 180,
+                        child: Text(
+                          group.groupName,
+                          style: TextStyle(
+                            fontSize: 26,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 80),
+                      Column(
+                        children: <Widget>[
+                          Text('Members:',
+                          style: TextStyle(
+                            fontSize: 10,
+                          ),),
+                          Text('${group.numMembers}',
+                          style: TextStyle(
+                            fontSize: 20
+                          ),),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildNoGroupDisplay() {
     return Container(
-      child: Center(
-        child: Text(
-          "You are not currently in any groups",
-          style: TextStyle(
-            fontSize: 24.0,
-          ),
-        )
-      )
-    );
+        child: Center(
+            child: Text(
+      "You are not currently in any groups!\n\nCreate one to get started",
+      style: TextStyle(
+        fontSize: 24.0,
+      ),
+    )));
   }
 
-  Widget _deletionBackground() {
+  Widget _deletionBackground(String groupName) {
     return Container(
       alignment: AlignmentDirectional.centerEnd,
       padding: EdgeInsets.only(right: 15.0),
-      color: Colors.red[600],
-      child: Icon(Icons.delete, color: Colors.black),
+      // color: Colors.red[600],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            'Deleting $groupName',
+            style: TextStyle(
+              fontSize: 15.0,
+              letterSpacing: 1.0,
+            ),
+          ),
+          SizedBox(width: 16),
+          Icon(Icons.delete, color: Colors.black),
+        ],
+      ),
     );
   }
 
@@ -100,39 +166,26 @@ class _GroupListViewState extends State<GroupListView> {
     );
   }
 
-  //TODO: deletion method!
   void _removeGroup(String groupUID) {
     final user = Provider.of<UserDetails>(context);
 
-    CollectionReference groupsReference = db.collection('users').document(user.uid)
-                                          .collection('groups');
+    CollectionReference groupsReference =
+        db.collection('users').document(user.uid).collection('groups');
     groupsReference.document(groupUID).delete();
-
-    // List<dynamic> updatedGroups = await usersCollection
-    //     .document(user.uid)
-    //     .get()
-    //     .then((user) => user['groups']);
-    // updatedGroups.removeAt(index);
-    // usersCollection.document(user.uid).updateData({'groups': updatedGroups});
-
-    // await groupsCollection.document(groupUID).delete();
-    // setState(() {
-    //   _groups.removeAt(index);
-    // });
   }
 
   void _deletionMessage(context, String groupName) {
     Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text("You have left $groupName"),
+      content: Text("You have deleted $groupName"),
     ));
   }
 }
 
 class GroupListView extends StatefulWidget {
-
   final UserDetails currentUser;
   GroupListView({this.currentUser});
 
   @override
-  _GroupListViewState createState() => _GroupListViewState(currentUser: currentUser);
+  _GroupListViewState createState() =>
+      _GroupListViewState(currentUser: currentUser);
 }

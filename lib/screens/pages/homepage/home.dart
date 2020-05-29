@@ -26,9 +26,12 @@ class _HomeState extends State<Home> {
           elevation: 0,
           backgroundColor: Colors.indigo,
           centerTitle: true,
+          actions: <Widget>[
+            // search for group function
+          ],
         ),
 
-        endDrawer: _buildDrawerMenu(context), //end drawer menu
+        drawer: _buildDrawerMenu(context), //end drawer menu
 
         body: GroupListView(),
 

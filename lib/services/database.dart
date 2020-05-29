@@ -58,6 +58,8 @@ class DataBaseService {
 
     groups.setData({
         "groupName": groupName,
+        "groupUID": groupUID,
+        "numMembers": 1,
       });
 
     DocumentReference userReference = db.collection("users").document(user.uid)
@@ -75,6 +77,7 @@ class DataBaseService {
       return new GroupDetails(
         groupName: doc.data['groupName'] ?? 'No name exists',
         groupUID : doc.documentID,
+        numMembers: doc.data['numMembers'],
       );
     }).toList();
   }

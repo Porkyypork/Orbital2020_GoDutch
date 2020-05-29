@@ -44,7 +44,6 @@ class _GroupState extends State<Group> {
           ],
         ),
         body: ContactListView(groupdata: this.groupdata),
-        //endDrawer: _buildDrawerMenu(context),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             // go to camera functions
@@ -56,48 +55,6 @@ class _GroupState extends State<Group> {
       ),
     );
   }
-  // Probably irrelevant now, check with weilin
-  // Drawer _buildDrawerMenu(BuildContext context) {
-  //   return Drawer(
-  //     child: ListView(
-  //       children: <Widget>[
-  //         Container(
-  //           color: Colors.white10,
-  //           child: ListTile (
-  //             title: Text (
-  //               "Member List",
-  //               style: TextStyle(fontSize: 20.0),
-  //             ),
-  //             trailing: Icon(Icons.group),
-  //           ),
-  //         ),
-  //         Divider(),
-  //         ListTile(
-  //           title: Text("This is the dailou"),
-  //           trailing: Icon(Icons.star),
-  //         ),
-  //         ListTile(
-  //           title: Text("Member 1"),
-  //           trailing: Icon(Icons.person),
-  //         ),
-  //         ListTile(
-  //           title: Text("Member 2"),
-  //           trailing: Icon(Icons.person),
-  //         ),
-  //         ListTile(
-  //           title: Text("Member 3"),
-  //           trailing: Icon(Icons.person),
-  //         ),
-  //         Divider(),
-  //         ListTile(
-  //           title: Text("Close"),
-  //           trailing: Icon(Icons.cancel),
-  //           onTap: () => Navigator.of(context).pop(),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
 
 class Group extends StatefulWidget {

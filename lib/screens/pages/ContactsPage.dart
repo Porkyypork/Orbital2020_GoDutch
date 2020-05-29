@@ -23,6 +23,7 @@ class _ContactsPageState extends State<ContactsPage> {
 
   _ContactsPageState({this.groupUID});
 
+  @override
   void initState() {
     getContacts();
     super.initState();
@@ -164,6 +165,15 @@ class _ContactsPageState extends State<ContactsPage> {
           .add({
         'Name': contact.displayName,
         'Number': contact.phones.first.value.toString(),
+      });
+
+      var groupDocRef = db.collection('users').document(userUID).collection('groups').document(groupUID);
+      int newNumMembers = await groupDocRef.get().then((group) {
+        return group['numMembers'];
+      });
+      
+      groupDocRef.updateData({
+        'numMembers': newNumMembers++,
       });
     } catch (e) {
       print(e.toString());

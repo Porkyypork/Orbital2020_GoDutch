@@ -12,7 +12,6 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  
   String name = '';
   String phoneNumber = '';
   String email = '';
@@ -44,7 +43,8 @@ class _RegisterState extends State<Register> {
     return ListTile(
       leading: const Icon(Icons.phone),
       title: TextFormField(
-        validator: (val) => val.isEmpty ? 'Enter your mobile phone number' : null,
+        validator: (val) =>
+            val.isEmpty ? 'Enter your mobile phone number' : null,
         decoration: new InputDecoration(
           hintText: 'Please enter your mobile phone number',
           labelText: 'Phone number',
@@ -99,9 +99,8 @@ class _RegisterState extends State<Register> {
           hintText: 'Please re-enter your password',
           labelText: 'Re-enter password',
         ),
-        validator: (val) => val != password
-            ? 'Your passwords do not match'
-            : null,
+        validator: (val) =>
+            val != password ? 'Your passwords do not match' : null,
         onChanged: (val) {
           setState(() => confirmPassword = val);
         },
@@ -114,49 +113,43 @@ class _RegisterState extends State<Register> {
   Widget build(BuildContext context) {
     return loading
         ? Loading()
-        : Stack(
-            children: <Widget>[
-              Scaffold(
-                resizeToAvoidBottomInset: false,
-                backgroundColor: Colors.grey[300],
-                appBar: AppBar(
-                  title: Text(
-                    'GoDutch',
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
-                  centerTitle: true,
-                  backgroundColor: Colors.teal[300],
-                  elevation: 0.0,
-                  leading: IconButton(
-                      icon:
-                          Icon(Icons.keyboard_arrow_left, color: Colors.black),
-                      onPressed: () {
-                        widget.toogleView();
-                      }),
+        : Scaffold(
+            resizeToAvoidBottomInset: true,
+            backgroundColor: Colors.grey[300],
+            appBar: AppBar(
+              title: Text(
+                'GoDutch',
+                style: TextStyle(
+                  fontSize: 25,
                 ),
               ),
-              Center(
-                child: Container(
-                  height: 500,
-                  child: Opacity(
-                    opacity: 0.7,
-                    child: Card(
+              centerTitle: true,
+              backgroundColor: Colors.teal[300],
+              elevation: 0.0,
+              leading: IconButton(
+                  icon: Icon(Icons.keyboard_arrow_left, color: Colors.black),
+                  onPressed: () {
+                    widget.toogleView();
+                  }),
+            ),
+            body: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  children: <Widget>[
+                    SizedBox(height: 10),
+                    Card(
                       color: Colors.blue[50],
                       elevation: 6.0,
                       margin: EdgeInsets.only(right: 15.0, left: 15.0),
-                      child: new Wrap(
+                      child: Column(
                         children: <Widget>[
-                          Center(
-                            child: Container(
-                              margin: EdgeInsets.only(top: 20.0),
-                              child: Text(
-                                'Create Your GoDutch Account',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                          Container(
+                            margin: EdgeInsets.only(top: 20.0),
+                            child: Text(
+                              'Create your GoDutch Account',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
@@ -172,73 +165,69 @@ class _RegisterState extends State<Register> {
                               ],
                             ),
                           ),
+                          SizedBox(height: 20),
+                          OutlineButton(
+                            splashColor: Colors.grey,
+                            onPressed: () async {
+                              if (_formKey.currentState.validate()) {
+                                setState(() => loading = true);
+                                UserDetails newUser = new UserDetails(
+                                    name: name,
+                                    number: phoneNumber,
+                                    email: email);
+                                dynamic result =
+                                    await _auth.registerWithEmailAndPassword(
+                                        newUser, password);
+                                if (result.id == 'Error_1') {
+                                  setState(() {
+                                    error = 'Email already in use';
+                                    loading = false;
+                                  });
+                                } else if (result == null) {
+                                  setState(() {
+                                    error = 'Please supply a valid email';
+                                    loading = false;
+                                  });
+                                }
+                              }
+                            },
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40)),
+                            highlightElevation: 0,
+                            borderSide: BorderSide(color: Colors.grey),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 10),
+                                    child: Text(
+                                      'Create',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          SizedBox(
+                              height: 16,
+                              child: Text(error,
+                                  style: TextStyle(
+                                      color: Colors.red, fontSize: 14.0))),
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-              Column(
-                children: <Widget>[
-                  Container(
-                    height: 420,
-                  ),
-                  SizedBox(height: 80),
-                  Center(
-                    child: OutlineButton(
-                      splashColor: Colors.grey,
-                      onPressed: () async {
-                        if (_formKey.currentState.validate()) {
-                          setState(() => loading = true);
-                          UserDetails newUser = new UserDetails(name: name, number: phoneNumber, email: email);
-                          dynamic result = await _auth
-                              .registerWithEmailAndPassword(newUser, password);
-                          if (result.id == 'Error_1') {
-                            setState(() {
-                              error = 'Email already in use';
-                              loading = false;
-                            });
-                          } else if (result == null) {
-                            setState(() {
-                              error = 'Please supply a valid email';
-                              loading = false;
-                            });
-                          }
-                        }
-                      },
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(40)),
-                      highlightElevation: 0,
-                      borderSide: BorderSide(color: Colors.grey),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Text(
-                                'Create',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  SizedBox(
-                      height: 16,
-                      child: Text(error,
-                          style: TextStyle(color: Colors.red, fontSize: 14.0))),
-                ],
-              ),
-            ],
+            ),
           );
   }
 }

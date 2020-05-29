@@ -1,4 +1,5 @@
 # GoDutch
+This is a project for National University of Singapore's Orbital 2020.
 
 GoDutch is a flutter based, cross-platform mobile application that enables users to
 easily split bills amongst groups. Group members will be notified of how much they
@@ -37,12 +38,9 @@ https://developer.android.com/studio
 
 ## Contributing
 
-## Versioning
-
 ## Authors
-- Lim Wei Lin
-- Darren Chee
-
-## License
+• Lim Wei Lin
+• Darren Chee
 
 ## Acknowledgements
+• Ang Zhi Kai - Advisor for the project

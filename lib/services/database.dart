@@ -49,7 +49,7 @@ class DataBaseService {
     });
   }
 
-  Future<void> createGroupData(String groupName, UserDetails user) async {
+  Future<GroupDetails> createGroupData(String groupName, UserDetails user) async {
 
     CollectionReference groupsReference = db.collection("users").document(user.uid)
                                         .collection("groups");
@@ -62,6 +62,12 @@ class DataBaseService {
         "numMembers": 1,
       });
 
+    GroupDetails groupDetails = new GroupDetails(
+      groupName: groupName,
+      groupUID: groupUID,
+      numMembers: 1,
+    );
+
     DocumentReference userReference = db.collection("users").document(user.uid)
                                         .collection("groups")
                                         .document(groupUID)
@@ -70,6 +76,8 @@ class DataBaseService {
       'Name' : user.name,
       'Number' : user.number,
     });
+
+    return groupDetails;
   }
 
   List<GroupDetails> _groupDetailsFromSnapshot(QuerySnapshot snap) {

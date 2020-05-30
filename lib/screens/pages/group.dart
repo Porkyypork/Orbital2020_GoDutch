@@ -58,6 +58,7 @@ class _GroupState extends State<Group> {
 }
 
 class Group extends StatefulWidget {
+  
   final GroupDetails data;
   Group({this.data});
 

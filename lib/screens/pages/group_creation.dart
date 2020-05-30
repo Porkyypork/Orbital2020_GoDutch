@@ -1,3 +1,5 @@
+import 'package:app/models/GroupDetails.dart';
+import 'package:app/screens/pages/group.dart';
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
@@ -81,8 +83,9 @@ class _GroupCreationState extends State<GroupCreation> {
 
   void _createGroup() async {
     final user = Provider.of<UserDetails>(context);
-    await DataBaseService().createGroupData(this._name, user);
+    GroupDetails groupsDetails = await DataBaseService().createGroupData(this._name, user);
     Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Group(data : groupsDetails)));
   }
 }
 

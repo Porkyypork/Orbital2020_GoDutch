@@ -4,6 +4,7 @@ import 'package:app/screens/pages/ContactListView.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../models/UserDetails.dart';
 import '../../services/AccessContacts.dart';
 import '../../services/database.dart';
@@ -43,16 +44,111 @@ class _GroupState extends State<Group> {
             AccessContacts(groupUID: groupUID),
           ],
         ),
-        body: ContactListView(groupdata: this.groupdata),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // go to camera functions
-          },
-          child: Icon(Icons.camera_alt, color: Colors.white),
-          backgroundColor: Colors.blueAccent,
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        body: SlidingUpPanel(
+          backdropEnabled: true,
+          body: ContactListView(groupdata: this.groupdata),
+          panel: _menu(),
+          collapsed: _floatingCollasped(),
+          minHeight: 40,
+          maxHeight: 200,
+          borderRadius : BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+          ),
       ),
+    );
+  }
+
+  Widget _floatingCollasped() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.indigo,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
+      child: Row(
+        children: <Widget>[
+          SizedBox(width: 20,),
+          Icon(Icons.menu)
+        ],
+      ),
+    );
+  }
+
+  Widget _menu() {
+    return Stack(
+          children :<Widget>[ 
+            Container(
+              decoration: BoxDecoration(
+              color: Colors.blue[600],
+              borderRadius:  BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              ),
+              ),
+            ),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  height: 30,
+                ),
+                SizedBox(
+                  height: 170,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30.0),
+                            topRight: Radius.circular(30.0),
+                          ),
+                          color: Colors.blue[400]
+                        ),
+                        child: Stack(
+                          overflow: Overflow.visible,
+                          children: <Widget>[
+                            Positioned(
+                              child: ListView(
+                                physics: NeverScrollableScrollPhysics(),
+                                children:ListTile.divideTiles(
+                                  context: context,
+                                  tiles:
+                                [
+                                  ListTile(
+                                    title: Text("Add a Bill"),
+                                    onTap: () {
+
+                                    },
+                                    leading: Icon(Icons.receipt)
+                                  ),
+                                  ListTile(
+                                    title: Text('Take a photo'),
+                                    onTap :() {
+
+                                    },
+                                    leading: Icon(Icons.camera_alt),
+                                  ),
+                                  ListTile(
+                                    title: Text("Add a receipt from gallery"),
+                                    onTap: () {
+
+                                    },
+                                    leading: Icon(Icons.collections),
+                                  ),
+                                ],
+                                ).toList(),
+                              ),
+                            ),
+                          ], 
+                        )
+                    ),
+                ),
+              ],
+            ),
+          ],
     );
   }
 }

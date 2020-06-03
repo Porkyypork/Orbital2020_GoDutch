@@ -1,3 +1,4 @@
+import 'package:app/constants/colour.dart';
 import 'package:app/constants/loading.dart';
 import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -28,16 +29,17 @@ class _SignInState extends State<SignIn> {
             children: <Widget>[
               Scaffold(
                 resizeToAvoidBottomInset: false,
-                backgroundColor: Colors.grey[300],
+                backgroundColor: backGround,
                 appBar: AppBar(
                   title: Text(
                     'GoDutch',
                     style: TextStyle(
                       fontSize: 25,
+                      color: Colors.black,
                     ),
                   ),
                   centerTitle: true,
-                  backgroundColor: Colors.teal[300],
+                  backgroundColor: appBar,
                   elevation: 0.0,
                 ),
               ),
@@ -159,7 +161,8 @@ class _SignInState extends State<SignIn> {
                                       ),
                                     ),
                                   ],
-                                )),
+                                )
+                              ),
                           ),
                         ],
                       ),

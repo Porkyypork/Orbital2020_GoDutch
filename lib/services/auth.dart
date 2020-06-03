@@ -78,6 +78,11 @@ class AuthService {
     }
   }
 
+  @override
+  Future<void> resetPassword(String email) async {
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   //sign out
   Future<void> signOut() async {
     _auth.signOut();

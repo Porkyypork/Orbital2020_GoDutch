@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/GroupDetails.dart';
 import '../../models/UserDetails.dart';
+import 'package:app/services/database.dart';
 
 class ContactListView extends StatefulWidget {
 
@@ -20,13 +21,14 @@ class _ContactListViewState extends State<ContactListView> {
 
   final GroupDetails groupdata;
   final Firestore db = Firestore.instance;
-
+ 
   _ContactListViewState({this.groupdata});
   
   @override
   Widget build(BuildContext context) {
     
     final members = Provider.of<List<MemberDetails>>(context);
+    
     
     return ListView.builder(
       itemCount: members.length,
@@ -36,10 +38,14 @@ class _ContactListViewState extends State<ContactListView> {
   }
 
   Widget _buildMemberTile(name, memberID) {
+
+    final user = Provider.of<UserDetails>(context);
+    final DataBaseService dbService =  DataBaseService(uid: user.uid, groupUID :groupdata.groupUID);
+
     return Dismissible(
       key: UniqueKey(),
       onDismissed: (direction) {
-        _removeGroupMember(memberID);
+        dbService.removeGroupMember(memberID);
       },
       background: _deletionBackground(),
       child: Card(
@@ -55,15 +61,6 @@ class _ContactListViewState extends State<ContactListView> {
         ),
       ),
     );
-  }
-
-  void _removeGroupMember(memberID) async {
-    final user = Provider.of<UserDetails>(context);
-
-    await db.collection('users').document(user.uid)
-            .collection('groups').document(groupdata.groupUID)
-            .collection('members').document(memberID)
-            .delete();
   }
 
   Widget _deletionBackground() {

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:provider/provider.dart';
+import 'package:app/services/database.dart';
 
 class ContactsPage extends StatefulWidget {
   final String groupUID;
@@ -15,6 +16,7 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
+
   final String groupUID;
   Iterable<Contact> _contactsAll;
   final Firestore db = Firestore.instance;
@@ -56,8 +58,10 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
+
     final user = Provider.of<UserDetails>(context);
     bool isSearching = searchController.text.isNotEmpty;
+    final DataBaseService dbService = new DataBaseService(uid : user.uid, groupUID : groupUID);
 
     return Scaffold(
       appBar: AppBar(
@@ -97,7 +101,7 @@ class _ContactsPageState extends State<ContactsPage> {
                           key: UniqueKey(),
                           background: _addBackground(),
                           onDismissed: (direction) {
-                            addGroupMember(contact, groupUID, user.uid);
+                            dbService.addGroupMember(contact);
                             _addMessage(context, contact.displayName);
                           },
                           child: ListTile(
@@ -151,32 +155,5 @@ class _ContactsPageState extends State<ContactsPage> {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text("Added $contact"),
     ));
-  }
-
-  void addGroupMember(Contact contact, String groupUID, String userUID) async {
-    print(userUID + " " + groupUID + " " + contact.displayName);
-    try {
-      await db
-          .collection('users')
-          .document(userUID)
-          .collection('groups')
-          .document(groupUID)
-          .collection('members')
-          .add({
-        'Name': contact.displayName,
-        'Number': contact.phones.first.value.toString(),
-      });
-
-      var groupDocRef = db.collection('users').document(userUID).collection('groups').document(groupUID);
-      int newNumMembers = await groupDocRef.get().then((group) {
-        return group['numMembers'];
-      });
-      
-      groupDocRef.updateData({
-        'numMembers': newNumMembers++,
-      });
-    } catch (e) {
-      print(e.toString());
-    }
   }
 }

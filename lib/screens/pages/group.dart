@@ -1,6 +1,7 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/screens/pages/ContactListView.dart';
+import 'package:app/screens/pages/ItemsCreation/itemPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,16 +17,13 @@ import '../../services/database.dart';
 // 3. etc...
 
 class _GroupState extends State<Group> {
-
   GroupDetails groupdata;
   final Firestore db = Firestore.instance;
-  
 
   _GroupState({this.groupdata});
 
   @override
   Widget build(BuildContext context) {
-
     String groupName = groupdata.groupName;
     String groupUID = groupdata.groupUID;
 
@@ -51,11 +49,11 @@ class _GroupState extends State<Group> {
           collapsed: _floatingCollasped(),
           minHeight: 40,
           maxHeight: 200,
-          borderRadius : BorderRadius.only(
+          borderRadius: BorderRadius.only(
             topLeft: Radius.circular(50),
             topRight: Radius.circular(50),
           ),
-          ),
+        ),
       ),
     );
   }
@@ -63,7 +61,7 @@ class _GroupState extends State<Group> {
   Widget _floatingCollasped() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.indigo,
+        color: Colors.blue[600],
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
@@ -71,7 +69,9 @@ class _GroupState extends State<Group> {
       ),
       child: Row(
         children: <Widget>[
-          SizedBox(width: 20,),
+          SizedBox(
+            width: 20,
+          ),
           Icon(Icons.menu)
         ],
       ),
@@ -80,81 +80,74 @@ class _GroupState extends State<Group> {
 
   Widget _menu() {
     return Stack(
-          children :<Widget>[ 
-            Container(
-              decoration: BoxDecoration(
-              color: Colors.blue[600],
-              borderRadius:  BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              ),
-              ),
+      
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.blue[600],
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
             ),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                Container(
-                  height: 30,
-                ),
-                SizedBox(
-                  height: 170,
-                    child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30.0),
-                            topRight: Radius.circular(30.0),
-                          ),
-                          color: Colors.blue[400]
-                        ),
-                        child: Stack(
-                          overflow: Overflow.visible,
-                          children: <Widget>[
-                            Positioned(
-                              child: ListView(
-                                physics: NeverScrollableScrollPhysics(),
-                                children:ListTile.divideTiles(
-                                  context: context,
-                                  tiles:
-                                [
-                                  ListTile(
-                                    title: Text("Add a Bill"),
-                                    onTap: () {
-
-                                    },
-                                    leading: Icon(Icons.receipt)
-                                  ),
-                                  ListTile(
-                                    title: Text('Take a photo'),
-                                    onTap :() {
-
-                                    },
-                                    leading: Icon(Icons.camera_alt),
-                                  ),
-                                  ListTile(
-                                    title: Text("Add a receipt from gallery"),
-                                    onTap: () {
-
-                                    },
-                                    leading: Icon(Icons.collections),
-                                  ),
-                                ],
-                                ).toList(),
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Container(
+              height: 30,
+            ),
+            SizedBox(
+              height: 170,
+              child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0),
+                      ),
+                      color: Colors.blue[400]),
+                  child: Stack(
+                    overflow: Overflow.visible,
+                    children: <Widget>[
+                      Positioned(
+                        child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: ListTile.divideTiles(
+                            context: context,
+                            tiles: [
+                              ListTile(
+                                  title: Text("Key in a Bill"),
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ItemPage()));
+                                  },
+                                  leading: Icon(Icons.receipt)),
+                              ListTile(
+                                title: Text('Take a Photo'),
+                                onTap: () {},
+                                leading: Icon(Icons.camera_alt),
                               ),
-                            ),
-                          ], 
-                        )
-                    ),
+                              ListTile(
+                                title: Text("Add a Receipt from Gallery"),
+                                onTap: () {},
+                                leading: Icon(Icons.collections),
+                              ),
+                            ],
+                          ).toList(),
+                        ),
+                      ),
+                    ],
+                  )
                 ),
-              ],
             ),
           ],
+        ),
+      ],
     );
   }
 }
 
 class Group extends StatefulWidget {
-  
   final GroupDetails data;
   Group({this.data});
 

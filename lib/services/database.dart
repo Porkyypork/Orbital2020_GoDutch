@@ -80,6 +80,14 @@ class DataBaseService {
     return groupDetails;
   }
 
+  void removeGroup() {
+
+    CollectionReference groupsReference =
+        db.collection('users').document(this.uid).collection('groups');
+    groupsReference.document(groupUID).delete();
+  }
+
+
   List<GroupDetails> _groupDetailsFromSnapshot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new GroupDetails(
@@ -88,6 +96,41 @@ class DataBaseService {
         numMembers: doc.data['numMembers'],
       );
     }).toList();
+  }
+
+  void removeGroupMember(memberID) async {
+
+    await db.collection('users').document(uid)
+            .collection('groups').document(groupUID)
+            .collection('members').document(memberID)
+            .delete();
+  }
+
+  void addGroupMember(Contact contact) async {
+
+    try {
+      await db
+          .collection('users')
+          .document(this.uid)
+          .collection('groups')
+          .document(groupUID)
+          .collection('members')
+          .add({
+        'Name': contact.displayName,
+        'Number': contact.phones.first.value.toString(),
+      });
+
+      var groupDocRef = db.collection('users').document(this.uid).collection('groups').document(groupUID);
+      int newNumMembers = await groupDocRef.get().then((group) {
+        return group['numMembers'];
+      });
+      
+      groupDocRef.updateData({
+        'numMembers': newNumMembers++,
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 
   Stream<List<GroupDetails>> get groups {

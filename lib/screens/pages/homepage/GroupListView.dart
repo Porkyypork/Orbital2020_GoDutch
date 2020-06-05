@@ -4,8 +4,10 @@ import 'package:app/screens/pages/group.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:app/services/database.dart';
 
 class _GroupListViewState extends State<GroupListView> {
+
   final Firestore db = Firestore.instance;
   UserDetails currentUser;
   TextEditingController searchController = new TextEditingController();
@@ -50,6 +52,10 @@ class _GroupListViewState extends State<GroupListView> {
   }
 
   Widget _buildGroupTile(GroupDetails group) {
+
+    final user = Provider.of<UserDetails>(context);
+    DataBaseService dbService = new DataBaseService(uid :user.uid, groupUID : group.groupUID);
+
     return Dismissible(
       key: UniqueKey(),
       direction: DismissDirection.endToStart,
@@ -57,7 +63,7 @@ class _GroupListViewState extends State<GroupListView> {
         if (direction == DismissDirection.endToStart) {
           setState(() {
             String groupName = group.groupName;
-            _removeGroup(group.groupUID);
+            dbService.removeGroup();
             _deletionMessage(context, groupName);
           });
         } else {
@@ -164,14 +170,6 @@ class _GroupListViewState extends State<GroupListView> {
       color: Colors.yellow[400],
       child: Icon(Icons.photo_camera, color: Colors.black),
     );
-  }
-
-  void _removeGroup(String groupUID) {
-    final user = Provider.of<UserDetails>(context);
-
-    CollectionReference groupsReference =
-        db.collection('users').document(user.uid).collection('groups');
-    groupsReference.document(groupUID).delete();
   }
 
   void _deletionMessage(context, String groupName) {

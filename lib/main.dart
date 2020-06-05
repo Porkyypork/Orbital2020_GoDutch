@@ -10,15 +10,21 @@ import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:app/constants/colour.dart';
 
 void main() => runApp(GoDutch());
 
 class GoDutch extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return StreamProvider<UserDetails>.value(
       value: AuthService().user,
       child: MaterialApp(
+        theme: ThemeData (
+          primaryColor : appBar,
+
+        ),
         routes: {
           '/home': (context) => Home(),
           '/debts': (context) => Debts(),

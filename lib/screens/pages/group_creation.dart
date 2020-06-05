@@ -1,6 +1,5 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/screens/pages/group.dart';
-import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,7 +8,6 @@ import '../../models/UserDetails.dart';
 
 class _GroupCreationState extends State<GroupCreation> {
 
-  AuthService _auth = AuthService();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _name;
@@ -26,15 +24,12 @@ class _GroupCreationState extends State<GroupCreation> {
         if (value.isEmpty) {
           return "Group name is required";
         }
+        return null;
       },
       onSaved: (String value) {
         _name = value;
       },
     );
-  }
-
-  Widget _buildMemberListField() {
-
   }
 
   @override

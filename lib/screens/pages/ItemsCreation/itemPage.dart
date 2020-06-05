@@ -89,6 +89,14 @@ class _ItemPageState extends State<ItemPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           key: Key("$index"),
           children: <Widget>[
+            SizedBox(
+              width : 35,
+                child: Text("$index",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+            ),
             Expanded(
               child: TextFormField(
                 decoration: InputDecoration(
@@ -134,11 +142,16 @@ class _ItemPageState extends State<ItemPage> {
                 },
               ),
             ),
-            //need to fix this
-            Expanded(
-              child: SizedBox(
-                child: Text("$totalPrice")
-              ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal : 10),
+            ),
+            SizedBox(
+              width : 35,
+                child: Text("$totalPrice",
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
             ),
           ],
         ),

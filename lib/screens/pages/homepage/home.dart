@@ -8,27 +8,25 @@ import 'package:provider/provider.dart';
 import '../../../services/database.dart';
 
 class _HomeState extends State<Home> {
-  
   AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
-
     final String _title = 'GoDutch';
     final user = Provider.of<UserDetails>(context);
 
     return StreamProvider<List<GroupDetails>>.value(
       value: DataBaseService(uid: user.uid).groups,
       child: Scaffold(
-        backgroundColor: Colors.indigo[100],
+        backgroundColor: Colors.blue[50],
         appBar: AppBar(
-          title: Text(_title),
+          title: Text(
+            _title,
+            style: TextStyle(color: Colors.white),
+          ),
           elevation: 0,
           backgroundColor: Colors.indigo,
           centerTitle: true,
-          actions: <Widget>[
-            // search for group function
-          ],
         ),
 
         drawer: _buildDrawerMenu(context), //end drawer menu
@@ -66,8 +64,14 @@ class _HomeState extends State<Home> {
       child: ListView(
         children: <Widget>[
           UserAccountsDrawerHeader(
-            accountName: Text(user.name),
-            accountEmail: Text(user.email),
+            accountName: Text(
+              user.name,
+              style: TextStyle(color: Colors.white),
+            ),
+            accountEmail: Text(
+              user.email,
+              style: TextStyle(color: Colors.white),
+            ),
             currentAccountPicture: GestureDetector(
               // onTap: () {}, can further implement features if we decide to
               child: CircleAvatar(
@@ -80,7 +84,6 @@ class _HomeState extends State<Home> {
               color: Colors.blue, //default color
               image: DecorationImage(
                 fit: BoxFit.fill,
-                // can easily change
                 image: NetworkImage(
                     "https://images.wallpapersden.com/image/wxl-minimal-sunset-purple-mountains-and-birds_61310.jpg"),
               ),

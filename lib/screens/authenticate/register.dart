@@ -1,7 +1,10 @@
+import 'package:app/constants/colour.dart';
 import 'package:app/constants/loading.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
+
+import 'background.dart';
 
 class Register extends StatefulWidget {
   final Function toogleView;
@@ -24,13 +27,19 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
 
   Widget _buildNameField() {
-    return ListTile(
-      leading: const Icon(Icons.create),
-      title: TextFormField(
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(29),
+        color: Colors.blue[100],
+      ),
+      child: TextFormField(
         validator: (val) => val.isEmpty ? 'Enter your name' : null,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Please enter your name',
           labelText: 'Name',
+          icon: Icon(Icons.create),
+          border: InputBorder.none,
         ),
         onChanged: (val) {
           setState(() => name = val);
@@ -40,14 +49,20 @@ class _RegisterState extends State<Register> {
   }
 
   Widget _buildPhoneNumberField() {
-    return ListTile(
-      leading: const Icon(Icons.phone),
-      title: TextFormField(
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(29),
+        color: Colors.blue[100],
+      ),
+      child: TextFormField(
         validator: (val) =>
             val.isEmpty ? 'Enter your mobile phone number' : null,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Please enter your mobile phone number',
           labelText: 'Phone number',
+          icon: Icon(Icons.phone),
+          border: InputBorder.none,
         ),
         onChanged: (val) {
           setState(() => phoneNumber = val);
@@ -57,13 +72,19 @@ class _RegisterState extends State<Register> {
   }
 
   Widget _buildEmailField() {
-    return ListTile(
-      leading: const Icon(Icons.person),
-      title: TextFormField(
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(29),
+        color: Colors.blue[100],
+      ),
+      child: TextFormField(
         validator: (val) => val.isEmpty ? 'Enter an Email' : null,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Please enter your email address',
           labelText: 'Email address',
+          icon: Icon(Icons.person),
+          border: InputBorder.none,
         ),
         onChanged: (val) {
           setState(() => email = val);
@@ -73,12 +94,18 @@ class _RegisterState extends State<Register> {
   }
 
   Widget _buildPasswordField() {
-    return ListTile(
-      leading: const Icon(Icons.lock),
-      title: TextFormField(
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(29),
+        color: Colors.blue[100],
+      ),
+      child: TextFormField(
         decoration: new InputDecoration(
           hintText: 'Please enter your password',
           labelText: 'Password',
+          icon: Icon(Icons.lock),
+          border: InputBorder.none,
         ),
         validator: (val) => val.length < 6
             ? 'Enter a password with 6 or more characters'
@@ -92,12 +119,18 @@ class _RegisterState extends State<Register> {
   }
 
   Widget _buildConfirmPasswordField() {
-    return ListTile(
-      leading: const Icon(Icons.priority_high),
-      title: TextFormField(
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(29),
+        color: Colors.blue[100],
+      ),
+      child: TextFormField(
         decoration: new InputDecoration(
           hintText: 'Please re-enter your password',
           labelText: 'Re-enter password',
+          icon: Icon(Icons.priority_high),
+          border: InputBorder.none,
         ),
         validator: (val) =>
             val != password ? 'Your passwords do not match' : null,
@@ -109,123 +142,129 @@ class _RegisterState extends State<Register> {
     );
   }
 
+  Widget _buildRegisterButton() {
+    return OutlineButton(
+      splashColor: Colors.grey,
+      onPressed: () async {
+        if (_formKey.currentState.validate()) {
+          setState(() => loading = true);
+          UserDetails newUser =
+              new UserDetails(name: name, number: phoneNumber, email: email);
+          dynamic result =
+              await _auth.registerWithEmailAndPassword(newUser, password);
+          if (result.id == 'Error_1') {
+            setState(() {
+              error = 'Email already in use';
+              loading = false;
+            });
+          } else if (result == null) {
+            setState(() {
+              error = 'Please supply a valid email';
+              loading = false;
+            });
+          }
+        }
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      highlightElevation: 0,
+      borderSide: BorderSide(color: secondary),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Register',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: secondary,
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlreadyHaveAccount() {
+    return Center(
+      child: Container(
+        margin: EdgeInsets.only(top: 5),
+        child: Column(
+          children: <Widget>[
+            Text(
+              "ALREADY HAVE AN ACCOUNT?",
+              style: TextStyle(
+                fontSize: 12,
+              ),
+            ),
+            SizedBox(height: 5),
+            InkWell(
+              onTap: widget.toogleView,
+              child: Text.rich(TextSpan(
+                children: <TextSpan>[
+                  TextSpan(
+                    text: "LOG IN",
+                    style: TextStyle(
+                      fontSize: 12,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              )),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return loading
         ? Loading()
-        : Scaffold(
-            resizeToAvoidBottomInset: true,
-            backgroundColor: Colors.grey[300],
-            appBar: AppBar(
-              title: Text(
-                'GoDutch',
-                style: TextStyle(
-                  fontSize: 25,
-                ),
-              ),
-              centerTitle: true,
-              backgroundColor: Colors.teal[300],
-              elevation: 0.0,
-              leading: IconButton(
-                  icon: Icon(Icons.keyboard_arrow_left, color: Colors.black),
-                  onPressed: () {
-                    widget.toogleView();
-                  }),
-            ),
-            body: SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 10),
-                    Card(
-                      color: Colors.blue[50],
-                      elevation: 6.0,
-                      margin: EdgeInsets.only(right: 15.0, left: 15.0),
+        : Background(
+            child: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    "Create your GoDutch account\ncan also add a app image",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Divider(color: secondary),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10),
+                    child: Form(
+                      key: _formKey,
                       child: Column(
                         children: <Widget>[
-                          Container(
-                            margin: EdgeInsets.only(top: 20.0),
-                            child: Text(
-                              'Create your GoDutch Account',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Form(
-                            key: _formKey,
-                            child: Column(
-                              children: <Widget>[
-                                _buildNameField(),
-                                _buildPhoneNumberField(),
-                                _buildEmailField(),
-                                _buildPasswordField(),
-                                _buildConfirmPasswordField(),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 20),
-                          OutlineButton(
-                            splashColor: Colors.grey,
-                            onPressed: () async {
-                              if (_formKey.currentState.validate()) {
-                                setState(() => loading = true);
-                                UserDetails newUser = new UserDetails(
-                                    name: name,
-                                    number: phoneNumber,
-                                    email: email);
-                                dynamic result =
-                                    await _auth.registerWithEmailAndPassword(
-                                        newUser, password);
-                                if (result.id == 'Error_1') {
-                                  setState(() {
-                                    error = 'Email already in use';
-                                    loading = false;
-                                  });
-                                } else if (result == null) {
-                                  setState(() {
-                                    error = 'Please supply a valid email';
-                                    loading = false;
-                                  });
-                                }
-                              }
-                            },
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(40)),
-                            highlightElevation: 0,
-                            borderSide: BorderSide(color: Colors.grey),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      'Create',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.blue,
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          SizedBox(
-                              height: 16,
-                              child: Text(error,
-                                  style: TextStyle(
-                                      color: Colors.red, fontSize: 14.0))),
+                          SizedBox(height: 3),
+                          _buildNameField(),
+                          SizedBox(height: 5),
+                          _buildPhoneNumberField(),
+                          SizedBox(height: 5),
+                          _buildEmailField(),
+                          SizedBox(height: 5),
+                          _buildPasswordField(),
+                          SizedBox(height: 5),
+                          _buildConfirmPasswordField(),
                         ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 20),
+                  _buildRegisterButton(),
+                  SizedBox(height: 15),
+                  _buildAlreadyHaveAccount(),
+                  SizedBox(
+                      height: 16,
+                      child: Text(error,
+                          style: TextStyle(color: Colors.red, fontSize: 14.0))),
+                ],
               ),
             ),
           );

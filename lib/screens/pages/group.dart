@@ -10,12 +10,6 @@ import '../../models/UserDetails.dart';
 import '../../services/AccessContacts.dart';
 import '../../services/database.dart';
 
-// Everyone else starts with a balance of 0, and as people pay, their value decreases, while others increase.
-// i.e. for a group of 4 people and split evenly setting. Members are A, B, C, D.
-// 1. A pays $10 for something. NEW STATE: [A = -7.5, B = +2.5, C = +2.5, D = +2.5]
-// 2. B pays a back to get rid of their debt. NEW STATE: [A = -5, B = 0, C = +2.5, D = +2.5]
-// 3. etc...
-
 class _GroupState extends State<Group> {
   GroupDetails groupdata;
   final Firestore db = Firestore.instance;
@@ -32,9 +26,12 @@ class _GroupState extends State<Group> {
     return StreamProvider<List<MemberDetails>>.value(
       value: DataBaseService(uid: user.uid, groupUID: groupUID).members,
       child: Scaffold(
-        backgroundColor: Colors.indigo[100],
+        backgroundColor: Colors.blue[50],
         appBar: AppBar(
-          title: Text(groupName),
+          title: Text(
+            groupName,
+            style: TextStyle(color: Colors.white),
+          ),
           elevation: 0,
           backgroundColor: Colors.indigo,
           centerTitle: true,
@@ -61,17 +58,15 @@ class _GroupState extends State<Group> {
   Widget _floatingCollasped() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.blue[600],
+        color: Colors.indigo,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
         ),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SizedBox(
-            width: 20,
-          ),
           Icon(Icons.menu)
         ],
       ),
@@ -80,11 +75,10 @@ class _GroupState extends State<Group> {
 
   Widget _menu() {
     return Stack(
-      
       children: <Widget>[
         Container(
           decoration: BoxDecoration(
-            color: Colors.blue[600],
+            color: Colors.indigo,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30),
               topRight: Radius.circular(30),
@@ -106,7 +100,7 @@ class _GroupState extends State<Group> {
                         topLeft: Radius.circular(30.0),
                         topRight: Radius.circular(30.0),
                       ),
-                      color: Colors.blue[400]),
+                      color: Colors.blue[100]),
                   child: Stack(
                     overflow: Overflow.visible,
                     children: <Widget>[
@@ -119,7 +113,10 @@ class _GroupState extends State<Group> {
                               ListTile(
                                   title: Text("Key in a Bill"),
                                   onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => ItemPage()));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ItemPage()));
                                   },
                                   leading: Icon(Icons.receipt)),
                               ListTile(
@@ -137,8 +134,7 @@ class _GroupState extends State<Group> {
                         ),
                       ),
                     ],
-                  )
-                ),
+                  )),
             ),
           ],
         ),

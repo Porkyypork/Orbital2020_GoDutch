@@ -1,3 +1,4 @@
+import 'package:app/constants/colour.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/screens/pages/homepage/GroupListView.dart';
@@ -6,6 +7,7 @@ import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../services/database.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 class _HomeState extends State<Home> {
   AuthService _auth = AuthService();
@@ -19,13 +21,13 @@ class _HomeState extends State<Home> {
       value: DataBaseService(uid: user.uid).groups,
       child: Scaffold(
         backgroundColor: Colors.blue[50],
-        appBar: AppBar(
+        appBar: GradientAppBar(
           title: Text(
             _title,
             style: TextStyle(color: Colors.white),
           ),
           elevation: 0,
-          backgroundColor: Colors.indigo,
+          gradient: appBarGradient,
           centerTitle: true,
         ),
 
@@ -33,15 +35,16 @@ class _HomeState extends State<Home> {
 
         body: GroupListView(),
 
-        bottomNavigationBar: BottomAppBar(
-          color: Colors.indigo,
-          shape: CircularNotchedRectangle(),
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            gradient: appBarGradient,
+          ),
           child: Container(height: 50),
         ),
 
         floatingActionButton: _buildCreateGroupButton(),
 
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }

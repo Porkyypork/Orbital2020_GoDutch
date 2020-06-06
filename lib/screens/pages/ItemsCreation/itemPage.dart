@@ -7,6 +7,7 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
+
   var listView = List<Widget>();
   int count = 1;
 
@@ -16,14 +17,16 @@ class _ItemPageState extends State<ItemPage> {
     _add();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue[50],
       appBar: AppBar(
         title: Text('Items'),
         centerTitle: true,
       ),
-      body: count == 0 ? _buildIntialState() : _listViewWidget(),
+      body:  _listViewWidget(),
       bottomNavigationBar: BottomAppBar(
         color: appBar,
         shape: CircularNotchedRectangle(),
@@ -51,17 +54,6 @@ class _ItemPageState extends State<ItemPage> {
     );
   }
 
-  Widget _buildIntialState() {
-    return Container(
-      child: Center(
-        child: Text(
-          'Tap on the Add Button to add New Items!',
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-    );
-  }
-
   void _add() {
     int keyValue = count;
     var _listView = List.from(listView);
@@ -73,89 +65,93 @@ class _ItemPageState extends State<ItemPage> {
 
   Widget _buildList(int index, List<dynamic> listView) {
 
-    int quant = 0;
-    double pricePerItem = 0.0;
-    String name = "";
-    double totalPrice = 0.0;
-
+    int quant;
+    double pricePerItem;
+    String itemName;
+    
     return Dismissible(
       key: UniqueKey(),
       onDismissed: (direction) {
-        
+        listView.removeAt(index);
       },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          key: Key("$index"),
-          children: <Widget>[
-            SizedBox(
-              width : 35,
-                child: Text("$index",
-                  style: TextStyle(
-                    fontSize: 20,
+      background: _deletionBackground(),
+      child: Form(
+          child: Container(
+          margin: EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            key: Key("$index"),
+            children: <Widget>[
+              Expanded(
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    labelText: "Item Name",
                   ),
+                  validator: (name) =>
+                      name.isEmpty ? "Item name is required" : null,
+                  onChanged: (name) {
+                    setState(() => itemName = name);
+                  },
                 ),
-            ),
-            Expanded(
-              child: TextFormField(
-                decoration: InputDecoration(
-                  labelText: "Item Name",
-                ),
-                validator: (name) =>
-                    name.isEmpty ? "Item name is required" : null,
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 20),
-            ),
-            SizedBox(
-              width: 40,
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    labelText: "QTY",
-                ),
-                validator: (qty) => qty.isEmpty ? "Qty is Required" : null,
-                onSaved: (qty) => {
-                  setState(()  {
-                    quant =  qty as int;
-                  })
-                },
+              Padding(
+                padding: EdgeInsets.only(left: 20),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 20),
-            ),
-            Expanded(
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    labelText: "Price per Item",
-                ),
-                validator: (price) => price.isEmpty ? "Price is Required" : null,
-                onSaved: (price) {
-                  setState(() {
-                    pricePerItem = price as double;
-                    totalPrice = pricePerItem * quant;
-                  });
-                },
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal : 10),
-            ),
-            SizedBox(
-              width : 35,
-                child: Text("$totalPrice",
-                  style: TextStyle(
-                    fontSize: 20,
+              SizedBox(
+                width: 40,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: "Qty",
                   ),
+                  validator: (qty) => qty.isEmpty ? "Qty is Required" : null,
+                  onChanged: (qty) => {
+                    setState(() => {
+                      quant =  int.parse(qty),
+                    })
+                  },
                 ),
-            ),
-          ],
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 20),
+              ),
+              Expanded(
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                      labelText: "Price per Item",
+                  ),
+                  validator: (price) => price.isEmpty ? "Price is Required" : null,
+                  onChanged: (price) {
+                    setState(() {
+                      pricePerItem = double.parse(price);
+                    });
+                  },
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal : 10),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget _deletionBackground() {
+    return Container(
+      alignment: AlignmentDirectional.centerEnd,
+      padding: EdgeInsets.only(right: 15.0),
+       //color: Colors.red[600],
+      child: Row (
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          SizedBox(width: 16),
+          Icon(Icons.delete, color: Colors.black),
+        ],
+      ),
+    );
+  }
+
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:app/constants/colour.dart';
+
 
 // background class to make any alterations easy
 class Background extends StatelessWidget {
+  
   final Widget child;
   Background({this.child});
 

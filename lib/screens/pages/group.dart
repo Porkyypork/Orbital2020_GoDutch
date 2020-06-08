@@ -1,9 +1,11 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/screens/pages/ContactListView.dart';
-import 'package:app/screens/pages/ItemsCreation/itemPage.dart';
+import 'package:app/screens/pages/Items/itemPage.dart';
+import 'package:app/screens/pages/PhotoPreviewPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../models/UserDetails.dart';
@@ -66,9 +68,7 @@ class _GroupState extends State<Group> {
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Icon(Icons.menu)
-        ],
+        children: <Widget>[Icon(Icons.menu)],
       ),
     );
   }
@@ -121,12 +121,27 @@ class _GroupState extends State<Group> {
                                   leading: Icon(Icons.receipt)),
                               ListTile(
                                 title: Text('Take a Photo'),
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PhotoPreviewPage(
+                                                  initialSource: ImageSource.camera)));
+                                },
                                 leading: Icon(Icons.camera_alt),
                               ),
                               ListTile(
                                 title: Text("Add a Receipt from Gallery"),
-                                onTap: () {},
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PhotoPreviewPage(
+                                                  initialSource:
+                                                      ImageSource.gallery)));
+                                },
                                 leading: Icon(Icons.collections),
                               ),
                             ],

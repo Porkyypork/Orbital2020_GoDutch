@@ -81,7 +81,6 @@ class DataBaseService {
   }
 
   void removeGroup() {
-
     CollectionReference groupsReference =
         db.collection('users').document(this.uid).collection('groups');
     groupsReference.document(groupUID).delete();
@@ -99,7 +98,6 @@ class DataBaseService {
   }
 
   void removeGroupMember(memberID) async {
-
     await db.collection('users').document(uid)
             .collection('groups').document(groupUID)
             .collection('members').document(memberID)
@@ -107,7 +105,6 @@ class DataBaseService {
   }
 
   void addGroupMember(Contact contact) async {
-
     try {
       await db
           .collection('users')

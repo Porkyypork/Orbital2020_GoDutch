@@ -1,8 +1,11 @@
 import 'dart:io';
 
 import 'package:app/constants/loading.dart';
+import 'package:app/services/ImageToText.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:app/constants/colour.dart';
 
@@ -25,13 +28,32 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
   _PhotoPreviewPageState({this.initialSource});
 
   Future getImage(ImageSource source) async {
-    _inProcess = true;
-    final image = await ImagePicker.pickImage(source: source);
-
     setState(() {
-      _image = image;
-      _inProcess = false;
+      _inProcess = true;
     });
+    final image = await ImagePicker.pickImage(source: source);
+    if (image != null) {
+      final croppedImage = await ImageCropper.cropImage(
+        sourcePath: image.path,
+        compressQuality: 100,
+        compressFormat: ImageCompressFormat.jpg,
+        androidUiSettings: AndroidUiSettings(
+          toolbarColor: Colors.deepOrange,
+          toolbarTitle: "Crop to show only items",
+          statusBarColor: Colors.deepOrange.shade900,
+          backgroundColor: Colors.white,
+          lockAspectRatio: false,
+        ),
+      );
+      setState(() {
+        _image = croppedImage;
+        _inProcess = false;
+      });
+    } else {
+      setState(() {
+        _inProcess = false;
+      });
+    }
   }
 
   @override
@@ -43,7 +65,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue[50],
+      backgroundColor: Colors.black,
       appBar: GradientAppBar(
         title: Text(
           "Preview",
@@ -60,10 +82,14 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
                 children: <Widget>[
                   Center(
                     child: Container(
-                      padding: EdgeInsets.only(top: 20, bottom: 20),
+                      color: Colors.black,
+                      // padding: EdgeInsets.all(20),
                       height: 500,
                       child: _image == null
-                          ? Text("no image selected")
+                          ? Text("no image selected",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ))
                           : Image.file(_image),
                     ),
                   ),
@@ -84,31 +110,58 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
   }
 
   Widget _buildGalleryButton() {
-    return OutlineButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      borderSide: BorderSide(color: secondary),
+    return RawMaterialButton(
+      splashColor: Colors.white,
+      fillColor: Colors.black,
+      shape: CircleBorder(
+        side: BorderSide(color: Colors.white),
+      ),
+      elevation: 2.0,
+      padding: EdgeInsets.all(20),
       onPressed: () => getImage(ImageSource.gallery),
-      child: Text("Gallery"),
+      child: Icon(
+        Icons.collections,
+        size: 35,
+        color: Colors.white,
+      ),
     );
   }
 
   Widget _buildCameraButton() {
-    return OutlineButton(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      borderSide: BorderSide(color: secondary),
+    return RawMaterialButton(
+      splashColor: Colors.white,
+      fillColor: Colors.black,
+      shape: CircleBorder(
+        side: BorderSide(color: Colors.white),
+      ),
+      elevation: 2.0,
+      padding: EdgeInsets.all(20),
       onPressed: () => getImage(ImageSource.camera),
-      child: Text("Retake photo"),
+      child: Icon(
+        Icons.camera_alt,
+        size: 35,
+        color: Colors.white,
+      ),
     );
   }
 
   Widget _buildConfirmButton() {
-    return OutlineButton(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-        highlightElevation: 0,
-        borderSide: BorderSide(color: secondary),
-        onPressed: () {},
-        child: Text("Confirm"));
+    return RawMaterialButton(
+        splashColor: Colors.greenAccent,
+        fillColor: Colors.green,
+        shape: CircleBorder(),
+        elevation: 2.0,
+        padding: EdgeInsets.all(20),
+        onPressed: () {
+          ImageToText().readText(_image);
+          // run image to text class
+          // Navigator.push(
+          //     context, MaterialPageRoute(builder: (context) => DisplayPage()));
+        },
+        child: Icon(
+          Icons.arrow_forward,
+          size: 35,
+          color: Colors.white,
+        ));
   }
 }

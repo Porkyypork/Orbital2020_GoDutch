@@ -3,17 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:app/constants/colour.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:app/screens/pages/Items/ItemCreation.dart';
-
+import 'package:app/services/database.dart';
 
 class ItemPage extends StatefulWidget {
+  DataBaseService dbService;
+
+  ItemPage({this.dbService});
+
   @override
-  _ItemPageState createState() => _ItemPageState();
+  _ItemPageState createState() => _ItemPageState(dbService: dbService);
 }
 
 class _ItemPageState extends State<ItemPage> {
-
   List<ItemDetails> _items = [];
-  
+
+  DataBaseService dbService;
+
+  _ItemPageState({this.dbService});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,7 +30,7 @@ class _ItemPageState extends State<ItemPage> {
         title: Text('Items'),
         centerTitle: true,
       ),
-      body : Container(
+      body: Container(
         child: _listItems(),
       ),
       floatingActionButton: _createButton(),
@@ -32,64 +39,57 @@ class _ItemPageState extends State<ItemPage> {
   }
 
   Widget _listItems() {
-    return _items == null || _items.length == 0 ? 
-     _initialState() : ListView.builder(
-      itemCount: _items.length,
-      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-      itemBuilder: (context, index) {
-        return _buildItemTile(index);
-      }
-    );
+    return _items == null || _items.length == 0
+        ? _initialState()
+        : ListView.builder(
+            itemCount: _items.length,
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+            itemBuilder: (context, index) {
+              return _buildItemTile(index);
+            });
   }
 
   Widget _buildItemTile(int index) {
     return Dismissible(
-      key: UniqueKey(),
-      onDismissed: (direction) {
-        setState(() {
-          String itemName = _items.elementAt(index).name;
-          _items.removeAt(index);
-          _deletionMessage(context, itemName);
-        });
-      },
-      child: Container(
+        key: UniqueKey(),
+        onDismissed: (direction) {
+          setState(() {
+            String itemName = _items.elementAt(index).name;
+            _items.removeAt(index);
+            _deletionMessage(context, itemName);
+          });
+        },
+        child: Container(
           child: ListTile(
-          leading: Icon(Icons.restaurant),
-          title : Text('Item Name'),
-          subtitle: Text('Total Price'),
-          trailing : SizedBox(
-            child : Text('QTY')
-          ),
-          onTap : () {
-             //
-          }
-        ),
-      )
-      
-    );
+              leading: Icon(Icons.restaurant),
+              title: Text('Item Name'),
+              subtitle: Text('Total Price'),
+              trailing: SizedBox(child: Text('QTY')),
+              onTap: () {
+                //
+              }),
+        ));
   }
 
   Widget _initialState() {
     return Container(
-      child: Center( 
-        child: Text(
-          "Tap on the Add Icon to get Started!",
-          style: TextStyle(
-            fontSize : 22.0
-          ),        
-        )
-      ),
+      child: Center(
+          child: Text(
+        "Tap on the Add Icon to get Started!",
+        style: TextStyle(fontSize: 22.0),
+      )),
     );
   }
 
   Widget _createButton() {
     return FloatingActionButton(
       child: Icon(Icons.add),
-      onPressed : () {
-       Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ItemCreation()));      },
+      onPressed: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ItemCreation(dbService: dbService)));
+      },
     );
   }
 

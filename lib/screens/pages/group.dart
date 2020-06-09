@@ -13,6 +13,7 @@ import '../../services/AccessContacts.dart';
 import '../../services/database.dart';
 
 class _GroupState extends State<Group> {
+
   GroupDetails groupdata;
   final Firestore db = Firestore.instance;
 
@@ -20,13 +21,15 @@ class _GroupState extends State<Group> {
 
   @override
   Widget build(BuildContext context) {
+
     String groupName = groupdata.groupName;
     String groupUID = groupdata.groupUID;
 
     final user = Provider.of<UserDetails>(context);
+    DataBaseService dbService = DataBaseService(uid: user.uid, groupUID: groupUID);
 
     return StreamProvider<List<MemberDetails>>.value(
-      value: DataBaseService(uid: user.uid, groupUID: groupUID).members,
+      value: dbService.members,
       child: Scaffold(
         backgroundColor: Colors.blue[50],
         appBar: AppBar(
@@ -44,7 +47,7 @@ class _GroupState extends State<Group> {
         body: SlidingUpPanel(
           backdropEnabled: true,
           body: ContactListView(groupdata: this.groupdata),
-          panel: _menu(),
+          panel: _menu(dbService),
           collapsed: _floatingCollasped(),
           minHeight: 40,
           maxHeight: 200,
@@ -73,7 +76,7 @@ class _GroupState extends State<Group> {
     );
   }
 
-  Widget _menu() {
+  Widget _menu(DataBaseService dbService) {
     return Stack(
       children: <Widget>[
         Container(
@@ -116,7 +119,7 @@ class _GroupState extends State<Group> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => ItemPage()));
+                                            builder: (context) => ItemPage(dbService : dbService)));
                                   },
                                   leading: Icon(Icons.receipt)),
                               ListTile(
@@ -159,6 +162,7 @@ class _GroupState extends State<Group> {
 }
 
 class Group extends StatefulWidget {
+
   final GroupDetails data;
   Group({this.data});
 

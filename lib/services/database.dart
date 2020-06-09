@@ -151,16 +151,4 @@ class DataBaseService {
             .collection('members')
             .snapshots().map(_memberDetailsFromSnapShot);
   }
-
-  Future<List<MemberDetails>> _getMembersStream(Stream<List<MemberDetails>> stream) async {
-    List<MemberDetails> temp = [];
-    await for (var list in stream) {
-      temp = list;
-    }
-    return temp;
-  }
-
-  Future<List<MemberDetails>> getMembers() async {
-    return await _getMembersStream(this.members);
-  }
 }

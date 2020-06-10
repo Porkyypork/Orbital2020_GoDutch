@@ -53,7 +53,6 @@ class _GroupCreationState extends State<GroupCreation> {
               //_buildGroupPictureField(),
               _buildNameField(),
               //_buildMemberList(),
-              // any further fields that we need to add ==> Add a group member list
               SizedBox(height: 50.0),
 
               RaisedButton(

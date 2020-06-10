@@ -1,25 +1,30 @@
 import 'package:app/models/itemDetails.dart';
+import 'package:app/screens/pages/PhotoPreviewPage.dart';
 import 'package:flutter/material.dart';
 import 'package:app/constants/colour.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ItemPage extends StatefulWidget {
   DataBaseService dbService;
+  PanelController pc;
 
-  ItemPage({this.dbService});
+  ItemPage({this.dbService, this.pc});
 
   @override
-  _ItemPageState createState() => _ItemPageState(dbService: dbService);
+  _ItemPageState createState() => _ItemPageState(dbService: dbService, pc: pc);
 }
 
 class _ItemPageState extends State<ItemPage> {
   List<ItemDetails> _items = [];
 
   DataBaseService dbService;
+  PanelController pc;
 
-  _ItemPageState({this.dbService});
+  _ItemPageState({this.dbService, this.pc});
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +35,24 @@ class _ItemPageState extends State<ItemPage> {
         title: Text('Items'),
         centerTitle: true,
       ),
-      body: Container(
-        child: _listItems(),
+      body: SlidingUpPanel(
+        controller: pc,
+        backdropEnabled: true,
+        isDraggable: false,
+        body: _listItems(),
+        panel: _menu(dbService),
+        collapsed: _floatingCollasped(),
+        minHeight: 40,
+        maxHeight: 232,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(50),
+          topRight: Radius.circular(50),
+        ),
       ),
       floatingActionButton: _createButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar:
+          BottomAppBar(color: Colors.teal[500], child: SizedBox(height: 54)),
     );
   }
 
@@ -73,23 +91,36 @@ class _ItemPageState extends State<ItemPage> {
 
   Widget _initialState() {
     return Container(
-      child: Center(
-          child: Text(
-        "Tap on the Add Icon to get Started!",
-        style: TextStyle(fontSize: 22.0),
-      )),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "Tap on the Add Icon to get Started!",
+            style: TextStyle(fontSize: 22.0),
+          ),
+          SizedBox(height: 140),
+        ],
+      ),
     );
   }
 
-  Widget _createButton() {
+  FloatingActionButton _createButton() {
     return FloatingActionButton(
-      child: Icon(Icons.add),
       onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ItemCreation(dbService: dbService)));
+        pc.open();
       },
+      child: Container(
+        height: 70,
+        width: 70,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.teal[500], width: 5),
+          shape: BoxShape.circle,
+          color: Color(
+              0xFF48D1CC), // this is the green button idk if it looks good? need change on AcccessContacts also
+        ),
+        child: Icon(Icons.add, size: 30, color: Colors.black),
+      ),
+      elevation: 0,
     );
   }
 
@@ -97,5 +128,103 @@ class _ItemPageState extends State<ItemPage> {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text("You have deleted $itemName"),
     ));
+  }
+
+  Widget _floatingCollasped() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xFFA5CFE3),
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30),
+          topRight: Radius.circular(30),
+        ),
+      ),
+    );
+  }
+
+  Widget _menu(DataBaseService dbService) {
+    return Stack(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: Color(0xFFA5CFE3),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Container(
+              height: 30,
+            ),
+            SizedBox(
+              height: 202,
+              child: Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(30.0),
+                        topRight: Radius.circular(30.0),
+                      ),
+                      color: Color(0xFFDEE2EC)),
+                  child: Stack(
+                    overflow: Overflow.visible,
+                    children: <Widget>[
+                      Positioned(
+                        child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          children: ListTile.divideTiles(
+                            context: context,
+                            tiles: [
+                              ListTile(
+                                  title: Text("Key in a Bill"),
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => ItemCreation(
+                                                dbService: dbService)));
+                                  },
+                                  leading: Icon(Icons.receipt)),
+                              ListTile(
+                                title: Text('Take a Photo'),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PhotoPreviewPage(
+                                                  initialSource:
+                                                      ImageSource.camera)));
+                                },
+                                leading: Icon(Icons.camera_alt),
+                              ),
+                              ListTile(
+                                title: Text("Add a Receipt from Gallery"),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              PhotoPreviewPage(
+                                                  initialSource:
+                                                      ImageSource.gallery)));
+                                },
+                                leading: Icon(Icons.collections),
+                              ),
+                            ],
+                          ).toList(),
+                        ),
+                      ),
+                    ],
+                  )),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

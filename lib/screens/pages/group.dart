@@ -13,6 +13,7 @@ import '../../services/database.dart';
 import 'package:app/screens/pages/Bills.dart';
 
 import 'ContactListView.dart';
+import 'Items/itemPage.dart';
 
 class _GroupState extends State<Group> {
 
@@ -76,9 +77,17 @@ class _GroupState extends State<Group> {
   }
 
   FloatingActionButton _billsFAB() {
+    final user = Provider.of<UserDetails>(context);
+    String groupUID = groupdata.groupUID;
+    DataBaseService dbService =
+        DataBaseService(uid: user.uid, groupUID: groupUID);
+
       return FloatingActionButton(
         onPressed : () {
-          pc.open();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ItemPage(dbService: dbService, pc: pc)));
         },
         child : Container(
         height: 70,

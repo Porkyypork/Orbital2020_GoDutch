@@ -29,7 +29,6 @@ class _ContactListViewState extends State<ContactListView> {
     
     final members = Provider.of<List<MemberDetails>>(context);
     
-    
     return ListView.builder(
       itemCount: members.length,
       itemBuilder: (context, index) =>
@@ -53,11 +52,6 @@ class _ContactListViewState extends State<ContactListView> {
           leading: Icon(Icons.important_devices),
           title: Text(name),
           subtitle: Text('Owed amount goes here'),
-          trailing: DropdownButton<Widget>(
-            items: null,
-            onChanged: null,
-            icon: Icon(Icons.more_vert),
-          ),
         ),
       ),
     );

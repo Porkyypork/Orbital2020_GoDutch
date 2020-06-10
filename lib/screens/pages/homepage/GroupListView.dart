@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:app/services/database.dart';
 
 class _GroupListViewState extends State<GroupListView> {
-
   final Firestore db = Firestore.instance;
   UserDetails currentUser;
   TextEditingController searchController = new TextEditingController();
@@ -52,9 +51,9 @@ class _GroupListViewState extends State<GroupListView> {
   }
 
   Widget _buildGroupTile(GroupDetails group) {
-
     final user = Provider.of<UserDetails>(context);
-    DataBaseService dbService = new DataBaseService(uid :user.uid, groupUID : group.groupUID);
+    DataBaseService dbService =
+        new DataBaseService(uid: user.uid, groupUID: group.groupUID);
 
     return Dismissible(
       key: UniqueKey(),
@@ -66,8 +65,6 @@ class _GroupListViewState extends State<GroupListView> {
             dbService.removeGroup();
             _deletionMessage(context, groupName);
           });
-        } else {
-          // do something else likely implementation of google vision
         }
       },
       background: _secondaryBackground(),
@@ -109,14 +106,16 @@ class _GroupListViewState extends State<GroupListView> {
                       SizedBox(width: 80),
                       Column(
                         children: <Widget>[
-                          Text('Members:',
-                          style: TextStyle(
-                            fontSize: 10,
-                          ),),
-                          Text('${group.numMembers}',
-                          style: TextStyle(
-                            fontSize: 20
-                          ),),
+                          Text(
+                            'Members:',
+                            style: TextStyle(
+                              fontSize: 10,
+                            ),
+                          ),
+                          Text(
+                            '${group.numMembers}',
+                            style: TextStyle(fontSize: 20),
+                          ),
                         ],
                       ),
                     ],

@@ -48,7 +48,6 @@ class _ItemCreationState extends State<ItemCreation> {
                     ),
                 _itemText(),
                 _priceText(),
-
                 _shareTextWidget(),
                 SharingGrid(),
                 _splitbutton(),
@@ -97,7 +96,7 @@ class _ItemCreationState extends State<ItemCreation> {
           EdgeInsets.only(top: 5.0, bottom: 15.0, left: 10.0, right: 200.0),
       child: TextField(
         keyboardType: TextInputType.number,
-        controller: nameController,
+        controller: priceController,
         decoration: InputDecoration(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),

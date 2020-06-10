@@ -44,7 +44,6 @@ class DataBaseService {
 
   // creates the user data in the database
   Future<void> updateUserData(String name, String email, String number) async {
-    //List<String> groups = List();
     await db.collection('users').document(this.uid).setData({
       "name": name,
       "email": email,
@@ -62,12 +61,14 @@ class DataBaseService {
     groups.setData({
         "groupName": groupName,
         "groupUID": groupUID,
+        "groupAdmin": user.name,
         "numMembers": 1,
       });
 
     GroupDetails groupDetails = new GroupDetails(
       groupName: groupName,
       groupUID: groupUID,
+      groupAdmin: user.name,
       numMembers: 1,
     );
 
@@ -118,6 +119,7 @@ class DataBaseService {
           .add({
         'Name': contact.displayName,
         'Number': contact.phones.first.value.toString(),
+        'Debt': 0,
       });
 
       var groupDocRef = db.collection('users').document(this.uid).collection('groups').document(groupUID);
@@ -143,7 +145,8 @@ class DataBaseService {
         doc.data['Name'] ?? '',
         doc.data['Number'] ?? '',
         doc.data['Email'] ?? '',
-        doc.documentID
+        doc.documentID,
+        doc.data['Debt'] ?? -1,
       );
     }).toList();
   }

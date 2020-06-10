@@ -1,21 +1,25 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
-import 'package:app/screens/pages/ContactListView.dart';
-import 'package:app/screens/pages/Items/itemPage.dart';
-import 'package:app/screens/pages/PhotoPreviewPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
+import 'package:gradient_bottom_navigation_bar/gradient_bottom_navigation_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import '../../constants/colour.dart';
 import '../../models/UserDetails.dart';
 import '../../services/AccessContacts.dart';
 import '../../services/database.dart';
+import 'package:app/screens/pages/Bills.dart';
+
+import 'ContactListView.dart';
 
 class _GroupState extends State<Group> {
 
   GroupDetails groupdata;
   final Firestore db = Firestore.instance;
+  int _selectedIndex = 0;
+  final PanelController pc = new PanelController();
 
   _GroupState({this.groupdata});
 
@@ -26,143 +30,81 @@ class _GroupState extends State<Group> {
     String groupUID = groupdata.groupUID;
 
     final user = Provider.of<UserDetails>(context);
-    DataBaseService dbService = DataBaseService(uid: user.uid, groupUID: groupUID);
+    DataBaseService dbService =
+        DataBaseService(uid: user.uid, groupUID: groupUID);
+
+    List<Widget> _widgetOptions = 
+              <Widget>[
+                Bills(dbService : dbService, pc : pc),
+                ContactListView(groupdata : groupdata)
+              ];
 
     return StreamProvider<List<MemberDetails>>.value(
       value: dbService.members,
       child: Scaffold(
         backgroundColor: Colors.blue[50],
-        appBar: AppBar(
+        appBar: GradientAppBar(
+          gradient : appBarGradient,
           title: Text(
             groupName,
             style: TextStyle(color: Colors.white),
           ),
           elevation: 0,
-          backgroundColor: Colors.indigo,
           centerTitle: true,
-          actions: <Widget>[
-            AccessContacts(groupUID: groupUID),
+        ),
+        body : _widgetOptions.elementAt(_selectedIndex),
+        bottomNavigationBar: BottomNavigationBar(
+          fixedColor: Color(0xFFFFFDD0), // cream
+          backgroundColor: Colors.teal[500],
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(Icons.receipt), title: Text('Bills')),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.group), title: Text('Members'))
           ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
         ),
-        body: SlidingUpPanel(
-          backdropEnabled: true,
-          body: ContactListView(groupdata: this.groupdata),
-          panel: _menu(dbService),
-          collapsed: _floatingCollasped(),
-          minHeight: 40,
-          maxHeight: 200,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(50),
-            topRight: Radius.circular(50),
-          ),
-        ),
+        floatingActionButton: _getFAB(groupUID),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
-  Widget _floatingCollasped() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.indigo,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+  Widget _getFAB(String groupUID) {
+    return _selectedIndex == 0 ? _billsFAB() : AccessContacts(groupUID: groupUID);
+  }
+
+  FloatingActionButton _billsFAB() {
+      return FloatingActionButton(
+        onPressed : () {
+          pc.open();
+        },
+        child : Container(
+        height: 70,
+        width: 70,
+        decoration: BoxDecoration(
+          border: Border.all (
+            color: Colors.teal[500],
+            width: 5
+          ),
+          shape : BoxShape.circle,
+          color : Color(0xFF48D1CC), // this is the green button idk if it looks good? need change on AcccessContacts also
         ),
+        child : Icon(Icons.add, size :30, color: Colors.black),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[Icon(Icons.menu)],
-      ),
+       elevation: 0,
     );
   }
 
-  Widget _menu(DataBaseService dbService) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.indigo,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
-          ),
-        ),
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            Container(
-              height: 30,
-            ),
-            SizedBox(
-              height: 170,
-              child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30.0),
-                        topRight: Radius.circular(30.0),
-                      ),
-                      color: Colors.blue[100]),
-                  child: Stack(
-                    overflow: Overflow.visible,
-                    children: <Widget>[
-                      Positioned(
-                        child: ListView(
-                          physics: NeverScrollableScrollPhysics(),
-                          children: ListTile.divideTiles(
-                            context: context,
-                            tiles: [
-                              ListTile(
-                                  title: Text("Key in a Bill"),
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => ItemPage(dbService : dbService)));
-                                  },
-                                  leading: Icon(Icons.receipt)),
-                              ListTile(
-                                title: Text('Take a Photo'),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              PhotoPreviewPage(
-                                                  initialSource: ImageSource.camera)));
-                                },
-                                leading: Icon(Icons.camera_alt),
-                              ),
-                              ListTile(
-                                title: Text("Add a Receipt from Gallery"),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              PhotoPreviewPage(
-                                                  initialSource:
-                                                      ImageSource.gallery)));
-                                },
-                                leading: Icon(Icons.collections),
-                              ),
-                            ],
-                          ).toList(),
-                        ),
-                      ),
-                    ],
-                  )),
-            ),
-          ],
-        ),
-      ],
-    );
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }
 
 class Group extends StatefulWidget {
-
   final GroupDetails data;
   Group({this.data});
 

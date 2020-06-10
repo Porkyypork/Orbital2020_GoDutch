@@ -11,7 +11,7 @@ class AccessContacts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(                                                                                  
+    return FloatingActionButton(                                                                                  
       onPressed: () async {
         final PermissionStatus status = await _getPermission();
         if (status == PermissionStatus.granted) {
@@ -33,21 +33,40 @@ class AccessContacts extends StatelessWidget {
           );
         }
       },
-      icon: Icon(Icons.person_add),
+      backgroundColor: Colors.teal[500],
+      child : Container(
+        height: 70,
+        width: 70,
+        decoration: BoxDecoration(
+          border: Border.all (
+            color: Colors.teal[500],
+            width: 5
+          ),
+          shape : BoxShape.circle,
+          color : Color(0xFF48D1CC), // CHANGE HERE
+        ),
+        child : Icon(Icons.add, size :30, color: Colors.black,),
+      ),
+       elevation: 0,
     );
   }
 
   //Check contacts permission
   Future<PermissionStatus> _getPermission() async {
-    final PermissionStatus permission = await Permission.contacts.status;
-    if (permission != PermissionStatus.granted &&
+    try{
+      final PermissionStatus permission = await Permission.contacts.status;
+      if (permission != PermissionStatus.granted &&
         permission != PermissionStatus.denied) {
       final Map<Permission, PermissionStatus> permissionStatus =
           await [Permission.contacts].request();
       return permissionStatus[Permission.contacts] ??
           PermissionStatus.undetermined;
-    } else {
+      } else {
       return permission;
+    }
+    } catch (e) {
+        print(e.toString());
+        return null;
     }
   }
 }

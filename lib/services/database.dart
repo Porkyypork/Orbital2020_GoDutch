@@ -3,16 +3,20 @@ import 'package:app/models/MemberDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:app/models/BillDetails.dart';
 
-import '../models/UserDetails.dart';
+import '../models/itemDetails.dart';
+
 
 class DataBaseService {
 
   final String uid;
   final Firestore db = Firestore.instance;
   final String groupUID;
+  final String billUID;
+  final String itemUID;
 
-  DataBaseService({this.uid, this.groupUID});
+  DataBaseService({this.uid, this.groupUID, this.billUID, this.itemUID});
 
   Future getUserGroups(String userUID) async {
     List<dynamic> groups;
@@ -45,7 +49,6 @@ class DataBaseService {
       "name": name,
       "email": email,
       'Number' : number
-      //"groups": groups,
     });
   }
 
@@ -137,10 +140,10 @@ class DataBaseService {
   List<MemberDetails> _memberDetailsFromSnapShot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new MemberDetails(
-        name : doc.data['Name'] ?? '',
-        number : doc.data['Number'] ?? '',
-        email : doc.data['Email'] ?? '',
-        memberID: doc.documentID
+        doc.data['Name'] ?? '',
+        doc.data['Number'] ?? '',
+        doc.data['Email'] ?? '',
+        doc.documentID
       );
     }).toList();
   }
@@ -150,5 +153,65 @@ class DataBaseService {
             .document(this.groupUID)
             .collection('members')
             .snapshots().map(_memberDetailsFromSnapShot);
+  }
+
+  Future<BillDetails> createBill(String billName) async {
+
+    DocumentReference billReference = db.collection("users").document(this.uid)
+                                          .collection("groups")
+                                          .document(this.groupUID)
+                                          .collection('bills')
+                                          .document();
+    billReference.setData({
+      'Name' : billName,
+      'billUID' : billReference.documentID,
+      'totalPrice' : 0.0,
+      'Date' : DateTime.now(),
+    });
+
+    return new BillDetails(billName, billReference.documentID);
+  }
+
+  Future<ItemDetails> createItem(String itemName, itemPrice) async {
+
+    DocumentReference itemReference = db.collection("users").document(this.uid)
+                                          .collection("groups")
+                                          .document(this.groupUID)
+                                          .collection('bills')
+                                          .document(this.billUID)
+                                          .collection('items')
+                                          .document();
+    itemReference.setData({
+      'Name' : itemName,
+      'itemUID' : itemReference.documentID,
+      'totalPrice' : itemPrice,
+    });
+    
+    return new ItemDetails(
+      name : itemName,
+      itemUID : itemReference.documentID,
+      totalPrice : itemPrice
+    );
+  }
+
+  void shareItemWith(Contact contact) async {
+     try {
+      await db
+          .collection('users')
+          .document(this.uid)
+          .collection('groups')
+          .document(groupUID)
+          .collection('bills')
+          .document(billUID)
+          .collection('items')
+          .document(itemUID)
+          .collection('sharingList')
+          .add({
+        'Name': contact.displayName,
+        'Number': contact.phones.first.value.toString(),
+      });
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

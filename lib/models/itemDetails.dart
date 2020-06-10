@@ -2,14 +2,12 @@ import 'package:app/models/MemberDetails.dart';
 
 class ItemDetails{
   String name;
-  double price;
-  double qty;
-  List<MemberDetails> sharingList;
+  String itemUID;
+  double totalPrice;
 
   ItemDetails({
     this.name,
-    this.price,
-    this.qty,
-    this.sharingList,
+    this.itemUID,
+    this.totalPrice,
   });
 }

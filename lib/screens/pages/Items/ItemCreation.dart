@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:app/screens/pages/Items/SharingGrid.dart';
 
 class ItemCreation extends StatefulWidget {
-  DataBaseService dbService;
+
+  final DataBaseService dbService;
 
   ItemCreation({this.dbService});
 
@@ -16,17 +17,30 @@ class ItemCreation extends StatefulWidget {
 }
 
 class _ItemCreationState extends State<ItemCreation> {
-
   TextEditingController nameController = TextEditingController();
-  TextEditingController qtyControlller = TextEditingController();
   TextEditingController priceController = TextEditingController();
   DataBaseService dbService;
+  String itemName = "";
+  String totalPrice = "";
 
   _ItemCreationState({this.dbService});
 
+  @override 
+  void initState() {
+    super.initState();
+    nameController.addListener(_nameListener);
+    priceController.addListener(_priceListener);
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    priceController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-
     return StreamProvider<List<MemberDetails>>.value(
       value: dbService.members,
       child: Scaffold(
@@ -45,7 +59,7 @@ class _ItemCreationState extends State<ItemCreation> {
               children: <Widget>[
                 Container(
                     //add if need any
-                    ),
+                ),
                 _itemText(),
                 _priceText(),
                 _shareTextWidget(),
@@ -70,10 +84,9 @@ class _ItemCreationState extends State<ItemCreation> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           onPressed: () {
-            //save
+
           },
-        )
-      );
+        ));
   }
 
   Padding _shareTextWidget() {
@@ -112,10 +125,7 @@ class _ItemCreationState extends State<ItemCreation> {
 
   Widget _itemText() {
     return Padding(
-      padding: EdgeInsets.symmetric(
-          vertical : 20,
-          horizontal: 10
-          ),
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       child: TextField(
         controller: nameController,
         decoration: InputDecoration(
@@ -129,5 +139,19 @@ class _ItemCreationState extends State<ItemCreation> {
         ),
       ),
     );
+  }
+
+  void _nameListener() {
+    setState((){
+      itemName = nameController.text;
+    });
+    print(itemName); // for debugging
+  }
+
+  void _priceListener() {
+    setState(() {
+      totalPrice = priceController.text;
+    });
+    print(totalPrice); // for debugging
   }
 }

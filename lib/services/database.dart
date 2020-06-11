@@ -7,9 +7,7 @@ import 'package:app/models/BillDetails.dart';
 
 import '../models/itemDetails.dart';
 
-
 class DataBaseService {
-
   final String uid;
   final Firestore db = Firestore.instance;
   final String groupUID;
@@ -21,8 +19,8 @@ class DataBaseService {
   Future getUserGroups(String userUID) async {
     List<dynamic> groups;
     await db.collection("users").document(userUID).get().then((user) => {
-      groups = user["groups"],
-    });
+          groups = user["groups"],
+        });
     return groups;
   }
 
@@ -32,7 +30,7 @@ class DataBaseService {
     await db.collection("users").document(userUID).get().then((user) => {
           currentUser = new UserDetails(
             name: user["name"],
-            uid : userUID,
+            uid: userUID,
             number: "818181",
             email: user["email"],
             groups: user["groups"],
@@ -41,29 +39,27 @@ class DataBaseService {
     return currentUser;
   }
 
-
   // creates the user data in the database
   Future<void> updateUserData(String name, String email, String number) async {
-    await db.collection('users').document(this.uid).setData({
-      "name": name,
-      "email": email,
-      'Number' : number
-    });
+    await db
+        .collection('users')
+        .document(this.uid)
+        .setData({"name": name, "email": email, 'Number': number});
   }
 
-  Future<GroupDetails> createGroupData(String groupName, UserDetails user) async {
-
-    CollectionReference groupsReference = db.collection("users").document(user.uid)
-                                        .collection("groups");
+  Future<GroupDetails> createGroupData(
+      String groupName, UserDetails user) async {
+    CollectionReference groupsReference =
+        db.collection("users").document(user.uid).collection("groups");
     DocumentReference groups = groupsReference.document();
     String groupUID = groups.documentID;
 
     groups.setData({
-        "groupName": groupName,
-        "groupUID": groupUID,
-        "groupAdmin": user.name,
-        "numMembers": 1,
-      });
+      "groupName": groupName,
+      "groupUID": groupUID,
+      "groupAdmin": user.name,
+      "numMembers": 1,
+    });
 
     GroupDetails groupDetails = new GroupDetails(
       groupName: groupName,
@@ -72,13 +68,16 @@ class DataBaseService {
       numMembers: 1,
     );
 
-    DocumentReference userReference = db.collection("users").document(user.uid)
-                                        .collection("groups")
-                                        .document(groupUID)
-                                        .collection('members').document();
+    DocumentReference userReference = db
+        .collection("users")
+        .document(user.uid)
+        .collection("groups")
+        .document(groupUID)
+        .collection('members')
+        .document();
     userReference.setData({
-      'Name' : user.name,
-      'Number' : user.number,
+      'Name': user.name,
+      'Number': user.number,
     });
 
     return groupDetails;
@@ -90,22 +89,25 @@ class DataBaseService {
     groupsReference.document(groupUID).delete();
   }
 
-
   List<GroupDetails> _groupDetailsFromSnapshot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new GroupDetails(
         groupName: doc.data['groupName'] ?? 'No name exists',
-        groupUID : doc.documentID,
+        groupUID: doc.documentID,
         numMembers: doc.data['numMembers'],
       );
     }).toList();
   }
 
   void removeGroupMember(memberID) async {
-    await db.collection('users').document(uid)
-            .collection('groups').document(groupUID)
-            .collection('members').document(memberID)
-            .delete();
+    await db
+        .collection('users')
+        .document(uid)
+        .collection('groups')
+        .document(groupUID)
+        .collection('members')
+        .document(memberID)
+        .delete();
   }
 
   void addGroupMember(Contact contact) async {
@@ -122,11 +124,15 @@ class DataBaseService {
         'Debt': 0,
       });
 
-      var groupDocRef = db.collection('users').document(this.uid).collection('groups').document(groupUID);
+      var groupDocRef = db
+          .collection('users')
+          .document(this.uid)
+          .collection('groups')
+          .document(groupUID);
       int newNumMembers = await groupDocRef.get().then((group) {
         return group['numMembers'];
       });
-      
+
       groupDocRef.updateData({
         'numMembers': newNumMembers++,
       });
@@ -136,7 +142,12 @@ class DataBaseService {
   }
 
   Stream<List<GroupDetails>> get groups {
-    return db.collection("users").document(this.uid).collection("groups").snapshots().map(_groupDetailsFromSnapshot);
+    return db
+        .collection("users")
+        .document(this.uid)
+        .collection("groups")
+        .snapshots()
+        .map(_groupDetailsFromSnapshot);
   }
 
   List<MemberDetails> _memberDetailsFromSnapShot(QuerySnapshot snap) {
@@ -151,54 +162,59 @@ class DataBaseService {
     }).toList();
   }
 
-  Stream<List<MemberDetails>> get members{
-    return db.collection("users").document(this.uid).collection("groups")
-            .document(this.groupUID)
-            .collection('members')
-            .snapshots().map(_memberDetailsFromSnapShot);
+  Stream<List<MemberDetails>> get members {
+    return db
+        .collection("users")
+        .document(this.uid)
+        .collection("groups")
+        .document(this.groupUID)
+        .collection('members')
+        .snapshots()
+        .map(_memberDetailsFromSnapShot);
   }
 
   Future<BillDetails> createBill(String billName) async {
-
-    DocumentReference billReference = db.collection("users").document(this.uid)
-                                          .collection("groups")
-                                          .document(this.groupUID)
-                                          .collection('bills')
-                                          .document();
+    DocumentReference billReference = db
+        .collection("users")
+        .document(this.uid)
+        .collection("groups")
+        .document(this.groupUID)
+        .collection('bills')
+        .document();
     billReference.setData({
-      'Name' : billName,
-      'billUID' : billReference.documentID,
-      'totalPrice' : 0.0,
-      'Date' : DateTime.now(),
+      'Name': billName,
+      'billUID': billReference.documentID,
+      'totalPrice': 0.0,
+      'Date': DateTime.now(),
     });
 
     return new BillDetails(billName, billReference.documentID);
   }
 
   Future<ItemDetails> createItem(String itemName, itemPrice) async {
-
-    DocumentReference itemReference = db.collection("users").document(this.uid)
-                                          .collection("groups")
-                                          .document(this.groupUID)
-                                          .collection('bills')
-                                          .document(this.billUID)
-                                          .collection('items')
-                                          .document();
+    DocumentReference itemReference = db
+        .collection("users")
+        .document(this.uid)
+        .collection("groups")
+        .document(this.groupUID)
+        .collection('bills')
+        .document(this.billUID)
+        .collection('items')
+        .document();
     itemReference.setData({
-      'Name' : itemName,
-      'itemUID' : itemReference.documentID,
-      'totalPrice' : itemPrice,
+      'Name': itemName,
+      'itemUID': itemReference.documentID,
+      'totalPrice': itemPrice,
     });
-    
+
     return new ItemDetails(
-      name : itemName,
-      itemUID : itemReference.documentID,
-      totalPrice : itemPrice
-    );
+        name: itemName,
+        itemUID: itemReference.documentID,
+        totalPrice: itemPrice);
   }
 
   void shareItemWith(Contact contact) async {
-     try {
+    try {
       await db
           .collection('users')
           .document(this.uid)

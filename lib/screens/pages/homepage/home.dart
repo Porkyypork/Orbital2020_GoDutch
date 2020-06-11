@@ -37,14 +37,14 @@ class _HomeState extends State<Home> {
 
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            gradient: appBarGradient,
+            color: Colors.teal[500]
           ),
           child: Container(height: 50),
         ),
 
         floatingActionButton: _buildCreateGroupButton(),
 
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
@@ -55,8 +55,17 @@ class _HomeState extends State<Home> {
         Navigator.pushNamed(context, '/group_creation');
         print("proceeding to group creation page\n");
       },
-      backgroundColor: Colors.teal[300],
-      child: Icon(Icons.add),
+      child: Container(
+        height: 70,
+        width: 70,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.teal[500], width: 5),
+          shape: BoxShape.circle,
+          color: Color(0xFF48D1CC), // this is the green button idk if it looks good? need change on AcccessContacts also
+        ),
+        child: Icon(Icons.add, size: 30, color: Colors.black),
+      ),
+      elevation: 0,
     );
   }
 

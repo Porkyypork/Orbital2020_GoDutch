@@ -1,5 +1,5 @@
 import 'package:app/models/GroupDetails.dart';
-import 'package:app/screens/pages/group.dart';
+import 'package:app/screens/pages/homepage/BtmNavigation/group.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

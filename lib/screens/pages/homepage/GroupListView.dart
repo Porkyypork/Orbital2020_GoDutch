@@ -1,6 +1,6 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/UserDetails.dart';
-import 'package:app/screens/pages/group.dart';
+import 'package:app/screens/pages/homepage/BtmNavigation/group.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

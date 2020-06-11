@@ -99,15 +99,21 @@ class _GroupState extends State<Group> {
     String groupUID = groupdata.groupUID;
     DataBaseService dbService =
         DataBaseService(uid: user.uid, groupUID: groupUID);
+    final _formKey = GlobalKey<FormState>();
+
     return showDialog(
       context: context,
       child: Dialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
           child: Container(
-            height: 225,
+            height: 220,
             child: Padding(
-                padding: EdgeInsets.all(20),
+                padding: EdgeInsets.only(
+                  top :20,
+                  left: 20,
+                  right: 20
+                ),
                 child: Column(
                   children: <Widget>[
                     Padding(
@@ -119,27 +125,35 @@ class _GroupState extends State<Group> {
                         )),
                     Padding(
                       padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                      child: TextField(
-                        onChanged: (name) {
-                          setState(() {
-                            billName = name;
-                            print(billName);
-                          });
-                        },
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide(
-                                  color: Colors.black,
-                                )),
-                            labelText: 'Bill Name'),
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Bill Name cannot be Empty';
+                            }
+                            return null;
+                          },
+                          onChanged: (name) {
+                            setState(() {
+                              billName = name;
+                            });
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
+                                  )),
+                              labelText: 'Bill Name'),
+                        ),
                       ),
                     ),
                     Row(
                       children: <Widget>[
                         Padding(
                             padding: EdgeInsets.only(
-                                top: 30.0, left: 25.0, right: 30.0),
+                                top: 20.0, left: 25.0, right: 30.0),
                             child: FlatButton(
                               child: Text(
                                 "Ok",
@@ -153,19 +167,21 @@ class _GroupState extends State<Group> {
                               ),
                               onPressed: () {
                                 // need add save bill to database
-                                Navigator.pop(context);
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => ItemPage(
-                                            dbService: dbService,
-                                            pc: pc,
-                                            billName: billName)));
+                                if (_formKey.currentState.validate()) {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ItemPage(
+                                              dbService: dbService,
+                                              pc: pc,
+                                              billName: billName)));
+                                }
                               },
                             )),
                         Padding(
                             padding: EdgeInsets.only(
-                              top: 30.0,
+                              top: 20.0,
                               left: 15.0,
                             ),
                             child: FlatButton(

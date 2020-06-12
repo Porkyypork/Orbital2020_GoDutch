@@ -1,8 +1,10 @@
+import 'package:app/constants/colour.dart';
 import 'package:app/constants/loading.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
+import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:app/services/database.dart';
 
@@ -16,7 +18,6 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-
   final String groupUID;
   Iterable<Contact> _contactsAll;
   final Firestore db = Firestore.instance;
@@ -58,20 +59,21 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
-
     final user = Provider.of<UserDetails>(context);
     bool isSearching = searchController.text.isNotEmpty;
-    final DataBaseService dbService = new DataBaseService(uid : user.uid, groupUID : groupUID);
+    final DataBaseService dbService =
+        new DataBaseService(uid: user.uid, groupUID: groupUID);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Contacts'),
-        actions: <Widget>[
-          // doneButton(),
-        ],
-      ),
-      body: _contactsAll != null
-          ? Container(
+    return _contactsAll != null
+        ? Scaffold(
+            appBar: GradientAppBar(
+              title: Text('Contacts'),
+              gradient: appBarGradient,
+              actions: <Widget>[
+                // doneButton(),
+              ],
+            ),
+            body: Container(
               padding: EdgeInsets.all(10),
               child: Column(
                 children: <Widget>[
@@ -82,7 +84,6 @@ class _ContactsPageState extends State<ContactsPage> {
                         labelText: 'Search',
                         border: new OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(1000)),
-                          borderSide: BorderSide(color: Colors.red),
                         ),
                         prefixIcon: Icon(Icons.search),
                       ),
@@ -114,9 +115,13 @@ class _ContactsPageState extends State<ContactsPage> {
                                         MemoryImage(contact.avatar),
                                   )
                                 : CircleAvatar(
-                                    child: Text(contact.initials()),
-                                    backgroundColor:
-                                        Theme.of(context).accentColor,
+                                    child: Text(
+                                      contact.initials(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    backgroundColor: Colors.teal[300],
                                   ),
                             title: Text(contact.displayName ?? ''),
                             subtitle:
@@ -128,9 +133,8 @@ class _ContactsPageState extends State<ContactsPage> {
                   ),
                 ],
               ),
-            )
-          : Center(child: Loading()),
-    );
+            ))
+        : Loading();
   }
 
   Widget _addBackground() {

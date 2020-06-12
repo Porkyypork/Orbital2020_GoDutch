@@ -23,9 +23,9 @@ class ItemPage extends StatefulWidget {
 class _ItemPageState extends State<ItemPage> {
   List<ItemDetails> _items = [];
 
-  DataBaseService dbService;
-  PanelController pc;
-  String billName;
+  final DataBaseService dbService;
+  final PanelController pc;
+  final String billName;
 
   _ItemPageState({this.dbService, this.pc, this.billName});
 
@@ -183,7 +183,7 @@ class _ItemPageState extends State<ItemPage> {
                             context: context,
                             tiles: [
                               ListTile(
-                                  title: Text("Key in a Bill"),
+                                  title: Text("Add an Item"),
                                   onTap: () {
                                     Navigator.push(
                                         context,

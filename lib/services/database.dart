@@ -191,7 +191,7 @@ class DataBaseService {
     return new BillDetails(billName, billReference.documentID);
   }
 
-  Future<ItemDetails> createItem(String itemName, itemPrice) async {
+  Future<ItemDetails> createItem(String itemName, double itemPrice) async {
     DocumentReference itemReference = db
         .collection("users")
         .document(this.uid)
@@ -213,7 +213,7 @@ class DataBaseService {
         totalPrice: itemPrice);
   }
 
-  void shareItemWith(Contact contact) async {
+  void shareItemWith(MemberDetails member) async {
     try {
       await db
           .collection('users')
@@ -226,8 +226,8 @@ class DataBaseService {
           .document(itemUID)
           .collection('sharingList')
           .add({
-        'Name': contact.displayName,
-        'Number': contact.phones.first.value.toString(),
+        'Name': member.name,
+        'Number': member.number
       });
     } catch (e) {
       print(e.toString());

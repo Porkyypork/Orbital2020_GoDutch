@@ -21,7 +21,7 @@ class GoDutch extends StatelessWidget {
       value: AuthService().user,
       child: MaterialApp(
         theme: ThemeData(
-          primaryColor: appBar,
+          scaffoldBackgroundColor: scaffoldBackground,
         ),
         routes: {
           '/home': (context) => Home(),

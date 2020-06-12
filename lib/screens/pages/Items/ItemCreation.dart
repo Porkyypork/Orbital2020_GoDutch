@@ -1,5 +1,6 @@
 import 'package:app/constants/colour.dart';
 import 'package:app/models/MemberDetails.dart';
+import 'package:app/models/itemDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -7,7 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:app/screens/pages/Items/SharingGrid.dart';
 
 class ItemCreation extends StatefulWidget {
-
   final DataBaseService dbService;
 
   ItemCreation({this.dbService});
@@ -22,10 +22,13 @@ class _ItemCreationState extends State<ItemCreation> {
   DataBaseService dbService;
   String itemName = "";
   String totalPrice = "";
+  ItemDetails itemDetails;
+  final _formKey = GlobalKey<FormState>();
+  List<MemberDetails> selectedMembers = [];
 
   _ItemCreationState({this.dbService});
 
-  @override 
+  @override
   void initState() {
     super.initState();
     nameController.addListener(_nameListener);
@@ -59,11 +62,11 @@ class _ItemCreationState extends State<ItemCreation> {
               children: <Widget>[
                 Container(
                     //add if need any
-                ),
+                    ),
                 _itemText(),
                 _priceText(),
                 _shareTextWidget(),
-                SharingGrid(),
+                SharingGrid(selectedMembers: selectedMembers,),
                 _splitbutton(),
               ],
             )),
@@ -83,8 +86,15 @@ class _ItemCreationState extends State<ItemCreation> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
-          onPressed: () {
-
+          onPressed: () async {
+            itemDetails = await dbService.createItem(itemName, double.parse(totalPrice));
+            dbService = new DataBaseService(
+                uid: dbService.uid,
+                groupUID: dbService.groupUID,
+                billUID: dbService.billUID,
+                itemUID: itemDetails.itemUID);
+            addMembers(selectedMembers);
+            Navigator.pop(context);
           },
         ));
   }
@@ -105,9 +115,16 @@ class _ItemCreationState extends State<ItemCreation> {
 
   Padding _priceText() {
     return Padding(
+      key: _formKey,
       padding:
           EdgeInsets.only(top: 5.0, bottom: 15.0, left: 10.0, right: 200.0),
-      child: TextField(
+      child: TextFormField(
+        validator: (val) {
+          if (val.isEmpty) {
+            return 'Total Price cannot be empty!';
+          }
+          return null;
+        },
         keyboardType: TextInputType.number,
         controller: priceController,
         decoration: InputDecoration(
@@ -126,7 +143,13 @@ class _ItemCreationState extends State<ItemCreation> {
   Widget _itemText() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-      child: TextField(
+      child: TextFormField(
+        validator: (val) {
+          if (val.isEmpty) {
+            return 'Item Name cannot be empty!';
+          }
+          return null;
+        },
         controller: nameController,
         decoration: InputDecoration(
           border: OutlineInputBorder(
@@ -141,8 +164,15 @@ class _ItemCreationState extends State<ItemCreation> {
     );
   }
 
+  Future<void> addMembers(List<MemberDetails> members) async {
+    for (MemberDetails member in members) {
+      print(member.name);
+      dbService.shareItemWith(member);
+    }
+  }
+
   void _nameListener() {
-    setState((){
+    setState(() {
       itemName = nameController.text;
     });
     print(itemName); // for debugging

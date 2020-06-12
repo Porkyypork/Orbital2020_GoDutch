@@ -12,6 +12,8 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:app/screens/pages/homepage/BtmNavigation/Bills.dart';
+import 'package:app/constants/loading.dart';
+import 'package:app/models/BillDetails.dart';
 
 class _GroupState extends State<Group> {
   GroupDetails groupdata;
@@ -19,6 +21,7 @@ class _GroupState extends State<Group> {
   final PanelController pc = new PanelController();
   int _selectedIndex = 0;
   String billName = "";
+  BillDetails billDetails;
 
   _GroupState({this.groupdata});
 
@@ -32,8 +35,8 @@ class _GroupState extends State<Group> {
         DataBaseService(uid: user.uid, groupUID: groupUID);
 
     List<Widget> _widgetOptions = <Widget>[
-      Bills(dbService: dbService, pc: pc),
-      ContactListView(groupdata: groupdata)
+      ContactListView(groupdata: groupdata),
+      Bills(dbService: dbService, pc: pc)
     ];
 
     return StreamProvider<List<MemberDetails>>.value(
@@ -42,10 +45,15 @@ class _GroupState extends State<Group> {
         backgroundColor: Colors.blue[50],
         appBar: GradientAppBar(
           gradient: appBarGradient,
-          title: Text(
-            groupName,
-            style: TextStyle(color: Colors.white),
-          ),
+          title: _selectedIndex == 0
+              ? Text(
+                'Members',
+                style :TextStyle(color: Colors.white), 
+              )
+              : Text(
+                  groupName,
+                  style: TextStyle(color: Colors.white),
+                ),
           elevation: 0,
           centerTitle: true,
         ),
@@ -55,29 +63,29 @@ class _GroupState extends State<Group> {
           backgroundColor: Colors.teal[500],
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-                icon: Icon(Icons.receipt), title: Text('Bills')),
+                icon: Icon(Icons.group), title: Text('Members')),
             BottomNavigationBarItem(
-                icon: Icon(Icons.group), title: Text('Members'))
+                icon: Icon(Icons.receipt), title: Text('Bills'))
           ],
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
         ),
-        floatingActionButton: _getFAB(groupUID),
+        floatingActionButton: _getFAB(groupUID, dbService),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }
 
-  Widget _getFAB(String groupUID) {
+  Widget _getFAB(String groupUID, DataBaseService dbService) {
     return _selectedIndex == 0
-        ? _billsFAB()
-        : AccessContacts(groupUID: groupUID);
+        ? AccessContacts(groupUID: groupUID)
+        : _billsFAB(dbService);
   }
 
-  FloatingActionButton _billsFAB() {
+  FloatingActionButton _billsFAB(DataBaseService dbService) {
     return FloatingActionButton(
       onPressed: () {
-        _billsDialog();
+        _billsDialog(dbService);
       },
       child: Container(
         height: 70,
@@ -94,11 +102,7 @@ class _GroupState extends State<Group> {
     );
   }
 
-  Future<dynamic> _billsDialog() {
-    final user = Provider.of<UserDetails>(context);
-    String groupUID = groupdata.groupUID;
-    DataBaseService dbService =
-        DataBaseService(uid: user.uid, groupUID: groupUID);
+  Future<dynamic> _billsDialog(DataBaseService dbService) {
     final _formKey = GlobalKey<FormState>();
 
     return showDialog(
@@ -109,11 +113,7 @@ class _GroupState extends State<Group> {
           child: Container(
             height: 220,
             child: Padding(
-                padding: EdgeInsets.only(
-                  top :20,
-                  left: 20,
-                  right: 20
-                ),
+                padding: EdgeInsets.only(top: 20, left: 20, right: 20),
                 child: Column(
                   children: <Widget>[
                     Padding(
@@ -165,9 +165,15 @@ class _GroupState extends State<Group> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30.0),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
                                 // need add save bill to database
                                 if (_formKey.currentState.validate()) {
+                                  billDetails =
+                                      await dbService.createBill(billName);
+                                  dbService = new DataBaseService(
+                                      uid: dbService.uid,
+                                      groupUID: dbService.groupUID,
+                                      billUID: billDetails.billUID);
                                   Navigator.pop(context);
                                   Navigator.push(
                                       context,

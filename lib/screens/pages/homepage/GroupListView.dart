@@ -8,9 +8,9 @@ import 'package:app/services/database.dart';
 
 class _GroupListViewState extends State<GroupListView> {
   final Firestore db = Firestore.instance;
-  UserDetails currentUser;
   TextEditingController searchController = new TextEditingController();
 
+  UserDetails currentUser;
   _GroupListViewState({this.currentUser});
 
   @override
@@ -20,32 +20,14 @@ class _GroupListViewState extends State<GroupListView> {
     if (groups == null || groups.length == 0) {
       return _buildNoGroupDisplay();
     } else {
-      return Column(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.all(10),
-            child: TextField(
-              controller: searchController,
-              decoration: InputDecoration(
-                labelText: 'Search *not working yet*',
-                border: new OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(1000)),
-                  borderSide: BorderSide(color: Colors.red),
-                ),
-                prefixIcon: Icon(Icons.search),
-              ),
-            ),
-          ),
-          Divider(),
-          Expanded(
-            child: ListView.builder(
-                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-                itemCount: groups.length,
-                itemBuilder: (context, index) {
-                  return _buildGroupTile(groups[index]);
-                }),
-          ),
-        ],
+      return Expanded(
+        child: ListView.builder(
+          shrinkWrap: true,
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+            itemCount: groups.length,
+            itemBuilder: (context, index) {
+              return _buildGroupTile(groups[index]);
+            }),
       );
     }
   }
@@ -179,7 +161,7 @@ class _GroupListViewState extends State<GroupListView> {
 }
 
 class GroupListView extends StatefulWidget {
-  final UserDetails currentUser;
+  UserDetails currentUser;
   GroupListView({this.currentUser});
 
   @override

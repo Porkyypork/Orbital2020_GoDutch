@@ -7,6 +7,7 @@ import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../services/database.dart';
+import 'package:app/screens/pages/homepage/BtmNavigation/group.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 class _HomeState extends State<Home> {
@@ -21,30 +22,59 @@ class _HomeState extends State<Home> {
       value: DataBaseService(uid: user.uid).groups,
       child: Scaffold(
         backgroundColor: Colors.blue[50],
-        appBar: GradientAppBar(
-          title: Text(
-            _title,
-            style: TextStyle(color: Colors.white),
-          ),
-          elevation: 0,
-          gradient: appBarGradient,
-          centerTitle: true,
+        body: Column(
+          children: <Widget>[
+            _buildCustomAppBar(),
+            SizedBox(height: 5),
+            GroupListView(),
+            SizedBox(height: 30),
+          ],
         ),
-
-        drawer: _buildDrawerMenu(context), //end drawer menu
-
-        body: GroupListView(),
-
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            color: Colors.teal[500]
-          ),
+          decoration: BoxDecoration(color: Colors.teal[500]),
           child: Container(height: 50),
         ),
-
         floatingActionButton: _buildCreateGroupButton(),
-
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      ),
+    );
+  }
+
+  Widget _buildCustomAppBar() {
+    final user = Provider.of<UserDetails>(context);
+
+    return Container(
+      height: 100,
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        gradient: appBarGradient,
+        borderRadius: BorderRadius.only(bottomRight: Radius.circular(40)),
+      ),
+      child: Row(
+        children: <Widget>[
+          SizedBox(width: 10),
+          Column(
+            children: <Widget>[
+              SizedBox(height: 30),
+              Text(
+                "Welcome back,",
+                style: TextStyle(fontSize: 24),
+              ),
+              Text(
+                user.name,
+                style: TextStyle(fontSize: 24),
+              ),
+            ],
+          ),
+          SizedBox(width: 150),
+          IconButton(
+            onPressed: () async {
+              Navigator.of(context).pushReplacementNamed('/');
+              await _auth.signOut();
+            },
+            icon: Icon(Icons.exit_to_app),
+          ),
+        ],
       ),
     );
   }
@@ -52,8 +82,7 @@ class _HomeState extends State<Home> {
   Widget _buildCreateGroupButton() {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.pushNamed(context, '/group_creation');
-        print("proceeding to group creation page\n");
+        _groupsDialog();
       },
       child: Container(
         height: 70,
@@ -61,11 +90,119 @@ class _HomeState extends State<Home> {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.teal[500], width: 5),
           shape: BoxShape.circle,
-          color: Color(0xFF48D1CC), // this is the green button idk if it looks good? need change on AcccessContacts also
+          color: Color(
+              0xFF48D1CC), // this is the green button idk if it looks good? need change on AcccessContacts also
         ),
         child: Icon(Icons.add, size: 30, color: Colors.black),
       ),
       elevation: 0,
+    );
+  }
+
+  Future<dynamic> _groupsDialog() {
+    final _formKey = GlobalKey<FormState>();
+    final user = Provider.of<UserDetails>(context);
+    DataBaseService dbService = DataBaseService(uid: user.uid);
+    String groupName = "";
+
+    return showDialog(
+      context: context,
+      child: Dialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+          child: Container(
+            height: 220,
+            child: Padding(
+                padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: Text(
+                          "New Group",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20.0),
+                        )),
+                    Padding(
+                      padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+                      child: Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Group name cannot be Empty';
+                            }
+                            return null;
+                          },
+                          onChanged: (name) {
+                            setState(() {
+                              groupName = name;
+                            });
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.black,
+                                  )),
+                              labelText: 'Group name'),
+                        ),
+                      ),
+                    ),
+                    Row(
+                      children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.only(
+                                top: 20.0, left: 25.0, right: 30.0),
+                            child: FlatButton(
+                              child: Text(
+                                "Ok",
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              color: Colors.teal[300],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              onPressed: () async {
+                                if (_formKey.currentState.validate()) {
+                                  GroupDetails groupsDetails = await dbService
+                                      .createGroupData(groupName, user);
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              Group(data: groupsDetails)));
+                                }
+                              },
+                            )),
+                        Padding(
+                            padding: EdgeInsets.only(
+                              top: 20.0,
+                              left: 15.0,
+                            ),
+                            child: FlatButton(
+                              child: Text(
+                                "Close",
+                                style: TextStyle(
+                                    fontSize: 17.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              color: Colors.teal[300],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            )),
+                      ],
+                    ),
+                  ],
+                )),
+          )),
     );
   }
 

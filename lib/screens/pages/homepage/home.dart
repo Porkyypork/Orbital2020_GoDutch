@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../services/database.dart';
 import 'package:app/screens/pages/homepage/BtmNavigation/group.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 
 class _HomeState extends State<Home> {
   AuthService _auth = AuthService();

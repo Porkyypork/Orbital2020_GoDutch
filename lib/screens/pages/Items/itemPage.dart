@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ItemPage extends StatefulWidget {
-
   final String billName;
   final DataBaseService dbService;
   final PanelController pc;
@@ -19,12 +18,11 @@ class ItemPage extends StatefulWidget {
   ItemPage({this.dbService, this.pc, this.billName});
 
   @override
-  _ItemPageState createState() => _ItemPageState(dbService: dbService, pc: pc, billName: billName);
+  _ItemPageState createState() =>
+      _ItemPageState(dbService: dbService, pc: pc, billName: billName);
 }
 
 class _ItemPageState extends State<ItemPage> {
-  List<ItemDetails> _items = [];
-
   final DataBaseService dbService;
   final PanelController pc;
   final String billName;
@@ -35,32 +33,32 @@ class _ItemPageState extends State<ItemPage> {
   Widget build(BuildContext context) {
     return StreamProvider<List<ItemDetails>>.value(
       value: dbService.items,
-        child : Scaffold(
-          backgroundColor: Colors.blue[50],
-          appBar: GradientAppBar(
-            gradient: appBarGradient,
-            title: Text(billName),
-            centerTitle: true,
-          ),
-          body: SlidingUpPanel(
-            controller: pc,
-            backdropEnabled: true,
-            isDraggable: false,
-            body: ItemListView(dbService : dbService),
-            panel: _menu(dbService),
-            collapsed: _floatingCollasped(),
-            minHeight: 0,
-            maxHeight: 232,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50),
-              topRight: Radius.circular(50),
-            ),
-          ),
-          floatingActionButton: _createButton(),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar:
-              BottomAppBar(color: Colors.teal[500], child: SizedBox(height: 54)),
+      child: Scaffold(
+        backgroundColor: Colors.blue[50],
+        appBar: GradientAppBar(
+          gradient: appBarGradient,
+          title: Text(billName),
+          centerTitle: true,
         ),
+        body: SlidingUpPanel(
+          controller: pc,
+          backdropEnabled: true,
+          isDraggable: false,
+          body: ItemListView(dbService: dbService),
+          panel: _menu(dbService),
+          collapsed: _floatingCollasped(),
+          minHeight: 0,
+          maxHeight: 232,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        floatingActionButton: _createButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar:
+            BottomAppBar(color: Colors.teal[500], child: SizedBox(height: 54)),
+      ),
     );
   }
 

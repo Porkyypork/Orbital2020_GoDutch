@@ -234,7 +234,7 @@ class DataBaseService {
   List<ItemDetails> _itemDetailsFromSnapShot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new ItemDetails(
-          name: doc.data['name'],
+          name: doc.data['Name'],
           itemUID: doc.data['itemUID'],
           totalPrice: doc.data["totalPrice"]);
     }).toList();

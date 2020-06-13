@@ -36,7 +36,8 @@ class _ItemListViewState extends State<ItemListView> {
   Widget _buildItemTile(int index, ItemDetails item) {
     String itemUID = item.itemUID;
     String name = item.name;
-    String totalPrice = item.totalPrice.toString();
+    String totalPrice = item.totalPrice.toStringAsFixed(2);
+    print(itemUID);
     return Dismissible(
         key: UniqueKey(),
         onDismissed: (direction) {
@@ -49,7 +50,7 @@ class _ItemListViewState extends State<ItemListView> {
           child: ListTile(
               leading: Icon(Icons.restaurant),
               title: Text(name),
-              subtitle: Text(totalPrice),
+              subtitle: Text("\$$totalPrice"),
               onTap: () {
                 //
               }),

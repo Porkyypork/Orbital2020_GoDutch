@@ -99,7 +99,7 @@ class DataBaseService {
     }).toList();
   }
 
-  void removeGroupMember(memberID) async {
+  void removeGroupMember(String memberID) async {
     await db
         .collection('users')
         .document(uid)
@@ -225,12 +225,44 @@ class DataBaseService {
           .collection('items')
           .document(itemUID)
           .collection('sharingList')
-          .add({
-        'Name': member.name,
-        'Number': member.number
-      });
+          .add({'Name': member.name, 'Number': member.number});
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  List<ItemDetails> _itemDetailsFromSnapShot(QuerySnapshot snap) {
+    return snap.documents.map((doc) {
+      return new ItemDetails(
+          name: doc.data['name'],
+          itemUID: doc.data['itemUID'],
+          totalPrice: doc.data["totalPrice"]);
+    }).toList();
+  }
+
+  Stream<List<ItemDetails>> get items {
+    return db
+        .collection("users")
+        .document(this.uid)
+        .collection("groups")
+        .document(this.groupUID)
+        .collection('bills')
+        .document(this.billUID)
+        .collection('items')
+        .snapshots()
+        .map(_itemDetailsFromSnapShot);
+  }
+
+  Future<void> deleteItem(String itemUID) async {
+    await db
+        .collection('users')
+        .document(uid)
+        .collection('groups')
+        .document(groupUID)
+        .collection('bills')
+        .document(this.billUID)
+        .collection('items')
+        .document(itemUID)
+        .delete();
   }
 }

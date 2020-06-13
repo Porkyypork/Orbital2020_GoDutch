@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-
-
 class Bills extends StatefulWidget {
   final DataBaseService dbService;
   final PanelController pc;

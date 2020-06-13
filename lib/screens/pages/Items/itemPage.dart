@@ -1,4 +1,5 @@
 import 'package:app/models/itemDetails.dart';
+import 'package:app/screens/pages/Items/itemsListView.dart';
 import 'package:app/screens/pages/PhotoPreviewPage.dart';
 import 'package:flutter/material.dart';
 import 'package:app/constants/colour.dart';
@@ -6,6 +7,7 @@ import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class ItemPage extends StatefulWidget {
@@ -31,79 +33,34 @@ class _ItemPageState extends State<ItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blue[50],
-      appBar: GradientAppBar(
-        gradient: appBarGradient,
-        title: Text(billName),
-        centerTitle: true,
-      ),
-      body: SlidingUpPanel(
-        controller: pc,
-        backdropEnabled: true,
-        isDraggable: false,
-        body: _listItems(),
-        panel: _menu(dbService),
-        collapsed: _floatingCollasped(),
-        minHeight: 0,
-        maxHeight: 232,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(50),
-          topRight: Radius.circular(50),
-        ),
-      ),
-      floatingActionButton: _createButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar:
-          BottomAppBar(color: Colors.teal[500], child: SizedBox(height: 54)),
-    );
-  }
-
-  Widget _listItems() {
-    return _items == null || _items.length == 0
-        ? _initialState()
-        : ListView.builder(
-            itemCount: _items.length,
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-            itemBuilder: (context, index) {
-              return _buildItemTile(index);
-            });
-  }
-
-  Widget _buildItemTile(int index) {
-    return Dismissible(
-        key: UniqueKey(),
-        onDismissed: (direction) {
-          setState(() {
-            String itemName = _items.elementAt(index).name;
-            _items.removeAt(index);
-            _deletionMessage(context, itemName);
-          });
-        },
-        child: Container(
-          child: ListTile(
-              leading: Icon(Icons.restaurant),
-              title: Text('Item Name'),
-              subtitle: Text('Total Price'),
-              trailing: SizedBox(child: Text('QTY')),
-              onTap: () {
-                //
-              }),
-        ));
-  }
-
-  Widget _initialState() {
-    return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            "Tap on the Add Icon to get Started!",
-            style: TextStyle(fontSize: 22.0),
+    return StreamProvider<List<ItemDetails>>.value(
+      value: dbService.items,
+        child : Scaffold(
+          backgroundColor: Colors.blue[50],
+          appBar: GradientAppBar(
+            gradient: appBarGradient,
+            title: Text(billName),
+            centerTitle: true,
           ),
-          SizedBox(height: 140),
-        ],
-      ),
+          body: SlidingUpPanel(
+            controller: pc,
+            backdropEnabled: true,
+            isDraggable: false,
+            body: ItemListView(dbService : dbService),
+            panel: _menu(dbService),
+            collapsed: _floatingCollasped(),
+            minHeight: 0,
+            maxHeight: 232,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(50),
+              topRight: Radius.circular(50),
+            ),
+          ),
+          floatingActionButton: _createButton(),
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          bottomNavigationBar:
+              BottomAppBar(color: Colors.teal[500], child: SizedBox(height: 54)),
+        ),
     );
   }
 
@@ -125,12 +82,6 @@ class _ItemPageState extends State<ItemPage> {
       ),
       elevation: 0,
     );
-  }
-
-  void _deletionMessage(context, String itemName) {
-    Scaffold.of(context).showSnackBar(SnackBar(
-      content: Text("You have deleted $itemName"),
-    ));
   }
 
   Widget _floatingCollasped() {

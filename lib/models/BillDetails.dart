@@ -5,9 +5,9 @@ class BillDetails {
   double totalPrice;
   final DateTime date = DateTime.now();
 
-  BillDetails(String name, String billUID) {
+  BillDetails(String name, String billUID, double totalPrice) {
     this.billName = name;
     this.billUID = billUID;
-    this.totalPrice = 0.0;
+    this.totalPrice = totalPrice;
   }
 }

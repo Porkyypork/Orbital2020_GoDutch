@@ -173,6 +173,27 @@ class DataBaseService {
         .map(_memberDetailsFromSnapShot);
   }
 
+  List<BillDetails> _billDetailsFromSnapshot(QuerySnapshot snap) {
+    return snap.documents.map((doc) {
+      return new BillDetails(
+        doc.data['Name'] ?? '',
+        doc.documentID,
+        doc.data['totalPrice'] ?? -1.0,
+      );
+    }).toList();
+  }
+
+  Stream<List<BillDetails>> get bill {
+    return db
+        .collection('users')
+        .document(this.uid)
+        .collection('groups')
+        .document(this.groupUID)
+        .collection('bills')
+        .snapshots()
+        .map(_billDetailsFromSnapshot);
+  }
+
   Future<BillDetails> createBill(String billName) async {
     DocumentReference billReference = db
         .collection("users")
@@ -188,7 +209,7 @@ class DataBaseService {
       'Date': DateTime.now(),
     });
 
-    return new BillDetails(billName, billReference.documentID);
+    return new BillDetails(billName, billReference.documentID, 0.0);
   }
 
   Future<ItemDetails> createItem(String itemName, double itemPrice) async {

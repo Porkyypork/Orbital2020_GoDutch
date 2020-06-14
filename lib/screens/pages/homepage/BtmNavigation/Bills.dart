@@ -1,3 +1,4 @@
+import 'package:app/models/BillDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
@@ -23,61 +24,36 @@ class _BillsState extends State<Bills> {
   Widget build(BuildContext context) {
     final members = Provider.of<List<MemberDetails>>(context);
 
-    return ListView.builder(
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-        itemCount: members.length,
-        itemBuilder: (context, index) {
-          return _buildOwedTile(members[index]);
-        });
+    return StreamProvider<List<BillDetails>>.value(
+      value: dbService.bill,
+      child: _buildBillsList(),
+    );
   }
 
-  Widget _buildOwedTile(MemberDetails member) {
+  Widget _buildBillsList() {
+    final bills = Provider.of<List<BillDetails>>(context);
+
+    return ListView.builder(
+      padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0,),
+      itemCount: bills.length,
+      itemBuilder: (context, index) {
+        return _buildBillsListTile(bills[index]);
+      }
+    );
+  }
+
+  Widget _buildBillsListTile(BillDetails bill) {
     return Container(
-      height: 60,
-      margin: EdgeInsets.all(3),
-      padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
       decoration: BoxDecoration(
         border: Border.all(),
       ),
       child: Row(
         children: <Widget>[
-          GestureDetector(
-            onTap: () {
-              // Navigator.push(
-              //     context, MaterialPageRoute(builder: (context) => DebtPreview()));
-            },
-            child: Row(
-              children: <Widget>[
-                Container(width: 290, child: Text('${member.name}')),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                      width: 50,
-                      child: Text('\$${member.debt} ',
-                          style: (member.debt != 0)
-                              ? TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.red[700],
-                                )
-                              : TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.green[700],
-                                )),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: Icon(Icons.check),
-            onPressed: () {
-              // remove all debts
-            },
-          ),
+          Text(bill.billName),
+          Text('${bill.totalPrice}'),
         ],
-      ),
+      )
     );
   }
+
 }

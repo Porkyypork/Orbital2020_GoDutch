@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ItemListView extends StatefulWidget {
-
   final DataBaseService dbService;
 
   ItemListView({this.dbService});
@@ -14,13 +13,11 @@ class ItemListView extends StatefulWidget {
 }
 
 class _ItemListViewState extends State<ItemListView> {
-
   final DataBaseService dbService;
 
   _ItemListViewState({this.dbService});
   @override
   Widget build(BuildContext context) {
-
     final _items = Provider.of<List<ItemDetails>>(context);
 
     return _items == null || _items.length == 0
@@ -59,14 +56,20 @@ class _ItemListViewState extends State<ItemListView> {
 
   Widget _initialState() {
     return Container(
-      child: Column(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
-            "Tap on the Add Icon to get Started!",
-            style: TextStyle(fontSize: 22.0),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 120),
+              Text(
+                "Tap on the Add Icon to get Started!",
+                style: TextStyle(fontSize: 22.0),
+              ),
+              SizedBox(height: 140),
+            ],
           ),
-          SizedBox(height: 140),
         ],
       ),
     );

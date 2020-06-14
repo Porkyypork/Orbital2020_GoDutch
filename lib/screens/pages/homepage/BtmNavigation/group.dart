@@ -18,7 +18,6 @@ import 'package:app/models/BillDetails.dart';
 class _GroupState extends State<Group> {
   GroupDetails groupdata;
   final Firestore db = Firestore.instance;
-  final PanelController pc = new PanelController();
   int _selectedIndex = 0;
   String billName = "";
   BillDetails billDetails;
@@ -36,7 +35,7 @@ class _GroupState extends State<Group> {
 
     List<Widget> _widgetOptions = <Widget>[
       ContactListView(groupdata: groupdata),
-      Bills(dbService: dbService, pc: pc)
+      Bills(dbService: dbService)
     ];
 
     return StreamProvider<List<MemberDetails>>.value(
@@ -180,7 +179,6 @@ class _GroupState extends State<Group> {
                                       MaterialPageRoute(
                                           builder: (context) => ItemPage(
                                               dbService: dbService,
-                                              pc: pc,
                                               billName: billName)));
                                 }
                               },

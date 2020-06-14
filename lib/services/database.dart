@@ -179,6 +179,7 @@ class DataBaseService {
         doc.data['Name'] ?? '',
         doc.documentID,
         doc.data['totalPrice'] ?? -1.0,
+        doc.data['Date'].toDate()
       );
     }).toList();
   }
@@ -209,7 +210,7 @@ class DataBaseService {
       'Date': DateTime.now(),
     });
 
-    return new BillDetails(billName, billReference.documentID, 0.0);
+    return new BillDetails(billName, billReference.documentID, 0.0, DateTime.now());
   }
 
   Future<ItemDetails> createItem(String itemName, double itemPrice) async {

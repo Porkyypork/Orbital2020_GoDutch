@@ -1,20 +1,19 @@
 import 'package:app/constants/colour.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/models/GroupDetails.dart';
+import 'package:app/screens/pages/group_related/group.dart';
 import 'package:app/screens/pages/homepage/GroupListView.dart';
 import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../services/database.dart';
-import 'package:app/screens/pages/homepage/BtmNavigation/group.dart';
 
 class _HomeState extends State<Home> {
   AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
-    final String _title = 'GoDutch';
     final user = Provider.of<UserDetails>(context);
 
     return StreamProvider<List<GroupDetails>>.value(

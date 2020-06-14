@@ -87,13 +87,19 @@ class _ItemCreationState extends State<ItemCreation> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           onPressed: () async {
-            itemDetails = await dbService.createItem(itemName, double.parse(totalPrice));
+            double price = double.parse(totalPrice);
+            int numShared = selectedMembers.length;
+            double pricePerPax = price / numShared;
+            itemDetails = await dbService.createItem(itemName, price, selectedMembers);
+            // for (MemberDetails member in selectedMembers) {
+            //   dbService.updateMember(member, pricePerPax);
+            // } TODO: NOT WORKING
             dbService = new DataBaseService(
                 uid: dbService.uid,
                 groupUID: dbService.groupUID,
                 billUID: dbService.billUID,
                 itemUID: itemDetails.itemUID);
-            addMembers(selectedMembers);
+            // addMembers(selectedMembers);
             Navigator.pop(context);
           },
         ));

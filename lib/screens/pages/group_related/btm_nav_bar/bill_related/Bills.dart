@@ -1,9 +1,8 @@
 import 'package:app/models/BillDetails.dart';
-import 'package:app/screens/pages/homepage/BtmNavigation/BillsListView.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'BillsListView.dart';
 
 class Bills extends StatefulWidget {
   final DataBaseService dbService;
@@ -22,7 +21,7 @@ class _BillsState extends State<Bills> {
 
     return StreamProvider<List<BillDetails>>.value(
       value: dbService.bill,
-      child: BillsListView(),
+      child: BillsListView(dbService: this.dbService,),
     );
   }
 }

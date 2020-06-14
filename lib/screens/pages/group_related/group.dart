@@ -2,7 +2,6 @@ import 'package:app/constants/colour.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/UserDetails.dart';
-import 'package:app/screens/pages/ContactListView.dart';
 import 'package:app/screens/pages/Items/itemPage.dart';
 import 'package:app/services/AccessContacts.dart';
 import 'package:app/services/database.dart';
@@ -10,10 +9,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
-import 'package:app/screens/pages/homepage/BtmNavigation/Bills.dart';
-import 'package:app/constants/loading.dart';
 import 'package:app/models/BillDetails.dart';
+
+import 'btm_nav_bar/ContactListView.dart';
+import 'btm_nav_bar/bill_related/Bills.dart';
 
 class _GroupState extends State<Group> {
   GroupDetails groupdata;
@@ -165,7 +164,6 @@ class _GroupState extends State<Group> {
                                 borderRadius: BorderRadius.circular(30.0),
                               ),
                               onPressed: () async {
-                                // need add save bill to database
                                 if (_formKey.currentState.validate()) {
                                   billDetails =
                                       await dbService.createBill(billName);

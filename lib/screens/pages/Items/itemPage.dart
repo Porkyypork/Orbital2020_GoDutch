@@ -1,6 +1,5 @@
 import 'package:app/models/itemDetails.dart';
 import 'package:app/screens/pages/Items/itemsListView.dart';
-import 'package:app/screens/pages/PhotoPreviewPage.dart';
 import 'package:flutter/material.dart';
 import 'package:app/constants/colour.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -8,7 +7,8 @@ import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import 'PhotoPreviewPage.dart';
 
 class ItemPage extends StatefulWidget {
   final String billName;

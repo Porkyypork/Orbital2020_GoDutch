@@ -1,12 +1,12 @@
 import 'package:app/constants/colour.dart';
 import 'package:app/models/GroupDetails.dart';
-import 'package:app/screens/pages/homepage/BtmNavigation/group.dart';
+import 'package:app/models/UserDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/UserDetails.dart';
+import 'group.dart';
 
 class _GroupCreationState extends State<GroupCreation> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();

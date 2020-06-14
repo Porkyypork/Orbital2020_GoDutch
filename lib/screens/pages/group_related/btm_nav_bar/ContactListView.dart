@@ -1,10 +1,9 @@
+import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
+import 'package:app/models/UserDetails.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../models/GroupDetails.dart';
-import '../../models/UserDetails.dart';
 import 'package:app/services/database.dart';
 
 class ContactListView extends StatefulWidget {

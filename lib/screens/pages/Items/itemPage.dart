@@ -66,7 +66,7 @@ class _ItemPageState extends State<ItemPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ItemCreation(dbService: dbService)));
+                builder: (context) => ItemCreation(dbService: dbService, edit : false)));
       },
       child: Container(
         height: 70,

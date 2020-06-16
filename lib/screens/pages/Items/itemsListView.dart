@@ -1,4 +1,5 @@
 import 'package:app/models/itemDetails.dart';
+import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ class ItemListView extends StatefulWidget {
 }
 
 class _ItemListViewState extends State<ItemListView> {
-  final DataBaseService dbService;
+  DataBaseService dbService;
 
   _ItemListViewState({this.dbService});
   @override
@@ -49,7 +50,16 @@ class _ItemListViewState extends State<ItemListView> {
               title: Text(name),
               subtitle: Text("\$$totalPrice"),
               onTap: () {
-                //
+                dbService = new DataBaseService(
+                    uid: dbService.uid,
+                    groupUID: dbService.groupUID,
+                    billUID: dbService.billUID,
+                    itemUID: itemUID);
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ItemCreation(dbService: dbService, item : item, edit : true)));
               }),
         ));
   }

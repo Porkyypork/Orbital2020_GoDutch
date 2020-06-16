@@ -1,6 +1,7 @@
 import 'package:app/constants/colour.dart';
 import 'package:app/models/BillDetails.dart';
 import 'package:app/models/itemDetails.dart';
+import 'package:app/screens/pages/Items/itemPage.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -9,7 +10,7 @@ import 'package:provider/provider.dart';
 import 'BillBreakdownListView.dart';
 
 class BillBreakdown extends StatefulWidget {
-  BillDetails billDetails;
+  final BillDetails billDetails;
   final DataBaseService dbService;
   BillBreakdown({this.billDetails, this.dbService});
   @override
@@ -35,6 +36,8 @@ class _BillBreakdownState extends State<BillBreakdown> {
     return StreamProvider<List<ItemDetails>>.value(
       value: dbServiceItems.items,
       child: Scaffold(
+        floatingActionButton: _editButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         backgroundColor: Colors.blue[50],
         appBar: GradientAppBar(
           gradient: appBarGradient,
@@ -48,6 +51,24 @@ class _BillBreakdownState extends State<BillBreakdown> {
           child: Container(height: 50),
         ),
       ),
+    );
+  }
+
+  Widget _editButton() {
+    return Container(
+      child: FloatingActionButton.extended(
+          backgroundColor: Colors.teal[300],
+          label: Text('Edit',
+              style: TextStyle(
+                fontSize: 20,
+              )),
+          onPressed: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ItemPage(
+                        dbService: dbService, billName: billDetails.billName)));
+          }),
     );
   }
 }

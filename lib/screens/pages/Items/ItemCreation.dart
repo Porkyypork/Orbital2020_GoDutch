@@ -9,11 +9,14 @@ import 'package:app/screens/pages/Items/SharingGrid.dart';
 
 class ItemCreation extends StatefulWidget {
   final DataBaseService dbService;
+  final ItemDetails item;
+  final bool edit;
 
-  ItemCreation({this.dbService});
+  ItemCreation({this.dbService, this.item, this.edit});
 
   @override
-  _ItemCreationState createState() => _ItemCreationState(dbService: dbService);
+  _ItemCreationState createState() =>
+      _ItemCreationState(dbService: dbService, item: item, edit: edit);
 }
 
 class _ItemCreationState extends State<ItemCreation> {
@@ -25,12 +28,20 @@ class _ItemCreationState extends State<ItemCreation> {
   ItemDetails itemDetails;
   final _formKey = GlobalKey<FormState>();
   List<MemberDetails> selectedMembers = [];
+  ItemDetails item;
+  final bool edit;
 
-  _ItemCreationState({this.dbService});
+  _ItemCreationState({this.dbService, this.item, this.edit});
 
   @override
   void initState() {
     super.initState();
+    if (item != null) {
+      nameController.text = item.name;
+      priceController.text = item.totalPrice.toString();
+      itemName = item.name;
+      totalPrice = item.totalPrice.toString();
+    }
     nameController.addListener(_nameListener);
     priceController.addListener(_priceListener);
   }
@@ -66,7 +77,9 @@ class _ItemCreationState extends State<ItemCreation> {
                 _itemText(),
                 _priceText(),
                 _shareTextWidget(),
-                SharingGrid(selectedMembers: selectedMembers,),
+                SharingGrid(
+                  selectedMembers: selectedMembers,
+                ),
                 _splitbutton(),
               ],
             )),
@@ -90,7 +103,13 @@ class _ItemCreationState extends State<ItemCreation> {
             double price = double.parse(totalPrice);
             int numShared = selectedMembers.length;
             double pricePerPax = price / numShared;
-            itemDetails = await dbService.createItem(itemName, price, selectedMembers);
+            if (edit) {
+              itemDetails =
+                  await dbService.editItem(itemName, price, selectedMembers);
+            } else {
+              itemDetails =
+                  await dbService.createItem(itemName, price, selectedMembers);
+            }
             // for (MemberDetails member in selectedMembers) {
             //   dbService.updateMember(member, pricePerPax);
             // } TODO: NOT WORKING

@@ -22,17 +22,18 @@ class _BillsListViewState extends State<BillsListView> {
   Widget build(BuildContext context) {
     final bills = Provider.of<List<BillDetails>>(context);
 
-    return ListView.builder(
-        padding: EdgeInsets.symmetric(
-          vertical: 10.0,
-          horizontal: 10.0,
-        ),
-        itemCount: bills.length,
-        itemBuilder: (context, index) {
-          return _buildBillsListTile(bills[bills.length -
-              index -
-              1]); // to ensure the latest bill is at the top
-        });
+    return bills == null || bills.length == 0
+        ? _initialState()
+        : ListView.builder(
+            padding: EdgeInsets.symmetric(
+              vertical: 10.0,
+              horizontal: 10.0,
+            ),
+            itemCount: bills.length,
+            itemBuilder: (context, index) {
+              return _buildBillsListTile(
+                  bills[index]); // to ensure the latest bill is at the top
+            });
   }
 
   Widget _buildBillsListTile(BillDetails bill) {
@@ -45,6 +46,11 @@ class _BillsListViewState extends State<BillsListView> {
         },
         child: GestureDetector(
           onTap: () {
+            dbService = new DataBaseService(
+              uid : dbService.uid,
+              groupUID: dbService.groupUID,
+              billUID: bill.billUID
+            );
             Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -104,6 +110,27 @@ class _BillsListViewState extends State<BillsListView> {
             ),
           ),
         ));
+  }
+
+  Widget _initialState() {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 120),
+              Text(
+                "Tap on the Add Icon to get Started!",
+                style: TextStyle(fontSize: 22.0),
+              ),
+              SizedBox(height: 140),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   void _deletionMessage(context, String itemName) {

@@ -281,6 +281,7 @@ class DataBaseService {
         .document(this.itemUID);
     double prevPrice =
         await itemReference.get().then((item) => item['totalPrice']);
+ 
     itemReference.setData({
       'Name': itemName,
       'itemUID': itemReference.documentID,

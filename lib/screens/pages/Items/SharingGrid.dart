@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class SharingGrid extends StatefulWidget {
-  List<MemberDetails> selectedMembers;
+  final List<MemberDetails> selectedMembers;
 
   SharingGrid({this.selectedMembers});
 
@@ -27,7 +27,6 @@ class _SharingGridState extends State<SharingGrid> {
           childAspectRatio: MediaQuery.of(context).size.width /
               (MediaQuery.of(context).size.height / 10),
           children: List.generate(members.length, (index) {
-            //not working yet
             return CheckboxListTile(
                 title: Text(members[index].name),
                 value: selectedMembers.contains(members[index]),

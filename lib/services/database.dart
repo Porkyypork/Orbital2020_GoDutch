@@ -12,9 +12,10 @@ class DataBaseService {
   final Firestore db = Firestore.instance;
   final String groupUID;
   final String billUID;
+  final String owedBillUID;
   final String itemUID;
 
-  DataBaseService({this.uid, this.groupUID, this.billUID, this.itemUID});
+  DataBaseService({this.uid, this.groupUID, this.owedBillUID, this.billUID, this.itemUID});
 
   // creates the user data in the database
   Future<void> updateUserData(String name, String email, String number) async {
@@ -55,6 +56,7 @@ class DataBaseService {
     userReference.setData({
       'Name': user.name,
       'Number': user.number,
+      //'Debt' : 0
     });
 
     return groupDetails;
@@ -98,7 +100,7 @@ class DataBaseService {
           .add({
         'Name': contact.displayName,
         'Number': contact.phones.first.value.toString(),
-        'Debt': 0,
+        //'Debt': 0,
       });
 
       var groupDocRef = db
@@ -127,6 +129,7 @@ class DataBaseService {
         .map(_groupDetailsFromSnapshot);
   }
 
+  //TODO fetching debt from collection
   List<MemberDetails> _memberDetailsFromSnapShot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new MemberDetails(
@@ -134,7 +137,7 @@ class DataBaseService {
         doc.data['Number'] ?? '',
         doc.data['Email'] ?? '',
         doc.documentID,
-        doc.data['Debt'] ?? -1,
+        doc.data['Debt'] ?? -1, //here
       );
     }).toList();
   }
@@ -153,7 +156,7 @@ class DataBaseService {
   List<BillDetails> _billDetailsFromSnapshot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new BillDetails(doc.data['Name'] ?? '', doc.documentID,
-          doc.data['totalPrice'] ?? -1.0, doc.data['Date'].toDate());
+          doc.data['owedBillUID'], doc.data['totalPrice'] ?? -1.0, doc.data['Date'].toDate());
     }).toList();
   }
 
@@ -169,7 +172,7 @@ class DataBaseService {
         .map(_billDetailsFromSnapshot);
   }
 
-  Future<BillDetails> createBill(String billName) async {
+  Future<BillDetails> createBill(String billName, List<MemberDetails> members) async {
     DocumentReference billReference = db
         .collection("users")
         .document(this.uid)
@@ -177,15 +180,46 @@ class DataBaseService {
         .document(this.groupUID)
         .collection('bills')
         .document();
+    
+    String billUID = billReference.documentID;
+    //create a new collection in each member to store their owed bills
+    String owedBillUID = db
+        .collection("users")
+        .document(this.uid)
+        .collection("groups")
+        .document(this.groupUID)
+        .collection('members')
+        .document(members.elementAt(0).memberID)
+        .collection('owedBills')
+        .document()
+        .documentID;
+      
+    for (MemberDetails member in members) {
+      DocumentReference owedBillRef = db
+        .collection("users")
+        .document(this.uid)
+        .collection("groups")
+        .document(this.groupUID)
+        .collection('members')
+        .document(member.memberID)
+        .collection('owedBills')
+        .document(owedBillUID);
+
+      owedBillRef.setData({
+        'Bill Name' : billName,
+        'Total Owed' : 0.00,
+      });
+    }
     billReference.setData({
       'Name': billName,
-      'billUID': billReference.documentID,
+      'billUID': billUID,
+      'owedBillUID' : owedBillUID,
       'totalPrice': 0.0,
       'Date': DateTime.now(),
     });
 
     return new BillDetails(
-        billName, billReference.documentID, 0.0, DateTime.now());
+        billName, billUID, owedBillUID, 0.0, DateTime.now());
   }
 
   Future<void> removeBill(String billUID) async {
@@ -311,17 +345,19 @@ class DataBaseService {
 
   //TODO: Not working for some reason
   void updateMember(MemberDetails member, double price) async {
-    var memberDocRef = db
+    DocumentReference memberDocRef = db
         .collection('users')
         .document(this.uid)
         .collection('groups')
         .document(this.groupUID)
         .collection('members')
-        .document(member.memberID);
+        .document(member.memberID)
+        .collection('owedBills')
+        .document(this.owedBillUID);
 
     double currentDebt =
-        await memberDocRef.get().then((member) => member['Debt']);
-    memberDocRef.updateData({'Debt': currentDebt + price});
+        await memberDocRef.get().then((bill) => bill['Total Owed']);
+    memberDocRef.updateData({'Total Owed': currentDebt + price});
   }
 
   void shareItemWith(MemberDetails member) async {

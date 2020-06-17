@@ -110,15 +110,15 @@ class _ItemCreationState extends State<ItemCreation> {
               itemDetails =
                   await dbService.createItem(itemName, price, selectedMembers);
             }
-            // for (MemberDetails member in selectedMembers) {
-            //   dbService.updateMember(member, pricePerPax);
-            // } TODO: NOT WORKING
+            for (MemberDetails member in selectedMembers) {
+              dbService.updateMember(member, pricePerPax);
+            } 
             dbService = new DataBaseService(
                 uid: dbService.uid,
                 groupUID: dbService.groupUID,
                 billUID: dbService.billUID,
+                owedBillUID: dbService.owedBillUID,
                 itemUID: itemDetails.itemUID);
-            // addMembers(selectedMembers);
             Navigator.pop(context);
           },
         ));

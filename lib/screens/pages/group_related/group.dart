@@ -2,7 +2,7 @@ import 'package:app/constants/colour.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/UserDetails.dart';
-import 'package:app/screens/pages/Items/itemPage.dart';
+import 'package:app/screens/pages/group_related/billsDialog.dart';
 import 'package:app/services/AccessContacts.dart';
 import 'package:app/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -100,112 +100,11 @@ class _GroupState extends State<Group> {
     );
   }
 
-  Future<dynamic> _billsDialog(DataBaseService dbService) {
-    final _formKey = GlobalKey<FormState>();
-
+  Future<dynamic> _billsDialog(DataBaseService dbService) async {
+    List<MemberDetails> members = await dbService.members.elementAt(0);
     return showDialog(
       context: context,
-      child: Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-          child: Container(
-            height: 220,
-            child: Padding(
-                padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 40),
-                        child: Text(
-                          "New Bill",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20.0),
-                        )),
-                    Padding(
-                      padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                      child: Form(
-                        key: _formKey,
-                        child: TextFormField(
-                          validator: (value) {
-                            if (value.isEmpty) {
-                              return 'Bill Name cannot be Empty';
-                            }
-                            return null;
-                          },
-                          onChanged: (name) {
-                            setState(() {
-                              billName = name;
-                            });
-                          },
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.black,
-                                  )),
-                              labelText: 'Bill Name'),
-                        ),
-                      ),
-                    ),
-                    Row(
-                      children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.only(
-                                top: 20.0, left: 25.0, right: 30.0),
-                            child: FlatButton(
-                              child: Text(
-                                "Ok",
-                                style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              color: Colors.teal[300],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                              onPressed: () async {
-                                if (_formKey.currentState.validate()) {
-                                  billDetails =
-                                      await dbService.createBill(billName);
-                                  dbService = new DataBaseService(
-                                      uid: dbService.uid,
-                                      groupUID: dbService.groupUID,
-                                      billUID: billDetails.billUID);
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => ItemPage(
-                                              dbService: dbService,
-                                              billName: billName)));
-                                }
-                              },
-                            )),
-                        Padding(
-                            padding: EdgeInsets.only(
-                              top: 20.0,
-                              left: 15.0,
-                            ),
-                            child: FlatButton(
-                              child: Text(
-                                "Close",
-                                style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              color: Colors.teal[300],
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            )),
-                      ],
-                    ),
-                  ],
-                )),
-          )),
+      child: BillsDialog(dbService: dbService, billName : billName, members : members)
     );
   }
 

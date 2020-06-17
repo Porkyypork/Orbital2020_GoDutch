@@ -45,7 +45,7 @@ class _GroupState extends State<Group> {
           gradient: appBarGradient,
           title: _selectedIndex == 0
               ? Text(
-                'Members',
+                groupName,
                 style :TextStyle(color: Colors.white), 
               )
               : Text(

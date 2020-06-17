@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app/services/database.dart';
 
+import 'MemberDebtBreakdown.dart';
+
 class ContactListView extends StatefulWidget {
   final GroupDetails groupdata;
 
@@ -39,46 +41,56 @@ class _ContactListViewState extends State<ContactListView> {
 
     return Dismissible(
       key: UniqueKey(),
+      direction: DismissDirection.endToStart,
       onDismissed: (direction) {
-        dbService.removeGroupMember(member.memberID);
+        if (direction == DismissDirection.endToStart) {
+          dbService.removeGroupMember(member.memberID);
+        }
       },
       background: _deletionBackground(),
-      child: Card(
-        child: Container(
-            child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
-              child: Icon(Icons.important_devices, color: Colors.grey),
-            ),
-            Container(
-              width: MediaQuery.of(context).size.width - 115,
-              child: Column(
-                children: <Widget>[
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        member.name,
-                        style: TextStyle(color: Colors.black, fontSize: 18),
-                      )),
-                  SizedBox(height: 2),
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Amount owed: ${member.debt}',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
-                      )),
-                ],
+      child: GestureDetector(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => MemberDebtBreakdown()));
+        },
+        child: Card(
+          child: Container(
+              child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
+                child: Icon(Icons.important_devices, color: Colors.grey),
               ),
-            ),
-            IconButton(
-                icon: Icon(Icons.check, color: Colors.green[900]),
-                onPressed: () {
-                  // remove all existing debt for this indiv
-                }),
-          ],
-        )),
+              Container(
+                width: MediaQuery.of(context).size.width - 115,
+                child: Column(
+                  children: <Widget>[
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          member.name,
+                          style: TextStyle(color: Colors.black, fontSize: 18),
+                        )),
+                    SizedBox(height: 2),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Amount owed: ${member.debt}',
+                          style:
+                              TextStyle(color: Colors.grey[600], fontSize: 16),
+                        )),
+                  ],
+                ),
+              ),
+              IconButton(
+                  icon: Icon(Icons.check, color: Colors.green[900]),
+                  onPressed: () {
+                    // remove all existing debt for this indiv
+                  }),
+            ],
+          )),
+        ),
       ),
     );
   }

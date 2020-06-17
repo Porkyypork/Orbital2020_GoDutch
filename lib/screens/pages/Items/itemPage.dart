@@ -25,7 +25,6 @@ class _ItemPageState extends State<ItemPage> {
   final DataBaseService dbService;
   final String billName;
 
-
   _ItemPageState({this.dbService, this.billName});
 
   @override
@@ -39,9 +38,31 @@ class _ItemPageState extends State<ItemPage> {
           title: Text(billName),
           centerTitle: true,
         ),
-        body: ItemListView(dbService: dbService),
-        floatingActionButton: _createButton(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        body: Column(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height - 220,
+              child: ItemListView(dbService: dbService),
+            ),
+            RaisedButton(
+              padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              color: Colors.green[800],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(29),
+              ),
+              child: Text(
+                'Confirm'.toUpperCase(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+          ],
+        ),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 10.0,
           selectedItemColor: Colors.black,
@@ -49,10 +70,23 @@ class _ItemPageState extends State<ItemPage> {
           backgroundColor: Colors.teal[500],
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-                icon: Icon(Icons.camera_alt), title: Text('Take a Photo')),
+                icon: Icon(Icons.camera_alt),
+                title: Text(
+                  'Take a Photo',
+                  style: TextStyle(fontSize: 14),
+                )),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.edit),
+                title: Text(
+                  'Manual entry',
+                  style: TextStyle(fontSize: 14),
+                )),
             BottomNavigationBarItem(
                 icon: Icon(Icons.perm_media),
-                title: Text("Add a Receipt from Gallery")),
+                title: Text(
+                  'Gallery',
+                  style: TextStyle(fontSize: 14),
+                )),
           ],
           onTap: _onItemTapped,
         ),
@@ -66,7 +100,8 @@ class _ItemPageState extends State<ItemPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ItemCreation(dbService: dbService, edit : false)));
+                builder: (context) =>
+                    ItemCreation(dbService: dbService, edit: false)));
       },
       child: Container(
         height: 70,
@@ -82,7 +117,7 @@ class _ItemPageState extends State<ItemPage> {
       elevation: 0,
     );
   }
-  
+
   void _onItemTapped(int index) {
     if (index == 0) {
       Navigator.push(
@@ -90,6 +125,12 @@ class _ItemPageState extends State<ItemPage> {
           MaterialPageRoute(
               builder: (context) =>
                   PhotoPreviewPage(initialSource: ImageSource.camera)));
+    } else if (index == 1) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  ItemCreation(dbService: dbService, edit: false)));
     } else {
       Navigator.push(
           context,

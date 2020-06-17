@@ -7,6 +7,7 @@ import 'package:app/services/auth.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../constants/colour.dart';
 import '../../../services/database.dart';
 
 class _HomeState extends State<Home> {
@@ -19,21 +20,49 @@ class _HomeState extends State<Home> {
     return StreamProvider<List<GroupDetails>>.value(
       value: DataBaseService(uid: user.uid).groups,
       child: Scaffold(
-        backgroundColor: Colors.blue[50],
-        body: Column(
+        body: Stack(
           children: <Widget>[
-            _buildCustomAppBar(),
-            SizedBox(height: 5),
-            GroupListView(),
-            SizedBox(height: 30),
+            Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                gradient: appBarGradient,
+              ),
+              child: _buildCustomAppBar(),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                ),
+                height: MediaQuery.of(context).size.height - 130,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 5),
+                      height: 33,
+                      child: Center(
+                        child: Text('Your groups', style: TextStyle(
+                          fontSize: 24,
+                        )),
+                      ),
+                    ),
+                    Divider(),
+                    GroupListView(),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(color: Colors.teal[500]),
-          child: Container(height: 50),
-        ),
         floatingActionButton: _buildCreateGroupButton(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -42,58 +71,37 @@ class _HomeState extends State<Home> {
     final user = Provider.of<UserDetails>(context);
 
     return Container(
+      padding: EdgeInsets.fromLTRB(5, 45, 0, 0),
       height: 100,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
-        gradient: appBarGradient,
-        borderRadius: BorderRadius.only(bottomRight: Radius.circular(40)),
-      ),
-      child: Row(
-        children: <Widget>[
-          SizedBox(width: 10),
-          Column(
-            children: <Widget>[
-              SizedBox(height: 30),
-              Text(
-                "Welcome back,",
-                style: TextStyle(fontSize: 24),
-              ),
-              Text(
-                user.name,
-                style: TextStyle(fontSize: 24),
-              ),
-            ],
-          ),
-          SizedBox(width: 150),
-          IconButton(
-            onPressed: () async {
-              Navigator.of(context).pushReplacementNamed('/');
-              await _auth.signOut();
-            },
-            icon: Icon(Icons.exit_to_app),
-          ),
-        ],
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Row(
+          children: <Widget>[
+            SizedBox(width: 24),
+            Text(
+              'Welcome back, \n${user.name}',
+              style: TextStyle(fontSize: 24),
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width - 260),
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () {},
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildCreateGroupButton() {
-    return FloatingActionButton(
+    return FloatingActionButton.extended(
+      backgroundColor: Colors.teal[400],
+      label: Text('Create group'),
+      elevation: 0,
       onPressed: () {
         _groupsDialog();
       },
-      child: Container(
-        height: 70,
-        width: 70,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.teal[500], width: 5),
-          shape: BoxShape.circle,
-          color: Color(
-              0xFF48D1CC), // this is the green button idk if it looks good? need change on AcccessContacts also
-        ),
-        child: Icon(Icons.add, size: 30, color: Colors.black),
-      ),
-      elevation: 0,
     );
   }
 
@@ -201,69 +209,6 @@ class _HomeState extends State<Home> {
                   ],
                 )),
           )),
-    );
-  }
-
-  Drawer _buildDrawerMenu(BuildContext context) {
-    final user = Provider.of<UserDetails>(context);
-
-    return Drawer(
-      child: ListView(
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              user.name,
-              style: TextStyle(color: Colors.white),
-            ),
-            accountEmail: Text(
-              user.email,
-              style: TextStyle(color: Colors.white),
-            ),
-            currentAccountPicture: GestureDetector(
-              // onTap: () {}, can further implement features if we decide to
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(
-                    "https://res.cloudinary.com/fleetnation/image/private/c_fit,w_1120/g_south,l_text:style_gothic2:%C2%A9%20Erik%20Reis,o_20,y_10/g_center,l_watermark4,o_25,y_50/v1454956714/jcz04ojmkyyz4wq5wvqf.jpg"),
-              ),
-            ),
-            decoration: BoxDecoration(
-              shape: BoxShape.rectangle, //Optional can do a circle
-              color: Colors.blue, //default color
-              image: DecorationImage(
-                fit: BoxFit.fill,
-                image: NetworkImage(
-                    "https://images.wallpapersden.com/image/wxl-minimal-sunset-purple-mountains-and-birds_61310.jpg"),
-              ),
-            ),
-          ),
-          ListTile(
-            title: Text("Profile"),
-            onTap: () => Navigator.pushNamed(context, '/profile'),
-            trailing: Icon(Icons.person),
-          ),
-          ListTile(
-            title: Text("Unsettled"),
-            onTap: () => Navigator.pushNamed(context, '/debts'),
-            trailing: Icon(Icons.local_atm),
-          ),
-          ListTile(
-            title: Text("About Us"),
-            onTap: () => Navigator.pushNamed(context, '/about'),
-            trailing: Icon(Icons.info),
-          ),
-          //SizedBox(height: 250), ==> This is to make the signout button at the botom of the drawer
-          Divider(),
-          ListTile(
-            title: Text("Sign out"),
-            onTap: () async {
-              Navigator.of(context).pop();
-              Navigator.of(context).pushReplacementNamed('/');
-              await _auth.signOut();
-            },
-            trailing: Icon(Icons.exit_to_app),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -19,17 +19,40 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
   }
 
   Widget _buildBreakdownTile(ItemDetails item) {
-    return Container(
-      padding: EdgeInsets.all(5),
+    return Card(
       margin: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        border: Border.all(),
-      ),
-      child: Column(
+      child: Row(
         children: <Widget>[
-          Text(item.name),
-          Text('${item.totalPrice}'),
-          //TODO: print out the members names
+          Container(
+            padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
+            child: Container(
+              width: MediaQuery.of(context).size.width - 100,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        item.name,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 28,
+                        ),
+                      ),
+                    ),
+                    Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Total price: ${item.totalPrice}',
+                          style: TextStyle(color: Colors.grey, fontSize: 18),
+                        )),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Container(),
         ],
       ),
     );

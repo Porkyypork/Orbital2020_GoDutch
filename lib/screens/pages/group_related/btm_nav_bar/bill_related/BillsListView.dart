@@ -39,18 +39,20 @@ class _BillsListViewState extends State<BillsListView> {
   Widget _buildBillsListTile(BillDetails bill) {
     return Dismissible(
         key: UniqueKey(),
+        direction: DismissDirection.endToStart,
         onDismissed: (direction) {
-          print('${bill.billUID}'); // for debugging purposes
-          dbService.removeBill(bill.billUID);
-          _deletionMessage(context, bill.billName);
+          if (direction == DismissDirection.endToStart) {
+            print('${bill.billUID}'); // for debugging purposes
+            dbService.removeBill(bill.billUID);
+            _deletionMessage(context, bill.billName);
+          }
         },
         child: GestureDetector(
           onTap: () {
             dbService = new DataBaseService(
-              uid : dbService.uid,
-              groupUID: dbService.groupUID,
-              billUID: bill.billUID
-            );
+                uid: dbService.uid,
+                groupUID: dbService.groupUID,
+                billUID: bill.billUID);
             Navigator.push(
                 context,
                 MaterialPageRoute(

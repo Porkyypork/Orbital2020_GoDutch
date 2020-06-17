@@ -22,17 +22,17 @@ class _GroupListViewState extends State<GroupListView> {
     } else {
       return Expanded(
         child: ListView.builder(
-          shrinkWrap: true,
+            shrinkWrap: true,
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
             itemCount: groups.length,
             itemBuilder: (context, index) {
-              return _buildGroupTile(groups[index]);
+              return _buildGroupTile(groups[index], index);
             }),
       );
     }
   }
 
-  Widget _buildGroupTile(GroupDetails group) {
+  Widget _buildGroupTile(GroupDetails group, int index) {
     final user = Provider.of<UserDetails>(context);
     DataBaseService dbService =
         new DataBaseService(uid: user.uid, groupUID: group.groupUID);
@@ -57,48 +57,37 @@ class _GroupListViewState extends State<GroupListView> {
             builder: (context) => Group(data: group),
           ));
         },
-        child: Container(
-          margin: new EdgeInsets.all(10.0),
-          decoration: new BoxDecoration(
-            borderRadius: new BorderRadius.all(new Radius.circular(10.0)),
-            border: Border.all(),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
+        child: Card(
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 20, 10, 20),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0, right: 15.0),
-                  child: Icon(Icons.group, color: Colors.black),
+                Container(
+                    width: 50, child: Icon(Icons.group, color: Colors.black)),
+                Container(
+                  width: MediaQuery.of(context).size.width - 120,
+                  child: Text(
+                    group.groupName,
+                    style: TextStyle(
+                      fontSize: 26,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
                 ),
-                Expanded(
-                  child: Row(
+                Container(
+                  width: 50,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      SizedBox(
-                        width: 180,
-                        child: Text(
-                          group.groupName,
-                          style: TextStyle(
-                            fontSize: 26,
-                            letterSpacing: 1.5,
-                          ),
+                      Text(
+                        'Members:',
+                        style: TextStyle(
+                          fontSize: 10,
                         ),
                       ),
-                      SizedBox(width: 80),
-                      Column(
-                        children: <Widget>[
-                          Text(
-                            'Members:',
-                            style: TextStyle(
-                              fontSize: 10,
-                            ),
-                          ),
-                          Text(
-                            '${group.numMembers}',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                        ],
+                      Text(
+                        '${group.numMembers}',
+                        style: TextStyle(fontSize: 20),
                       ),
                     ],
                   ),
@@ -107,6 +96,65 @@ class _GroupListViewState extends State<GroupListView> {
             ),
           ),
         ),
+
+        // Container(
+        //   height: 75,
+        //   margin: new EdgeInsets.only(top: 2),
+        //   decoration: new BoxDecoration(
+        //     border: (index == 0)
+        //         ? Border(
+        //             top: BorderSide(color: Colors.black),
+        //             bottom: BorderSide(color: Colors.black),
+        //           )
+        //         : Border(
+        //             bottom: BorderSide(color: Colors.black),
+        //           ),
+        //   ),
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(8.0),
+        //     child: Row(
+        //       crossAxisAlignment: CrossAxisAlignment.center,
+        //       children: <Widget>[
+        //         Padding(
+        //           padding: const EdgeInsets.only(left: 10.0, right: 15.0),
+        //           child: Icon(Icons.group, color: Colors.black),
+        //         ),
+        //         Expanded(
+        //           child: Row(
+        //             children: <Widget>[
+        //               SizedBox(
+        //                 width: 180,
+        //                 child: Text(
+        //                   group.groupName,
+        //                   style: TextStyle(
+        //                     fontSize: 26,
+        //                     letterSpacing: 1.5,
+        //                   ),
+        //                 ),
+        //               ),
+        //               SizedBox(width: 80),
+        //               Column(
+        //                 mainAxisAlignment: MainAxisAlignment.center,
+        //                 children: <Widget>[
+        //                   Text(
+        //                     'Members:',
+        //                     style: TextStyle(
+        //                       fontSize: 10,
+        //                     ),
+        //                   ),
+        //                   Text(
+        //                     '${group.numMembers}',
+        //                     style: TextStyle(fontSize: 20),
+        //                   ),
+        //                 ],
+        //               ),
+        //             ],
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
       ),
     );
   }
@@ -126,7 +174,7 @@ class _GroupListViewState extends State<GroupListView> {
     return Container(
       alignment: AlignmentDirectional.centerEnd,
       padding: EdgeInsets.only(right: 15.0),
-      // color: Colors.red[600],
+      color: Colors.red[600],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[

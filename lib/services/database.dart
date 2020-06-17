@@ -100,7 +100,7 @@ class DataBaseService {
           .add({
         'Name': contact.displayName,
         'Number': contact.phones.first.value.toString(),
-        //'Debt': 0,
+        'Debt': 0,
       });
 
       var groupDocRef = db

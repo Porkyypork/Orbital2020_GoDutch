@@ -3,7 +3,6 @@ import 'package:app/models/MemberDetails.dart';
 import 'package:app/screens/pages/Items/itemPage.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class BillsDialog extends StatefulWidget {
   final DataBaseService dbService;

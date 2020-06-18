@@ -1,3 +1,4 @@
+import 'package:app/constants/colour.dart';
 import 'package:app/models/BillDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/services/database.dart';
@@ -26,10 +27,7 @@ class _BillsListViewState extends State<BillsListView> {
     return bills == null || bills.length == 0
         ? _initialState()
         : ListView.builder(
-            padding: EdgeInsets.symmetric(
-              vertical: 10.0,
-              horizontal: 10.0,
-            ),
+            padding: EdgeInsets.all(10),
             itemCount: bills.length,
             itemBuilder: (context, index) {
               return _buildBillsListTile(
@@ -63,21 +61,17 @@ class _BillsListViewState extends State<BillsListView> {
                           dbService: dbService,
                         )));
           },
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
+          child: Card(
+            color: tileColour,
             child: Container(
-              padding: EdgeInsets.all(5.0),
-              decoration: BoxDecoration(
-                border: Border.all(),
-                borderRadius: BorderRadius.circular(15),
-              ),
+              padding: EdgeInsets.all(10),
               child: Row(
                 children: <Widget>[
                   Column(
                     children: <Widget>[
                       Padding(
-                          padding: EdgeInsets.only(
-                              top: 5.0, bottom: 5.0, left: 10.0),
+                          padding:
+                              EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0),
                           child: Text(
                             DateFormat('EEE').format(bill.date).toString(),
                             style: TextStyle(fontSize: 17),

@@ -1,13 +1,12 @@
+import 'package:app/constants/colour.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/screens/pages/group_related/group.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app/services/database.dart';
 
 class _GroupListViewState extends State<GroupListView> {
-  final Firestore db = Firestore.instance;
   TextEditingController searchController = new TextEditingController();
 
   UserDetails currentUser;
@@ -16,23 +15,22 @@ class _GroupListViewState extends State<GroupListView> {
   @override
   Widget build(BuildContext context) {
     final groups = Provider.of<List<GroupDetails>>(context);
-
     if (groups == null || groups.length == 0) {
       return _buildNoGroupDisplay();
     } else {
       return Expanded(
         child: ListView.builder(
             shrinkWrap: true,
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+            padding: EdgeInsets.all(5),
             itemCount: groups.length,
             itemBuilder: (context, index) {
-              return _buildGroupTile(groups[index], index);
+              return _buildGroupTile(groups[index]);
             }),
       );
     }
   }
 
-  Widget _buildGroupTile(GroupDetails group, int index) {
+  Widget _buildGroupTile(GroupDetails group) {
     final user = Provider.of<UserDetails>(context);
     DataBaseService dbService =
         new DataBaseService(uid: user.uid, groupUID: group.groupUID);
@@ -58,14 +56,16 @@ class _GroupListViewState extends State<GroupListView> {
           ));
         },
         child: Card(
+          margin: EdgeInsets.only(left: 8, right: 8, bottom: 8),
+          color: tileColour,
           child: Container(
-            padding: EdgeInsets.fromLTRB(0, 20, 10, 20),
+            padding: EdgeInsets.fromLTRB(0, 20, 5, 20),
             child: Row(
               children: <Widget>[
                 Container(
                     width: 50, child: Icon(Icons.group, color: Colors.black)),
                 Container(
-                  width: MediaQuery.of(context).size.width - 120,
+                  width: MediaQuery.of(context).size.width - 135,
                   child: Text(
                     group.groupName,
                     style: TextStyle(
@@ -96,65 +96,6 @@ class _GroupListViewState extends State<GroupListView> {
             ),
           ),
         ),
-
-        // Container(
-        //   height: 75,
-        //   margin: new EdgeInsets.only(top: 2),
-        //   decoration: new BoxDecoration(
-        //     border: (index == 0)
-        //         ? Border(
-        //             top: BorderSide(color: Colors.black),
-        //             bottom: BorderSide(color: Colors.black),
-        //           )
-        //         : Border(
-        //             bottom: BorderSide(color: Colors.black),
-        //           ),
-        //   ),
-        //   child: Padding(
-        //     padding: const EdgeInsets.all(8.0),
-        //     child: Row(
-        //       crossAxisAlignment: CrossAxisAlignment.center,
-        //       children: <Widget>[
-        //         Padding(
-        //           padding: const EdgeInsets.only(left: 10.0, right: 15.0),
-        //           child: Icon(Icons.group, color: Colors.black),
-        //         ),
-        //         Expanded(
-        //           child: Row(
-        //             children: <Widget>[
-        //               SizedBox(
-        //                 width: 180,
-        //                 child: Text(
-        //                   group.groupName,
-        //                   style: TextStyle(
-        //                     fontSize: 26,
-        //                     letterSpacing: 1.5,
-        //                   ),
-        //                 ),
-        //               ),
-        //               SizedBox(width: 80),
-        //               Column(
-        //                 mainAxisAlignment: MainAxisAlignment.center,
-        //                 children: <Widget>[
-        //                   Text(
-        //                     'Members:',
-        //                     style: TextStyle(
-        //                       fontSize: 10,
-        //                     ),
-        //                   ),
-        //                   Text(
-        //                     '${group.numMembers}',
-        //                     style: TextStyle(fontSize: 20),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ],
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //   ),
-        // ),
       ),
     );
   }

@@ -4,7 +4,6 @@ import 'package:app/models/itemDetails.dart';
 import 'package:app/screens/pages/Items/itemPage.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 
 import 'BillBreakdownListView.dart';
@@ -38,16 +37,16 @@ class _BillBreakdownState extends State<BillBreakdown> {
       child: Scaffold(
         floatingActionButton: _editButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        backgroundColor: Colors.blue[50],
-        appBar: GradientAppBar(
-          gradient: appBarGradient,
+        backgroundColor: bodyColour,
+        appBar: AppBar(
+          backgroundColor: headerColour,
           title: Text('${billDetails.billName}'),
           elevation: 0,
           centerTitle: true,
         ),
         body: BillBreakdownListView(),
         bottomNavigationBar: Container(
-          decoration: BoxDecoration(color: Colors.teal[500]),
+          color: headerColour,
           child: Container(height: 50),
         ),
       ),
@@ -57,10 +56,11 @@ class _BillBreakdownState extends State<BillBreakdown> {
   Widget _editButton() {
     return Container(
       child: FloatingActionButton.extended(
-          backgroundColor: Colors.teal[300],
+          backgroundColor: Colors.orange[300],
           label: Text('EDIT',
               style: TextStyle(
                 fontSize: 15,
+                color: Colors.black,
               )),
           onPressed: () {
             Navigator.push(

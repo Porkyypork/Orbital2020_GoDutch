@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:app/constants/loading.dart';
 import 'package:app/services/ImageToText.dart';
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:image_cropper/image_cropper.dart';

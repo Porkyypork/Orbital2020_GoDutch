@@ -1,3 +1,4 @@
+import 'package:app/constants/colour.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/UserDetails.dart';
@@ -29,6 +30,7 @@ class _ContactListViewState extends State<ContactListView> {
     final members = Provider.of<List<MemberDetails>>(context);
 
     return ListView.builder(
+      padding: EdgeInsets.all(10),
       itemCount: members.length,
       itemBuilder: (context, index) => _buildMemberTile(members[index]),
     );
@@ -54,6 +56,7 @@ class _ContactListViewState extends State<ContactListView> {
               MaterialPageRoute(builder: (context) => MemberDebtBreakdown()));
         },
         child: Card(
+          color: tileColour,
           child: Container(
               child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -63,7 +66,7 @@ class _ContactListViewState extends State<ContactListView> {
                 child: Icon(Icons.important_devices, color: Colors.grey),
               ),
               Container(
-                width: MediaQuery.of(context).size.width - 115,
+                width: MediaQuery.of(context).size.width - 130,
                 child: Column(
                   children: <Widget>[
                     Align(

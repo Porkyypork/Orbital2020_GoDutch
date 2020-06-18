@@ -5,9 +5,7 @@ import 'package:app/models/UserDetails.dart';
 import 'package:app/screens/pages/group_related/billsDialog.dart';
 import 'package:app/services/AccessContacts.dart';
 import 'package:app/services/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:app/models/BillDetails.dart';
 
@@ -15,11 +13,14 @@ import 'btm_nav_bar/ContactListView.dart';
 import 'btm_nav_bar/bill_related/Bills.dart';
 
 class _GroupState extends State<Group> {
-  GroupDetails groupdata;
-  final Firestore db = Firestore.instance;
+  PageController _pageController = PageController(
+    initialPage: 0,
+  );
   int _selectedIndex = 0;
   String billName = "";
   BillDetails billDetails;
+
+    GroupDetails groupdata;
 
   _GroupState({this.groupdata});
 
@@ -32,22 +33,17 @@ class _GroupState extends State<Group> {
     DataBaseService dbService =
         DataBaseService(uid: user.uid, groupUID: groupUID);
 
-    List<Widget> _widgetOptions = <Widget>[
-      ContactListView(groupdata: groupdata),
-      Bills(dbService: dbService)
-    ];
-
     return StreamProvider<List<MemberDetails>>.value(
       value: dbService.members,
       child: Scaffold(
-        backgroundColor: Colors.blue[50],
-        appBar: GradientAppBar(
-          gradient: appBarGradient,
+        backgroundColor: bodyColour,
+        appBar: AppBar(
+          backgroundColor: headerColour,
           title: _selectedIndex == 0
               ? Text(
-                groupName,
-                style :TextStyle(color: Colors.white), 
-              )
+                  groupName,
+                  style: TextStyle(color: Colors.white),
+                )
               : Text(
                   groupName,
                   style: TextStyle(color: Colors.white),
@@ -55,10 +51,22 @@ class _GroupState extends State<Group> {
           elevation: 0,
           centerTitle: true,
         ),
-        body: _widgetOptions.elementAt(_selectedIndex),
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (page) {
+            setState(() {
+              _selectedIndex = page;
+            });
+          },
+          children: <Widget>[
+            ContactListView(groupdata: groupdata),
+            Bills(dbService: dbService)
+          ],
+        ),
+
         bottomNavigationBar: BottomNavigationBar(
           fixedColor: Color(0xFFFFFDD0), // cream
-          backgroundColor: Colors.teal[500],
+          backgroundColor: headerColour,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.group), title: Text('Members')),
@@ -69,7 +77,7 @@ class _GroupState extends State<Group> {
           onTap: _onItemTapped,
         ),
         floatingActionButton: _getFAB(groupUID, dbService),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       ),
     );
   }
@@ -81,21 +89,12 @@ class _GroupState extends State<Group> {
   }
 
   FloatingActionButton _billsFAB(DataBaseService dbService) {
-    return FloatingActionButton(
+    return FloatingActionButton.extended(
       onPressed: () {
         _billsDialog(dbService);
       },
-      child: Container(
-        height: 70,
-        width: 70,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.teal[500], width: 5),
-          shape: BoxShape.circle,
-          color: Color(
-              0xFF48D1CC), // this is the green button idk if it looks good? need change on AcccessContacts also
-        ),
-        child: Icon(Icons.add, size: 30, color: Colors.black),
-      ),
+      backgroundColor: Colors.orange[300],
+      label: Text('Add bill', style: TextStyle(color: Colors.black)),
       elevation: 0,
     );
   }
@@ -103,14 +102,15 @@ class _GroupState extends State<Group> {
   Future<dynamic> _billsDialog(DataBaseService dbService) async {
     List<MemberDetails> members = await dbService.members.elementAt(0);
     return showDialog(
-      context: context,
-      child: BillsDialog(dbService: dbService, billName : billName, members : members)
-    );
+        context: context,
+        child: BillsDialog(
+            dbService: dbService, billName: billName, members: members));
   }
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _pageController.animateToPage(index, duration: Duration(milliseconds: 340), curve: Curves.easeIn);
     });
   }
 }

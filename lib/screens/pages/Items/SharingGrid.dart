@@ -28,7 +28,12 @@ class _SharingGridState extends State<SharingGrid> {
               (MediaQuery.of(context).size.height / 10),
           children: List.generate(members.length, (index) {
             return CheckboxListTile(
-                title: Text(members[index].name),
+              activeColor: Colors.green,
+              checkColor: Colors.white,
+                title: Text(
+                  members[index].name,
+                  style: TextStyle(color: Colors.white),
+                ),
                 value: selectedMembers.contains(members[index]),
                 onChanged: (bool select) {
                   setState(() {

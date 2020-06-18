@@ -1,6 +1,5 @@
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/models/MemberDetails.dart';
-import 'package:app/screens/pages/sideFunctions/debts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:contacts_service/contacts_service.dart';

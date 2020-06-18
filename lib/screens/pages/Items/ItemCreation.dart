@@ -3,7 +3,6 @@ import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:app/screens/pages/Items/SharingGrid.dart';
 
@@ -58,9 +57,10 @@ class _ItemCreationState extends State<ItemCreation> {
     return StreamProvider<List<MemberDetails>>.value(
       value: dbService.members,
       child: Scaffold(
-        appBar: GradientAppBar(
+        backgroundColor: bodyColour,
+        appBar: AppBar(
           title: Text('Edit Item'),
-          gradient: appBarGradient,
+          backgroundColor: headerColour,
         ),
         body: Padding(
             //edit accordingly
@@ -95,7 +95,7 @@ class _ItemCreationState extends State<ItemCreation> {
             "Split!",
             style: TextStyle(fontSize: 17.0, fontWeight: FontWeight.bold),
           ),
-          color: Colors.teal[300],
+          color: Colors.orange[300],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
           ),
@@ -134,7 +134,7 @@ class _ItemCreationState extends State<ItemCreation> {
         child: Text("Share With : ",
             style: TextStyle(
                 fontSize: 17.0,
-                color: Colors.black,
+                color: Colors.white70,
                 fontWeight: FontWeight.bold)));
   }
 
@@ -156,7 +156,7 @@ class _ItemCreationState extends State<ItemCreation> {
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide(
-              color: Colors.black,
+              color: Colors.white, // TODO:Change to white
             ),
           ),
           labelText: 'Total Price',

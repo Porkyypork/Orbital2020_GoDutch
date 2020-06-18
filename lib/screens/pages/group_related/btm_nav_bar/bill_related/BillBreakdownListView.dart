@@ -71,7 +71,10 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
               SizedBox(height: 120),
               Text(
                 "You have no items in this Bill",
-                style: TextStyle(fontSize: 25.0),
+                style: TextStyle(
+                  fontSize: 25.0,
+                  color: Colors.white,
+                ),
               ),
               SizedBox(height: 140),
             ],

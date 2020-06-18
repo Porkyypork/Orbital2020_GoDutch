@@ -10,7 +10,6 @@ import 'package:app/screens/wrapper.dart';
 import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:app/constants/colour.dart';
 
 void main() => runApp(GoDutch());
 
@@ -21,7 +20,7 @@ class GoDutch extends StatelessWidget {
       value: AuthService().user,
       child: MaterialApp(
         theme: ThemeData(
-          scaffoldBackgroundColor: scaffoldBackground,
+          scaffoldBackgroundColor: Colors.blue[50],
         ),
         routes: {
           '/home': (context) => Home(),

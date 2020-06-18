@@ -75,9 +75,10 @@ class _ItemListViewState extends State<ItemListView> {
               SizedBox(height: 120),
               Text(
                 "Choose one of our functions",
-                style: TextStyle(fontSize: 22.0),
+                style: TextStyle(fontSize: 22.0, color: Colors.white),
               ),
-              Text("to get Started!", style: TextStyle(fontSize: 22.0)),
+              Text("to get Started!",
+                  style: TextStyle(fontSize: 22.0, color: Colors.white)),
               SizedBox(height: 60),
             ],
           ),

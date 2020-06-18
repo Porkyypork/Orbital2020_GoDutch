@@ -2,7 +2,6 @@ import 'package:app/models/itemDetails.dart';
 import 'package:app/screens/pages/Items/itemsListView.dart';
 import 'package:flutter/material.dart';
 import 'package:app/constants/colour.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
@@ -33,9 +32,9 @@ class _ItemPageState extends State<ItemPage> {
     return StreamProvider<List<ItemDetails>>.value(
       value: dbService.items,
       child: Scaffold(
-        backgroundColor: Colors.blue[50],
-        appBar: GradientAppBar(
-          gradient: appBarGradient,
+        backgroundColor: bodyColour,
+        appBar: AppBar(
+          backgroundColor: headerColour,
           title: Text(billName),
           centerTitle: true,
         ),
@@ -51,14 +50,14 @@ class _ItemPageState extends State<ItemPage> {
                Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => DebtsDisplay(dbService : dbService)));
               },
-              color: Colors.teal[300],
+              color: Colors.orange[300],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(29),
               ),
               child: Text(
                 'Confirm'.toUpperCase(),
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontSize: 18,
                 ),
               ),
@@ -67,9 +66,9 @@ class _ItemPageState extends State<ItemPage> {
         ),
         bottomNavigationBar: BottomNavigationBar(
           elevation: 10.0,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.black,
-          backgroundColor: Colors.teal[500],
+          selectedItemColor: Colors.white70,
+          unselectedItemColor: Colors.white70,
+          backgroundColor: headerColour,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
                 icon: Icon(Icons.camera_alt),
@@ -93,30 +92,6 @@ class _ItemPageState extends State<ItemPage> {
           onTap: _onItemTapped,
         ),
       ),
-    );
-  }
-
-  FloatingActionButton _createButton() {
-    return FloatingActionButton(
-      onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    ItemCreation(dbService: dbService, edit: false)));
-      },
-      child: Container(
-        height: 70,
-        width: 70,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.teal[500], width: 5),
-          shape: BoxShape.circle,
-          color: Color(
-              0xFF48D1CC), // this is the green button idk if it looks good? need change on AcccessContacts also
-        ),
-        child: Icon(Icons.add, size: 30, color: Colors.black),
-      ),
-      elevation: 0,
     );
   }
 

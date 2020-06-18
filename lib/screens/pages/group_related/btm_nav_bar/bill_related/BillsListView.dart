@@ -1,4 +1,5 @@
 import 'package:app/models/BillDetails.dart';
+import 'package:app/models/MemberDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,8 +41,9 @@ class _BillsListViewState extends State<BillsListView> {
     return Dismissible(
         key: UniqueKey(),
         direction: DismissDirection.endToStart,
-        onDismissed: (direction) {
+        onDismissed: (direction) async {
           if (direction == DismissDirection.endToStart) {
+            List<MemberDetails> members = await dbService.members.elementAt(0);
             print('${bill.billUID}'); // for debugging purposes
             dbService.removeBill(bill.billUID);
             _deletionMessage(context, bill.billName);

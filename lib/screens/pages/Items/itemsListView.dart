@@ -58,8 +58,8 @@ class _ItemListViewState extends State<ItemListView> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            ItemCreation(dbService: dbService, item : item, edit : true)));
+                        builder: (context) => ItemCreation(
+                            dbService: dbService, item: item, edit: true)));
               }),
         ));
   }
@@ -74,10 +74,11 @@ class _ItemListViewState extends State<ItemListView> {
             children: <Widget>[
               SizedBox(height: 120),
               Text(
-                "Tap on the Add Icon to get Started!",
+                "Choose one of our functions",
                 style: TextStyle(fontSize: 22.0),
               ),
-              SizedBox(height: 140),
+              Text("to get Started!", style: TextStyle(fontSize: 22.0)),
+              SizedBox(height: 60),
             ],
           ),
         ],

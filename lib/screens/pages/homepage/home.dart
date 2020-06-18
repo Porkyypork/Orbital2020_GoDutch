@@ -95,13 +95,19 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildCreateGroupButton() {
-    return FloatingActionButton.extended(
-      backgroundColor: Colors.teal[400],
-      label: Text('Create group'),
-      elevation: 0,
-      onPressed: () {
-        _groupsDialog();
-      },
+    return Container(
+      child: FloatingActionButton.extended(
+        backgroundColor: Colors.teal[300],
+        label: Text(
+          'Create group',
+          style: TextStyle(
+          fontSize: 15
+        )),
+        elevation: 0,
+        onPressed: () {
+          _groupsDialog();
+        },
+      ),
     );
   }
 

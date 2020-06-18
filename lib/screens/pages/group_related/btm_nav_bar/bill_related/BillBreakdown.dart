@@ -58,9 +58,9 @@ class _BillBreakdownState extends State<BillBreakdown> {
     return Container(
       child: FloatingActionButton.extended(
           backgroundColor: Colors.teal[300],
-          label: Text('Edit',
+          label: Text('EDIT',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 15,
               )),
           onPressed: () {
             Navigator.push(

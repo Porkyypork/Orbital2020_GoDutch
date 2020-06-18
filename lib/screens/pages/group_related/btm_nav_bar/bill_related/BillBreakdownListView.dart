@@ -12,10 +12,12 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
   Widget build(BuildContext context) {
     final items = Provider.of<List<ItemDetails>>(context);
 
-    return ListView.builder(
-        itemCount: items.length,
-        padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-        itemBuilder: (context, index) => _buildBreakdownTile(items[index]));
+    return items == null || items.length == 0
+        ? _initialState()
+        : ListView.builder(
+            itemCount: items.length,
+            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+            itemBuilder: (context, index) => _buildBreakdownTile(items[index]));
   }
 
   Widget _buildBreakdownTile(ItemDetails item) {
@@ -53,6 +55,27 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
             ),
           ),
           Container(),
+        ],
+      ),
+    );
+  }
+
+  Widget _initialState() {
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(height: 120),
+              Text(
+                "You have no items in this Bill",
+                style: TextStyle(fontSize: 25.0),
+              ),
+              SizedBox(height: 140),
+            ],
+          ),
         ],
       ),
     );

@@ -7,6 +7,7 @@ import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:app/screens/pages/group_related/btm_nav_bar/bill_related/DebtsDisplay.dart';
 
 import 'PhotoPreviewPage.dart';
 
@@ -41,15 +42,16 @@ class _ItemPageState extends State<ItemPage> {
         body: Column(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height - 220,
+              height: MediaQuery.of(context).size.height - 210,
               child: ItemListView(dbService: dbService),
             ),
             RaisedButton(
               padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
               onPressed: () {
-                Navigator.pop(context);
+               Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => DebtsDisplay(dbService : dbService)));
               },
-              color: Colors.green[800],
+              color: Colors.teal[300],
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(29),
               ),

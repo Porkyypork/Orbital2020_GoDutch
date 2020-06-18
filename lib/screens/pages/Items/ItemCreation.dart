@@ -112,7 +112,7 @@ class _ItemCreationState extends State<ItemCreation> {
             }
             for (MemberDetails member in selectedMembers) {
               dbService.updateMember(member, pricePerPax);
-            } 
+            }
             dbService = new DataBaseService(
                 uid: dbService.uid,
                 groupUID: dbService.groupUID,

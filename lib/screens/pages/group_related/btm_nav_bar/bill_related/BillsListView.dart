@@ -41,7 +41,6 @@ class _BillsListViewState extends State<BillsListView> {
         direction: DismissDirection.endToStart,
         onDismissed: (direction) async {
           if (direction == DismissDirection.endToStart) {
-            List<MemberDetails> members = await dbService.members.elementAt(0);
             print('${bill.billUID}'); // for debugging purposes
             dbService.removeBill(bill.billUID);
             _deletionMessage(context, bill.billName);
@@ -52,7 +51,8 @@ class _BillsListViewState extends State<BillsListView> {
             dbService = new DataBaseService(
                 uid: dbService.uid,
                 groupUID: dbService.groupUID,
-                billUID: bill.billUID);
+                billUID: bill.billUID,
+                owedBillUID: bill.owedBillUID);
             Navigator.push(
                 context,
                 MaterialPageRoute(

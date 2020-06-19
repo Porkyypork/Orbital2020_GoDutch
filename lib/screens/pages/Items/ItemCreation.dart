@@ -101,18 +101,8 @@ class _ItemCreationState extends State<ItemCreation> {
           ),
           onPressed: () async {
             double price = double.parse(totalPrice);
-            int numShared = selectedMembers.length;
-            double pricePerPax = price / numShared;
-            if (edit) {
-              itemDetails =
-                  await dbService.editItem(itemName, price, selectedMembers);
-            } else {
               itemDetails =
                   await dbService.createItem(itemName, price, selectedMembers);
-            }
-            for (MemberDetails member in selectedMembers) {
-              dbService.updateMember(member, pricePerPax);
-            }
             dbService = new DataBaseService(
                 uid: dbService.uid,
                 groupUID: dbService.groupUID,

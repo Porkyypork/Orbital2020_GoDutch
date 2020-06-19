@@ -27,7 +27,7 @@ class _ItemListViewState extends State<ItemListView> {
             itemCount: _items.length,
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
             itemBuilder: (context, index) {
-              return _buildItemTile(index, _items[index]);
+              return _buildItemTile(index, _items[index]); // to ensure latest item at the bottom
             });
   }
 
@@ -54,6 +54,7 @@ class _ItemListViewState extends State<ItemListView> {
                     uid: dbService.uid,
                     groupUID: dbService.groupUID,
                     billUID: dbService.billUID,
+                    owedBillUID: dbService.owedBillUID,
                     itemUID: itemUID);
                 Navigator.push(
                     context,

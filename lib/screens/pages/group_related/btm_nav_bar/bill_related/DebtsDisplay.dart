@@ -27,7 +27,8 @@ class _DebtsDisplayState extends State<DebtsDisplay> {
         child: Scaffold(
           appBar: GradientAppBar(
             gradient: appBarGradient,
-            title: Text('Debts')
+            title: Text('Transaction Details'),
+            centerTitle: true,
           ),
           body: DebtListView(dbService : dbService),
         )

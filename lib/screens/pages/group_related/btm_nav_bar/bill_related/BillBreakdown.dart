@@ -2,6 +2,7 @@ import 'package:app/constants/colour.dart';
 import 'package:app/models/BillDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:app/screens/pages/Items/itemPage.dart';
+import 'package:app/screens/pages/group_related/btm_nav_bar/bill_related/DebtsDisplay.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -57,7 +58,7 @@ class _BillBreakdownState extends State<BillBreakdown> {
     return Container(
       child: FloatingActionButton.extended(
           backgroundColor: Colors.orange[300],
-          label: Text('EDIT',
+          label: Text('BREAKDOWN',
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.black,
@@ -66,8 +67,8 @@ class _BillBreakdownState extends State<BillBreakdown> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => ItemPage(
-                        dbService: dbService, billName: billDetails.billName)));
+                    builder: (context) => DebtsDisplay(
+                        dbService: dbService)));
           }),
     );
   }

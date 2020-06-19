@@ -23,39 +23,48 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
   Widget _buildBreakdownTile(ItemDetails item) {
     return Card(
       margin: EdgeInsets.all(5),
-      child: Row(
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
-            child: Container(
-              width: MediaQuery.of(context).size.width - 100,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(10, 10, 15, 10),
+        child: Row(
+          children: <Widget>[
+            Container(
+              child : Text(
                         item.name,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 28,
-                        ),
-                      ),
-                    ),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Total price: ${item.totalPrice}',
-                          style: TextStyle(color: Colors.grey, fontSize: 18),
-                        )),
-                  ],
-                ),
-              ),
+                        style: TextStyle(color: Colors.black, fontSize: 30),
+                      )
             ),
-          ),
-          Container(),
-        ],
+            Spacer(),
+            Container(
+              child: Text(
+                        '\$${item.totalPrice.toStringAsFixed(2)}',
+                        style: TextStyle(color: Colors.black, fontSize: 25),
+                      )
+            )
+            // Align(
+            //   alignment: Alignment.,
+            //   child: Column(
+            //     children: <Widget>[
+            //       Align(
+            //         alignment: Alignment.centerLeft,
+            //         child: Text(
+            //           item.name,
+            //           style: TextStyle(
+            //             color: Colors.black,
+            //             fontSize: 28,
+            //           ),
+            //         ),
+            //       ),
+            //       Align(
+            //           alignment: Alignment.centerLeft,
+            //           child: Text(
+            //             'Total price: \$${item.totalPrice.toStringAsFixed(2)}',
+            //             style: TextStyle(color: Colors.grey, fontSize: 18),
+            //           )),
+            //     ],
+            //   ),
+            // ),
+          ],
+        ),
       ),
     );
   }

@@ -46,6 +46,7 @@ class _BillsListViewState extends State<BillsListView> {
             _deletionMessage(context, bill.billName);
           }
         },
+        background: _deletionBackground(bill),
         child: GestureDetector(
           onTap: () {
             dbService = new DataBaseService(
@@ -57,7 +58,7 @@ class _BillsListViewState extends State<BillsListView> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => BillBreakdown(
-                          billDetails: bill,
+                          billName: bill.billName,
                           dbService: dbService,
                         )));
           },
@@ -70,17 +71,19 @@ class _BillsListViewState extends State<BillsListView> {
                   Column(
                     children: <Widget>[
                       Padding(
-                          padding:
-                              EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0),
+                          padding: EdgeInsets.only(
+                              top: 5.0, bottom: 5.0, left: 10.0),
                           child: Text(
                             DateFormat('EEE').format(bill.date).toString(),
-                            style: TextStyle(fontSize: 17),
+                            style:
+                                TextStyle(fontSize: 17, fontFamily: 'OpenSans'),
                           )),
                       Padding(
                           padding: EdgeInsets.only(bottom: 5.0, left: 10.0),
                           child: Text(
                             DateFormat('d/M').format(bill.date).toString(),
-                            style: TextStyle(fontSize: 17),
+                            style:
+                                TextStyle(fontSize: 17, fontFamily: 'OpenSans'),
                           )),
                     ],
                   ),
@@ -88,7 +91,7 @@ class _BillsListViewState extends State<BillsListView> {
                     padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0),
                     child: Text(
                       bill.billName,
-                      style: TextStyle(fontSize: 25),
+                      style: TextStyle(fontSize: 25, fontFamily: 'Montserrat'),
                     ),
                   ),
                   Spacer(),
@@ -100,6 +103,7 @@ class _BillsListViewState extends State<BillsListView> {
                           '\$${bill.totalPrice.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 20,
+                            fontFamily: 'OpenSans',
                           ),
                         ),
                       )),
@@ -108,6 +112,24 @@ class _BillsListViewState extends State<BillsListView> {
             ),
           ),
         ));
+  }
+
+  Widget _deletionBackground(BillDetails bill) {
+    return Container(
+      alignment: AlignmentDirectional.centerEnd,
+      padding: EdgeInsets.only(right: 15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            'Deleting ${bill.billName}',
+            style: TextStyle(color: Colors.red),
+          ),
+          SizedBox(width: 16),
+          Icon(Icons.delete, color: Colors.red),
+        ],
+      ),
+    );
   }
 
   Widget _initialState() {

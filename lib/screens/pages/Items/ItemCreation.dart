@@ -9,13 +9,13 @@ import 'package:app/screens/pages/Items/SharingGrid.dart';
 class ItemCreation extends StatefulWidget {
   final DataBaseService dbService;
   final ItemDetails item;
-  final bool edit;
+  List<ItemDetails> itemList;
 
-  ItemCreation({this.dbService, this.item, this.edit});
+  ItemCreation({this.dbService, this.item, this.itemList});
 
   @override
   _ItemCreationState createState() =>
-      _ItemCreationState(dbService: dbService, item: item, edit: edit);
+      _ItemCreationState(dbService: dbService, item: item, itemList: itemList);
 }
 
 class _ItemCreationState extends State<ItemCreation> {
@@ -28,9 +28,9 @@ class _ItemCreationState extends State<ItemCreation> {
   final _formKey = GlobalKey<FormState>();
   List<MemberDetails> selectedMembers = [];
   ItemDetails item;
-  final bool edit;
+  List<ItemDetails> itemList;
 
-  _ItemCreationState({this.dbService, this.item, this.edit});
+  _ItemCreationState({this.dbService, this.item, this.itemList});
 
   @override
   void initState() {
@@ -103,6 +103,7 @@ class _ItemCreationState extends State<ItemCreation> {
             double price = double.parse(totalPrice);
               itemDetails =
                   await dbService.createItem(itemName, price, selectedMembers);
+              itemList.add(itemDetails);
             dbService = new DataBaseService(
                 uid: dbService.uid,
                 groupUID: dbService.groupUID,

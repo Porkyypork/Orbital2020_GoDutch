@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app/services/database.dart';
 
-import 'MemberDebtBreakdown.dart';
-
 class ContactListView extends StatefulWidget {
   final GroupDetails groupdata;
 
@@ -49,12 +47,9 @@ class _ContactListViewState extends State<ContactListView> {
           dbService.removeGroupMember(member.memberID);
         }
       },
-      background: _deletionBackground(),
+      background: _deletionBackground(member),
       child: GestureDetector(
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => MemberDebtBreakdown()));
-        },
+        onTap: () {},
         child: Card(
           color: tileColour,
           child: Container(
@@ -73,15 +68,20 @@ class _ContactListViewState extends State<ContactListView> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           member.name,
-                          style: TextStyle(color: Colors.black, fontSize: 18),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontFamily: 'Montserrat'),
                         )),
                     SizedBox(height: 2),
                     Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Amount owed: ${member.debt}',
-                          style:
-                              TextStyle(color: Colors.grey[600], fontSize: 16),
+                          style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 14,
+                              fontFamily: 'OpenSans'),
                         )),
                   ],
                 ),
@@ -89,7 +89,7 @@ class _ContactListViewState extends State<ContactListView> {
               IconButton(
                   icon: Icon(Icons.check, color: Colors.green[900]),
                   onPressed: () {
-                    // remove all existing debt for this indiv
+                    // member has settled
                   }),
             ],
           )),
@@ -98,12 +98,21 @@ class _ContactListViewState extends State<ContactListView> {
     );
   }
 
-  Widget _deletionBackground() {
+  Widget _deletionBackground(MemberDetails member) {
     return Container(
       alignment: AlignmentDirectional.centerEnd,
       padding: EdgeInsets.only(right: 15.0),
-      color: Colors.red[600],
-      child: Icon(Icons.delete, color: Colors.black),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            'Removing ${member.name}',
+            style: TextStyle(color: Colors.red),
+          ),
+          SizedBox(width: 16),
+          Icon(Icons.delete, color: Colors.red),
+        ],
+      ),
     );
   }
 }

@@ -7,69 +7,77 @@ import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../../constants/colour.dart';
 import 'BillBreakdownListView.dart';
+import 'DebtListView.dart';
+import 'DebtsDisplay.dart';
 
 class BillBreakdown extends StatefulWidget {
-  final BillDetails billDetails;
+  final String billName;
   final DataBaseService dbService;
-  BillBreakdown({this.billDetails, this.dbService});
+  BillBreakdown({this.billName, this.dbService});
   @override
   _BillBreakdownState createState() => _BillBreakdownState(
-      billDetails: this.billDetails, dbService: this.dbService);
+      billName: this.billName, dbService: this.dbService);
 }
 
 class _BillBreakdownState extends State<BillBreakdown> {
-  BillDetails billDetails;
+  PageController _pageController = PageController(
+    initialPage: 0,
+  );
+  int _selectedIndex = 0;
+
+  String billName;
   DataBaseService dbService;
 
-  _BillBreakdownState({this.billDetails, this.dbService});
+  _BillBreakdownState({this.billName, this.dbService});
 
   @override
   Widget build(BuildContext context) {
-    String userUID = dbService.uid;
-    String groupUID = dbService.groupUID;
-    String billUID = billDetails.billUID;
-
-    DataBaseService dbServiceItems =
-        new DataBaseService(uid: userUID, groupUID: groupUID, billUID: billUID);
 
     return StreamProvider<List<ItemDetails>>.value(
-      value: dbServiceItems.items,
+      value: dbService.items,
       child: Scaffold(
-        floatingActionButton: _editButton(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        backgroundColor: bodyColour,
+        backgroundColor: tileColour,
         appBar: AppBar(
           backgroundColor: headerColour,
-          title: Text('${billDetails.billName}'),
+          title: Text('$billName'),
           elevation: 0,
           centerTitle: true,
         ),
-        body: BillBreakdownListView(),
-        bottomNavigationBar: Container(
-          color: headerColour,
-          child: Container(height: 50),
+        body: PageView(
+          controller: _pageController,
+          onPageChanged: (page) {
+            setState(() {
+              _selectedIndex = page;
+            });
+          },
+          children: <Widget>[
+            DebtsDisplay(dbService: dbService),
+            BillBreakdownListView(),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: headerColour,
+          fixedColor: Color(0xFFFFFDD0), // cream
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(Icons.monetization_on), title: Text('Overview')),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.list), title: Text('Items'))
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
         ),
       ),
     );
   }
 
-  Widget _editButton() {
-    return Container(
-      child: FloatingActionButton.extended(
-          backgroundColor: Colors.orange[300],
-          label: Text('BREAKDOWN',
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.black,
-              )),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => DebtsDisplay(
-                        dbService: dbService)));
-          }),
-    );
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _pageController.animateToPage(index,
+          duration: Duration(milliseconds: 200), curve: Curves.easeIn);
+    });
   }
 }

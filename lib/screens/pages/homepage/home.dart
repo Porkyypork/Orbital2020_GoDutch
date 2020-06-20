@@ -94,9 +94,12 @@ class _HomeState extends State<Home> {
             SizedBox(width: 80),
             Text(
               'Welcome back, \n${user.name}',
-              style: TextStyle(fontSize: 24, color: Colors.white70, fontFamily: 'Main'),
+              style: TextStyle(
+                  fontSize: 24,
+                  color: Colors.white70,
+                  fontFamily: 'Montserrat'),
             ),
-            SizedBox(width: MediaQuery.of(context).size.width - 260),
+            SizedBox(width: MediaQuery.of(context).size.width - 280),
           ],
         ),
       ),
@@ -114,7 +117,8 @@ class _HomeState extends State<Home> {
     return Container(
       child: FloatingActionButton.extended(
         backgroundColor: Colors.orange[300],
-        label: Text('Create group', style: TextStyle(fontSize: 15, color: Colors.black)),
+        label: Text('Create group',
+            style: TextStyle(fontSize: 15, color: Colors.black)),
         elevation: 0,
         onPressed: () {
           _groupsDialog();
@@ -244,12 +248,6 @@ class _HomeState extends State<Home> {
             accountEmail: Text(
               user.email,
               style: TextStyle(color: Colors.white),
-            ),
-            currentAccountPicture: GestureDetector(
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(
-                    "https://res.cloudinary.com/fleetnation/image/private/c_fit,w_1120/g_south,l_text:style_gothic2:%C2%A9%20Erik%20Reis,o_20,y_10/g_center,l_watermark4,o_25,y_50/v1454956714/jcz04ojmkyyz4wq5wvqf.jpg"),
-              ),
             ),
             decoration: BoxDecoration(
               shape: BoxShape.rectangle, //Optional can do a circle

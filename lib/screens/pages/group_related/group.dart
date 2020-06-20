@@ -20,7 +20,7 @@ class _GroupState extends State<Group> {
   String billName = "";
   BillDetails billDetails;
 
-    GroupDetails groupdata;
+  GroupDetails groupdata;
 
   _GroupState({this.groupdata});
 
@@ -63,7 +63,6 @@ class _GroupState extends State<Group> {
             Bills(dbService: dbService)
           ],
         ),
-
         bottomNavigationBar: BottomNavigationBar(
           fixedColor: Color(0xFFFFFDD0), // cream
           backgroundColor: headerColour,
@@ -110,7 +109,8 @@ class _GroupState extends State<Group> {
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _pageController.animateToPage(index, duration: Duration(milliseconds: 340), curve: Curves.easeIn);
+      _pageController.animateToPage(index,
+          duration: Duration(milliseconds: 340), curve: Curves.easeIn);
     });
   }
 }

@@ -14,58 +14,84 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
 
     return items == null || items.length == 0
         ? _initialState()
-        : ListView.builder(
-            itemCount: items.length,
-            padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-            itemBuilder: (context, index) => _buildBreakdownTile(items[index]));
+        : SingleChildScrollView(
+            physics: ScrollPhysics(),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text('Items Breakdown',
+                      style: TextStyle(
+                          letterSpacing: 1,
+                          fontSize: 27,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'OpenSans')),
+                ),
+                _heading(),
+                ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: items.length,
+                    padding:
+                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
+                    itemBuilder: (context, index) =>
+                        _buildBreakdownTile(items[index])),
+              ],
+            ),
+          );
+  }
+
+  Widget _heading() {
+    final items = Provider.of<List<ItemDetails>>(context);
+    double cost = 0;
+    for (ItemDetails item in items) {
+      cost += item.totalPrice;
+    }
+
+    return Container(
+        padding: EdgeInsets.only(left: 15, right: 10),
+        decoration: BoxDecoration(
+            border: Border(
+                top: BorderSide(width: 1, color: Colors.black),
+                bottom: BorderSide(width: 1, color: Colors.black))),
+        child: Padding(
+          padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
+          child: Container(
+              child: Row(
+            children: <Widget>[
+              Text('Total :',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'OpenSans')),
+              Spacer(),
+              Text('\$${cost.toStringAsFixed(2)}',
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'OpenSans')),
+            ],
+          )),
+        ));
   }
 
   Widget _buildBreakdownTile(ItemDetails item) {
-    return Card(
-      margin: EdgeInsets.all(5),
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
       child: Container(
-        padding: EdgeInsets.fromLTRB(10, 10, 15, 10),
-        child: Row(
-          children: <Widget>[
-            Container(
-              child : Text(
-                        item.name,
-                        style: TextStyle(color: Colors.black, fontSize: 30),
-                      )
-            ),
-            Spacer(),
-            Container(
-              child: Text(
-                        '\$${item.totalPrice.toStringAsFixed(2)}',
-                        style: TextStyle(color: Colors.black, fontSize: 25),
-                      )
-            )
-            // Align(
-            //   alignment: Alignment.,
-            //   child: Column(
-            //     children: <Widget>[
-            //       Align(
-            //         alignment: Alignment.centerLeft,
-            //         child: Text(
-            //           item.name,
-            //           style: TextStyle(
-            //             color: Colors.black,
-            //             fontSize: 28,
-            //           ),
-            //         ),
-            //       ),
-            //       Align(
-            //           alignment: Alignment.centerLeft,
-            //           child: Text(
-            //             'Total price: \$${item.totalPrice.toStringAsFixed(2)}',
-            //             style: TextStyle(color: Colors.grey, fontSize: 18),
-            //           )),
-            //     ],
-            //   ),
-            // ),
-          ],
-        ),
-      ),
+          child: Row(
+        children: <Widget>[
+          Text(item.name,
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Montserrat',
+              )),
+          Spacer(),
+          Text(
+            '\$${item.totalPrice.toStringAsFixed(2)}',
+            style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+          ),
+        ],
+      )),
     );
   }
 

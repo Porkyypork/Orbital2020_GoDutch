@@ -178,6 +178,18 @@ class DataBaseService {
         .map(_billDetailsFromSnapshot);
   }
 
+  Future<bool> isBillEmpty() {
+    DocumentReference billReference = db
+        .collection("users")
+        .document(this.uid)
+        .collection("groups")
+        .document(this.groupUID)
+        .collection('bills')
+        .document(this.billUID);
+
+    return billReference.get().then((bill) => bill['isEmpty']);
+  }
+
   Future<BillDetails> createBill(
       String billName, List<MemberDetails> members) async {
     DocumentReference billReference = db
@@ -225,6 +237,7 @@ class DataBaseService {
       'owedBillUID': owedBillUID,
       'totalPrice': 0.0,
       'Date': DateTime.now(),
+      'isEmpty': true,
     });
 
     return new BillDetails(billName, billUID, owedBillUID, 0.0, DateTime.now());
@@ -300,7 +313,10 @@ class DataBaseService {
 
     double totalPrice = currentPrice + itemPrice;
 
-    billsDocRef.updateData({'totalPrice': totalPrice});
+    billsDocRef.updateData({
+      'totalPrice': totalPrice,
+      'isEmpty': false,
+    });
 
     for (MemberDetails member in members) {
       DocumentReference memberDocRef = db
@@ -326,70 +342,6 @@ class DataBaseService {
         itemUID: itemReference.documentID,
         totalPrice: itemPrice);
   }
-
-  // Future<ItemDetails> editItem(
-  //     String itemName, double itemPrice, List<MemberDetails> members) async {
-  //   List<String> memberNames = [];
-  //   for (MemberDetails member in members) {
-  //     memberNames.add(member.name);
-  //   }
-  //   DocumentReference itemReference = db
-  //       .collection("users")
-  //       .document(this.uid)
-  //       .collection("groups")
-  //       .document(this.groupUID)
-  //       .collection('bills')
-  //       .document(this.billUID)
-  //       .collection('items')
-  //       .document(this.itemUID);
-  //   double prevPrice =
-  //       await itemReference.get().then((item) => item['totalPrice']);
-
-  //   itemReference.setData({
-  //     'Name': itemName,
-  //     'itemUID': itemReference.documentID,
-  //     'totalPrice': itemPrice,
-  //     'sharedWith': memberNames,
-  //   });
-
-  //   var billsDocRef = db
-  //       .collection('users')
-  //       .document(this.uid)
-  //       .collection('groups')
-  //       .document(this.groupUID)
-  //       .collection('bills')
-  //       .document(this.billUID);
-
-  //   double currentPrice =
-  //       await billsDocRef.get().then((bill) => bill['totalPrice']);
-
-  //   double totalPrice = currentPrice + itemPrice - prevPrice;
-
-  //   billsDocRef.updateData({'totalPrice': totalPrice});
-
-  //   for (MemberDetails member in members) {
-  //     DocumentReference memberDocRef = db
-  //         .collection('users')
-  //         .document(this.uid)
-  //         .collection('groups')
-  //         .document(this.groupUID)
-  //         .collection('members')
-  //         .document(member.memberID)
-  //         .collection('owedBills')
-  //         .document(this.owedBillUID);
-
-  //     double currentDebt =
-  //         await memberDocRef.get().then((bill) => bill['totalOwed']);
-  //     memberDocRef.updateData({
-  //       'totalOwed': currentDebt + ((itemPrice - prevPrice) / members.length),
-  //       'totalPrice': totalPrice
-  //     });
-  //   }
-  //   return new ItemDetails(
-  //       name: itemName,
-  //       itemUID: itemReference.documentID,
-  //       totalPrice: itemPrice);
-  // }
 
   void shareItemWith(MemberDetails member) async {
     try {

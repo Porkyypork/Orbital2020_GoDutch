@@ -6,17 +6,20 @@ import 'package:provider/provider.dart';
 
 class ItemListView extends StatefulWidget {
   final DataBaseService dbService;
+  List<ItemDetails> itemList;
 
-  ItemListView({this.dbService});
+  ItemListView({this.dbService, this.itemList});
 
   @override
-  _ItemListViewState createState() => _ItemListViewState(dbService: dbService);
+  _ItemListViewState createState() =>
+      _ItemListViewState(dbService: dbService, itemList: itemList);
 }
 
 class _ItemListViewState extends State<ItemListView> {
   DataBaseService dbService;
+  List<ItemDetails> itemList;
 
-  _ItemListViewState({this.dbService});
+  _ItemListViewState({this.dbService, this.itemList});
   @override
   Widget build(BuildContext context) {
     final _items = Provider.of<List<ItemDetails>>(context);
@@ -27,28 +30,42 @@ class _ItemListViewState extends State<ItemListView> {
             itemCount: _items.length,
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
             itemBuilder: (context, index) {
-              return _buildItemTile(index, _items[index]); // to ensure latest item at the bottom
+              return _buildItemTile(
+                  _items[index]); // to ensure latest item at the bottom
             });
   }
 
-  Widget _buildItemTile(int index, ItemDetails item) {
+  Widget _buildItemTile(ItemDetails item) {
     String itemUID = item.itemUID;
     String name = item.name;
     String totalPrice = item.totalPrice.toStringAsFixed(2);
     print(itemUID);
     return Dismissible(
         key: UniqueKey(),
+        direction: DismissDirection.endToStart,
         onDismissed: (direction) {
-          setState(() async {
-            await dbService.deleteItem(itemUID);
-            _deletionMessage(context, name);
-          });
+          if (direction == DismissDirection.endToStart) {
+            setState(() async {
+              await dbService.deleteItem(itemUID);
+              _deletionMessage(context, name);
+            });
+          }
         },
+        background: _deletionBackground(item),
         child: Container(
           child: ListTile(
-              leading: Icon(Icons.restaurant),
-              title: Text(name),
-              subtitle: Text("\$$totalPrice"),
+              leading: Icon(
+                Icons.restaurant,
+                color: Colors.white70,
+              ),
+              title: Text(name,
+                  style: TextStyle(
+                    color: Colors.white,
+                  )),
+              subtitle: Text(
+                "\$$totalPrice",
+                style: TextStyle(color: Colors.white54),
+              ),
               onTap: () {
                 dbService = new DataBaseService(
                     uid: dbService.uid,
@@ -60,7 +77,9 @@ class _ItemListViewState extends State<ItemListView> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ItemCreation(
-                            dbService: dbService, item: item, edit: true)));
+                            dbService: dbService,
+                            item: item,
+                            itemList: itemList)));
               }),
         ));
   }
@@ -83,6 +102,24 @@ class _ItemListViewState extends State<ItemListView> {
               SizedBox(height: 60),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _deletionBackground(ItemDetails item) {
+    return Container(
+      alignment: AlignmentDirectional.centerEnd,
+      padding: EdgeInsets.only(right: 15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Text(
+            'Removing ${item.name}',
+            style: TextStyle(color: Colors.red),
+          ),
+          SizedBox(width: 16),
+          Icon(Icons.delete, color: Colors.red),
         ],
       ),
     );

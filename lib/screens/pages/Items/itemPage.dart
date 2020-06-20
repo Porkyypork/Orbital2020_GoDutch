@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:app/screens/pages/group_related/btm_nav_bar/bill_related/DebtsDisplay.dart';
 
+import '../group_related/btm_nav_bar/bill_related/BillBreakdown.dart';
 import 'PhotoPreviewPage.dart';
 
 class ItemPage extends StatefulWidget {
@@ -24,6 +25,8 @@ class ItemPage extends StatefulWidget {
 class _ItemPageState extends State<ItemPage> {
   final DataBaseService dbService;
   final String billName;
+
+  List<ItemDetails> itemList = [];
 
   _ItemPageState({this.dbService, this.billName});
 
@@ -42,23 +45,32 @@ class _ItemPageState extends State<ItemPage> {
           children: <Widget>[
             Container(
               height: MediaQuery.of(context).size.height - 210,
-              child: ItemListView(dbService: dbService),
+              child: ItemListView(dbService: dbService, itemList: itemList),
             ),
-            RaisedButton(
-              padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
-              onPressed: () {
-               Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => DebtsDisplay(dbService : dbService)));
-              },
-              color: Colors.orange[300],
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(29),
-              ),
-              child: Text(
-                'Confirm'.toUpperCase(),
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 18,
+            Builder(
+              builder: (context) => RaisedButton(
+                padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
+                onPressed: () async {
+                  bool isEmpty = await dbService.isBillEmpty();
+                  if (isEmpty) {
+                    showDialog(context: context, child: _buildWarningDialog(),);
+                  } else {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            BillBreakdown(dbService: dbService, billName:billName)));
+                  }
+                },
+                color: Colors.orange[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(29),
+                ),
+                child: Text(
+                  'Confirm'.toUpperCase(),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ),
@@ -95,6 +107,26 @@ class _ItemPageState extends State<ItemPage> {
     );
   }
 
+  Widget _buildWarningDialog() {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      child: Container(
+        height: 220,
+        padding: EdgeInsets.fromLTRB(0, 20, 20, 20),
+        child: Column(
+          children: <Widget>[
+            Text('You cannot submit an empty bill!'),
+            FlatButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('ok'))
+          ],
+        ),
+      ),
+    );
+  }
+
   void _onItemTapped(int index) {
     if (index == 0) {
       Navigator.push(
@@ -107,7 +139,7 @@ class _ItemPageState extends State<ItemPage> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  ItemCreation(dbService: dbService, edit: false)));
+                  ItemCreation(dbService: dbService, itemList: itemList)));
     } else {
       Navigator.push(
           context,

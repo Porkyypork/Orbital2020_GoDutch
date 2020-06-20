@@ -24,14 +24,7 @@ class _DebtsDisplayState extends State<DebtsDisplay> {
   Widget build(BuildContext context) {
     return StreamProvider<List<MemberDetails>>.value(
       value: dbService.members,
-        child: Scaffold(
-          appBar: GradientAppBar(
-            gradient: appBarGradient,
-            title: Text('Transaction Details'),
-            centerTitle: true,
-          ),
-          body: DebtListView(dbService : dbService),
-        )
+      child: DebtListView(dbService: dbService),
     );
   }
 }

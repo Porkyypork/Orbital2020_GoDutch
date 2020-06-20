@@ -47,8 +47,7 @@ class _GroupListViewState extends State<GroupListView> {
           });
         }
       },
-      background: _secondaryBackground(),
-      secondaryBackground: _deletionBackground(group.groupName),
+      background: _deletionBackground(group.groupName),
       child: GestureDetector(
         onTap: () {
           Navigator.of(context).push(MaterialPageRoute(
@@ -71,6 +70,7 @@ class _GroupListViewState extends State<GroupListView> {
                     style: TextStyle(
                       fontSize: 26,
                       letterSpacing: 1.5,
+                      fontFamily: 'OpenSans',
                     ),
                   ),
                 ),
@@ -83,11 +83,12 @@ class _GroupListViewState extends State<GroupListView> {
                         'Members:',
                         style: TextStyle(
                           fontSize: 10,
+                          fontFamily: 'OpenSans',
                         ),
                       ),
                       Text(
                         '${group.numMembers}',
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 20, fontFamily: 'OpenSans'),
                       ),
                     ],
                   ),
@@ -115,7 +116,7 @@ class _GroupListViewState extends State<GroupListView> {
     return Container(
       alignment: AlignmentDirectional.centerEnd,
       padding: EdgeInsets.only(right: 15.0),
-      color: Colors.red[600],
+      // color: Colors.red[600],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
@@ -124,21 +125,13 @@ class _GroupListViewState extends State<GroupListView> {
             style: TextStyle(
               fontSize: 15.0,
               letterSpacing: 1.0,
+              color: Colors.red,
             ),
           ),
           SizedBox(width: 16),
-          Icon(Icons.delete, color: Colors.black),
+          Icon(Icons.delete, color: Colors.red),
         ],
       ),
-    );
-  }
-
-  Widget _secondaryBackground() {
-    return Container(
-      alignment: AlignmentDirectional.centerStart,
-      padding: EdgeInsets.only(left: 15.0),
-      color: Colors.yellow[400],
-      child: Icon(Icons.photo_camera, color: Colors.black),
     );
   }
 

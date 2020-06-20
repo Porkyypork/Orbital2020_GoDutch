@@ -1,5 +1,6 @@
 import 'package:app/constants/loading.dart';
 import 'package:app/models/MemberDetails.dart';
+import 'package:app/models/UserDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,7 @@ class _DebtListViewState extends State<DebtListView> {
   @override
   Widget build(BuildContext context) {
     final members = Provider.of<List<MemberDetails>>(context);
+    final user = Provider.of<UserDetails>(context);
 
     return FutureBuilder<List<OwedBills>>(
         future: dbService.getDebt(members),
@@ -33,9 +35,12 @@ class _DebtListViewState extends State<DebtListView> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.all(15.0),
-                    child: Text(snap.data.elementAt(0).billName,
+                    child: Text('Cash Breakdown',
                         style: TextStyle(
-                            fontSize: 27, fontWeight: FontWeight.bold)),
+                            letterSpacing: 1,
+                            fontSize: 27,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'OpenSans')),
                   ),
                   _heading(snap),
                   ListView.builder(
@@ -46,7 +51,11 @@ class _DebtListViewState extends State<DebtListView> {
                       ),
                       itemCount: snap.data.length,
                       itemBuilder: (context, index) {
-                        return _buildBillsListTile(snap.data[index]);
+                        if (user.name != snap.data[index].name) {
+                          return _buildBillsListTile(snap.data[index]);
+                        } else {
+                          return _buildYourListTile(snap.data[index]);
+                        }
                       }),
                 ],
               ),
@@ -57,6 +66,27 @@ class _DebtListViewState extends State<DebtListView> {
         });
   }
 
+  Widget _buildYourListTile(OwedBills bill) {
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
+      child: Container(
+          child: Row(
+        children: <Widget>[
+          Text('You pay',
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Montserrat',
+              )),
+          Spacer(),
+          Text(
+            '\$${bill.totalOwed.toStringAsFixed(2)}',
+            style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+          ),
+        ],
+      )),
+    );
+  }
+
   Widget _buildBillsListTile(OwedBills bill) {
     return Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
@@ -64,14 +94,15 @@ class _DebtListViewState extends State<DebtListView> {
           child: Row(
         children: <Widget>[
           Text(bill.name,
-          style: TextStyle(
-            fontSize: 20
-          )),
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Montserrat',
+              )),
           Spacer(),
-          Text('\$${bill.totalOwed.toStringAsFixed(2)}',
-          style: TextStyle(
-            fontSize: 20
-          )),
+          Text(
+            '\$${bill.totalOwed.toStringAsFixed(2)}',
+            style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+          ),
         ],
       )),
     );
@@ -90,10 +121,16 @@ class _DebtListViewState extends State<DebtListView> {
               child: Row(
             children: <Widget>[
               Text('Total :',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'OpenSans')),
               Spacer(),
               Text('\$${snap.data.elementAt(0).totalPrice.toStringAsFixed(2)}',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'OpenSans')),
             ],
           )),
         ));

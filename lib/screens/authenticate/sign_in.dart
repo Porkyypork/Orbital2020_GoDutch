@@ -1,4 +1,5 @@
 import 'package:app/constants/colour.dart';
+import 'package:app/constants/colour.dart';
 import 'package:app/constants/loading.dart';
 import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
@@ -34,23 +35,30 @@ class _SignInState extends State<SignIn> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(height: 120),
-                      Text("logo and welcome message here"),
+                      Text("logo here",
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
                       SizedBox(height: 120),
                       Container(
                           padding: EdgeInsets.only(left: 22, bottom: 2),
                           alignment: Alignment.centerLeft,
                           child: Text("Sign in",
-                              style: TextStyle(fontSize: 16))),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ))),
                       SizedBox(height: 2),
                       _buildLoginForm(),
                       _buildForgotPassword(),
                       SizedBox(height: 15),
                       _buildSignInButton(),
+                      SizedBox(height: 2),
                       Text(
                         "- OR -",
                         style: TextStyle(
                           fontSize: 15,
-                          color: secondary,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -82,7 +90,7 @@ class _SignInState extends State<SignIn> {
                   text: "FORGOT YOUR PASSWORD?",
                   style: TextStyle(
                       decoration: TextDecoration.underline,
-                      color: Colors.black,
+                      color: Colors.white70,
                       fontSize: 10.0),
                 ),
               ],
@@ -104,6 +112,7 @@ class _SignInState extends State<SignIn> {
                 "DON'T HAVE AN ACCOUNT?",
                 style: TextStyle(
                   fontSize: 13.0,
+                  color: Colors.white70,
                 ),
               ),
               SizedBox(width: 5.0),
@@ -119,7 +128,7 @@ class _SignInState extends State<SignIn> {
                         style: TextStyle(
                             fontSize: 12.0,
                             decoration: TextDecoration.underline,
-                            color: Colors.black),
+                            color: Colors.orange[300]),
                       ),
                     ],
                   ),
@@ -131,7 +140,6 @@ class _SignInState extends State<SignIn> {
   }
 
   Widget _buildLoginForm() {
-
     return Form(
       key: _formKey,
       child: Column(
@@ -140,7 +148,7 @@ class _SignInState extends State<SignIn> {
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(29),
-              color: Colors.blue[100],
+              color: tileColour,
             ),
             child: TextFormField(
               validator: (val) => val.isEmpty ? 'Enter an email' : null,
@@ -160,7 +168,7 @@ class _SignInState extends State<SignIn> {
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(29),
-              color: Colors.blue[100],
+              color: tileColour,
             ),
             child: TextFormField(
               validator: (val) => val.length < 6
@@ -185,57 +193,47 @@ class _SignInState extends State<SignIn> {
   }
 
   Widget _buildSignInButton() {
-    return Column(
-      children: <Widget>[
-        OutlineButton(
-          splashColor: Colors.grey,
-          onPressed: () async {
-            if (_formKey.currentState.validate()) {
-              setState(() => loading = true);
-              dynamic result =
-                  await _auth.signInWithEmailAndPassword(email, password);
-              if (result == null) {
-                setState(() {
-                  error = 'Invalid Email or Password';
-                  loading = false;
-                });
-              }
-            }
-          },
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-          highlightElevation: 0,
-          borderSide: BorderSide(color: secondary),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 5, 9, 5),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: secondary,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
+    return FlatButton(
+      color: Colors.orange[300],
+      splashColor: Colors.grey,
+      onPressed: () async {
+        if (_formKey.currentState.validate()) {
+          setState(() => loading = true);
+          dynamic result =
+              await _auth.signInWithEmailAndPassword(email, password);
+          if (result == null) {
+            setState(() {
+              error = 'Invalid Email or Password';
+              loading = false;
+            });
+          }
+        }
+      },
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 5, 9, 5),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                'Sign in',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: secondary,
+                ),
+              ),
+            )
+          ],
         ),
-        SizedBox(
-            height: 10,
-            child: Text(error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0))),
-      ],
+      ),
     );
   }
 
   Widget _buildGoogleSignInButton() {
-    return OutlineButton(
+    return FlatButton(
       color: Colors.white,
       onPressed: () async {
         setState(() => loading = true);
@@ -250,8 +248,8 @@ class _SignInState extends State<SignIn> {
         }
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      borderSide: BorderSide(color: secondary),
+      // highlightElevation: 0,
+      // borderSide: BorderSide(color: secondary),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
         child: Row(

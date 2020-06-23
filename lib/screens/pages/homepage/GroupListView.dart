@@ -103,11 +103,13 @@ class _GroupListViewState extends State<GroupListView> {
 
   Widget _buildNoGroupDisplay() {
     return Container(
+      height: MediaQuery.of(context).size.height - 250,
         child: Center(
             child: Text(
       "You are not currently in any groups!\n\nCreate one to get started",
       style: TextStyle(
         fontSize: 24.0,
+        color: Colors.white70,
       ),
     )));
   }

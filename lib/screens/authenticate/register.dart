@@ -31,7 +31,7 @@ class _RegisterState extends State<Register> {
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(29),
-        color: Colors.blue[100],
+        color: tileColour,
       ),
       child: TextFormField(
         validator: (val) => val.isEmpty ? 'Enter your name' : null,
@@ -53,7 +53,7 @@ class _RegisterState extends State<Register> {
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(29),
-        color: Colors.blue[100],
+        color: tileColour,
       ),
       child: TextFormField(
         validator: (val) =>
@@ -76,7 +76,7 @@ class _RegisterState extends State<Register> {
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(29),
-        color: Colors.blue[100],
+        color: tileColour,
       ),
       child: TextFormField(
         validator: (val) => val.isEmpty ? 'Enter an Email' : null,
@@ -98,7 +98,7 @@ class _RegisterState extends State<Register> {
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(29),
-        color: Colors.blue[100],
+        color: tileColour,
       ),
       child: TextFormField(
         decoration: new InputDecoration(
@@ -123,7 +123,7 @@ class _RegisterState extends State<Register> {
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(29),
-        color: Colors.blue[100],
+        color: tileColour,
       ),
       child: TextFormField(
         decoration: new InputDecoration(
@@ -143,7 +143,8 @@ class _RegisterState extends State<Register> {
   }
 
   Widget _buildRegisterButton() {
-    return OutlineButton(
+    return FlatButton(
+      color: Colors.orange[300],
       splashColor: Colors.grey,
       onPressed: () async {
         if (_formKey.currentState.validate()) {
@@ -166,8 +167,6 @@ class _RegisterState extends State<Register> {
         }
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      borderSide: BorderSide(color: secondary),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
         child: Row(
@@ -200,6 +199,7 @@ class _RegisterState extends State<Register> {
               "ALREADY HAVE AN ACCOUNT?",
               style: TextStyle(
                 fontSize: 12,
+                color: Colors.white70,
               ),
             ),
             SizedBox(height: 5),
@@ -212,6 +212,7 @@ class _RegisterState extends State<Register> {
                     style: TextStyle(
                       fontSize: 12,
                       decoration: TextDecoration.underline,
+                      color: Colors.orange[300],
                     ),
                   ),
                 ],
@@ -232,8 +233,8 @@ class _RegisterState extends State<Register> {
               child: Column(
                 children: <Widget>[
                   Text(
-                    "Create your GoDutch account\ncan also add a app image",
-                    style: TextStyle(fontSize: 20),
+                    "Create your GoDutch account\n",
+                    style: TextStyle(fontSize: 20, color: Colors.white),
                   ),
                   Divider(color: secondary),
                   Padding(

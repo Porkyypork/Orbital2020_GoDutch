@@ -143,7 +143,7 @@ class _BillsListViewState extends State<BillsListView> {
               SizedBox(height: 120),
               Text(
                 "Tap on the Add Icon to get Started!",
-                style: TextStyle(fontSize: 22.0),
+                style: TextStyle(fontSize: 22.0, color: Colors.white70),
               ),
               SizedBox(height: 140),
             ],

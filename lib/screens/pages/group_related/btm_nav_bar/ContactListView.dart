@@ -73,16 +73,16 @@ class _ContactListViewState extends State<ContactListView> {
                               fontSize: 18,
                               fontFamily: 'Montserrat'),
                         )),
-                    SizedBox(height: 2),
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Amount owed: ${member.debt}',
-                          style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 14,
-                              fontFamily: 'OpenSans'),
-                        )),
+                    // SizedBox(height: 2),
+                    // Align(
+                    //     alignment: Alignment.centerLeft,
+                    //     child: Text(
+                    //       'Amount owed: ${member.debt}',
+                    //       style: TextStyle(
+                    //           color: Colors.grey[600],
+                    //           fontSize: 14,
+                    //           fontFamily: 'OpenSans'),
+                    //     )),
                   ],
                 ),
               ),

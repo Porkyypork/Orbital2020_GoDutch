@@ -6,7 +6,6 @@ import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:app/screens/pages/group_related/btm_nav_bar/bill_related/DebtsDisplay.dart';
 
 import '../group_related/btm_nav_bar/bill_related/BillBreakdown.dart';
 import 'PhotoPreviewPage.dart';
@@ -53,12 +52,15 @@ class _ItemPageState extends State<ItemPage> {
                 onPressed: () async {
                   bool isEmpty = await dbService.isBillEmpty();
                   if (isEmpty) {
-                    showDialog(context: context, child: _buildWarningDialog(),);
+                    showDialog(
+                      context: context,
+                      child: _buildWarningDialog(),
+                    );
                   } else {
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) =>
-                            BillBreakdown(dbService: dbService, billName:billName)));
+                        builder: (context) => BillBreakdown(
+                            dbService: dbService, billName: billName)));
                   }
                 },
                 color: Colors.orange[300],
@@ -109,18 +111,26 @@ class _ItemPageState extends State<ItemPage> {
 
   Widget _buildWarningDialog() {
     return Dialog(
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       child: Container(
         height: 220,
-        padding: EdgeInsets.fromLTRB(0, 20, 20, 20),
+        padding: EdgeInsets.all(20),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('You cannot submit an empty bill!'),
+            SizedBox(height: 60),
+            Text(
+              'You cannot submit an empty bill!',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 45),
             FlatButton(
+                color: Colors.teal,
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('ok'))
+                child: Text('OK'))
           ],
         ),
       ),

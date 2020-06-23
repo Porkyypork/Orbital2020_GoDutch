@@ -91,7 +91,7 @@ class _HomeState extends State<Home> {
         alignment: Alignment.topLeft,
         child: Row(
           children: <Widget>[
-            SizedBox(width: 80),
+            SizedBox(width: 115),
             Text(
               'Welcome back, \n${user.name}',
               style: TextStyle(
@@ -99,7 +99,6 @@ class _HomeState extends State<Home> {
                   color: Colors.white70,
                   fontFamily: 'Montserrat'),
             ),
-            SizedBox(width: MediaQuery.of(context).size.width - 280),
           ],
         ),
       ),

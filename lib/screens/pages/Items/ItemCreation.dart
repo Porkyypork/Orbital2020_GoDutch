@@ -101,9 +101,9 @@ class _ItemCreationState extends State<ItemCreation> {
           ),
           onPressed: () async {
             double price = double.parse(totalPrice);
-              itemDetails =
-                  await dbService.createItem(itemName, price, selectedMembers);
-              itemList.add(itemDetails);
+            itemDetails =
+                await dbService.createItem(itemName, price, selectedMembers);
+            itemList.add(itemDetails);
             dbService = new DataBaseService(
                 uid: dbService.uid,
                 groupUID: dbService.groupUID,
@@ -144,14 +144,20 @@ class _ItemCreationState extends State<ItemCreation> {
         keyboardType: TextInputType.number,
         controller: priceController,
         decoration: InputDecoration(
-          border: OutlineInputBorder(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: BorderSide(color: Colors.white, width: 2.0),
+          ),
+          focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide(
-              color: Colors.white, // TODO:Change to white
+              color: Colors.white,
             ),
           ),
           labelText: 'Total Price',
+          labelStyle: TextStyle(color: Colors.white70),
         ),
+        style: TextStyle(color: Colors.white),
       ),
     );
   }
@@ -168,14 +174,20 @@ class _ItemCreationState extends State<ItemCreation> {
         },
         controller: nameController,
         decoration: InputDecoration(
-          border: OutlineInputBorder(
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30.0),
+            borderSide: BorderSide(color: Colors.white, width: 2.0),
+          ),
+          focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30.0),
             borderSide: BorderSide(
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
           labelText: 'Item Name',
+          labelStyle: TextStyle(color: Colors.white70),
         ),
+        style: TextStyle(color: Colors.white),
       ),
     );
   }

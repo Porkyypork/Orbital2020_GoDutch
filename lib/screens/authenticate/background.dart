@@ -1,3 +1,4 @@
+import 'package:app/constants/colour.dart';
 import 'package:flutter/material.dart';
 
 
@@ -15,7 +16,7 @@ class Background extends StatelessWidget {
       body: Container(
           height: size.height,
           width: double.infinity,
-          color: Colors.blue[50],
+          color: bodyColour,
           child: Stack(
             alignment: Alignment.center,
             children: <Widget>[

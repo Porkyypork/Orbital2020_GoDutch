@@ -9,7 +9,7 @@ import 'package:app/screens/pages/Items/SharingGrid.dart';
 class ItemCreation extends StatefulWidget {
   final DataBaseService dbService;
   final ItemDetails item;
-  List<ItemDetails> itemList;
+  final List<ItemDetails> itemList;
 
   ItemCreation({this.dbService, this.item, this.itemList});
 

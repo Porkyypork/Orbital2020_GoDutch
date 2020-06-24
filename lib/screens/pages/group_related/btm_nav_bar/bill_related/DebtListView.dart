@@ -5,6 +5,7 @@ import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:app/models/OwedBills.dart';
+import 'package:share/share.dart';
 
 class DebtListView extends StatefulWidget {
   final DataBaseService dbService;
@@ -15,13 +16,19 @@ class DebtListView extends StatefulWidget {
   _DebtListViewState createState() => _DebtListViewState(dbService: dbService);
 }
 
-class _DebtListViewState extends State<DebtListView> {
+class _DebtListViewState extends State<DebtListView>
+    with AutomaticKeepAliveClientMixin<DebtListView> {
   final DataBaseService dbService;
+  String output;
+
+  @override
+  bool get wantKeepAlive => true;
 
   _DebtListViewState({this.dbService});
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final members = Provider.of<List<MemberDetails>>(context);
     final user = Provider.of<UserDetails>(context);
 
@@ -57,6 +64,8 @@ class _DebtListViewState extends State<DebtListView> {
                           return _buildYourListTile(snap.data[index]);
                         }
                       }),
+                  SizedBox(height: 30),
+                  _shareButton(),
                 ],
               ),
             );
@@ -66,7 +75,27 @@ class _DebtListViewState extends State<DebtListView> {
         });
   }
 
+  Widget _shareButton() {
+    return FloatingActionButton.extended(
+      label: Text("Share",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 15,
+          )),
+      onPressed: () {
+        final RenderBox box = context.findRenderObject();
+        Share.share(output,
+            sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+      },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(29),
+      ),
+      backgroundColor: Colors.orange[300],
+    );
+  }
+
   Widget _buildYourListTile(OwedBills bill) {
+    output += bill.name + " \$" + bill.totalOwed.toStringAsFixed(2) + "\n";
     return Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
       child: Container(
@@ -88,6 +117,8 @@ class _DebtListViewState extends State<DebtListView> {
   }
 
   Widget _buildBillsListTile(OwedBills bill) {
+    output += bill.name + " \$" + bill.totalOwed.toStringAsFixed(2) + "\n";
+
     return Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
       child: Container(
@@ -109,6 +140,10 @@ class _DebtListViewState extends State<DebtListView> {
   }
 
   Widget _heading(AsyncSnapshot<List<OwedBills>> snap) {
+    output = "${snap.data.elementAt(0).billName}\n";
+    output += "Total : \$" +
+        "${snap.data.elementAt(0).totalPrice.toStringAsFixed(2)}" +
+        "\n";
     return Container(
         padding: EdgeInsets.only(left: 15, right: 10),
         decoration: BoxDecoration(

@@ -1,6 +1,5 @@
 import 'package:app/constants/colour.dart';
 import 'package:app/models/BillDetails.dart';
-import 'package:app/models/MemberDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

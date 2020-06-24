@@ -1,7 +1,5 @@
 import 'package:app/constants/colour.dart';
-import 'package:app/models/BillDetails.dart';
 import 'package:app/models/itemDetails.dart';
-import 'package:app/screens/pages/Items/itemPage.dart';
 import 'package:app/screens/pages/group_related/btm_nav_bar/bill_related/DebtsDisplay.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +7,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../../constants/colour.dart';
 import 'BillBreakdownListView.dart';
-import 'DebtListView.dart';
 import 'DebtsDisplay.dart';
 
 class BillBreakdown extends StatefulWidget {
@@ -17,8 +14,8 @@ class BillBreakdown extends StatefulWidget {
   final DataBaseService dbService;
   BillBreakdown({this.billName, this.dbService});
   @override
-  _BillBreakdownState createState() => _BillBreakdownState(
-      billName: this.billName, dbService: this.dbService);
+  _BillBreakdownState createState() =>
+      _BillBreakdownState(billName: this.billName, dbService: this.dbService);
 }
 
 class _BillBreakdownState extends State<BillBreakdown> {
@@ -34,7 +31,6 @@ class _BillBreakdownState extends State<BillBreakdown> {
 
   @override
   Widget build(BuildContext context) {
-
     return StreamProvider<List<ItemDetails>>.value(
       value: dbService.items,
       child: Scaffold(
@@ -72,6 +68,8 @@ class _BillBreakdownState extends State<BillBreakdown> {
       ),
     );
   }
+
+ 
 
   void _onItemTapped(int index) {
     setState(() {

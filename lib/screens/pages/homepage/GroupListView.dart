@@ -145,7 +145,7 @@ class _GroupListViewState extends State<GroupListView> {
 }
 
 class GroupListView extends StatefulWidget {
-  UserDetails currentUser;
+  final UserDetails currentUser;
   GroupListView({this.currentUser});
 
   @override

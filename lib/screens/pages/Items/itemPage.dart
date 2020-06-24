@@ -43,41 +43,13 @@ class _ItemPageState extends State<ItemPage> {
         body: Column(
           children: <Widget>[
             Container(
-              height: MediaQuery.of(context).size.height - 210,
+              height: MediaQuery.of(context).size.height - 330,
               child: ItemListView(dbService: dbService, itemList: itemList),
-            ),
-            Builder(
-              builder: (context) => RaisedButton(
-                padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
-                onPressed: () async {
-                  bool isEmpty = await dbService.isBillEmpty();
-                  if (isEmpty) {
-                    showDialog(
-                      context: context,
-                      child: _buildWarningDialog(),
-                    );
-                  } else {
-                    Navigator.pop(context);
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BillBreakdown(
-                            dbService: dbService, billName: billName)));
-                  }
-                },
-                color: Colors.orange[300],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(29),
-                ),
-                child: Text(
-                  'Confirm'.toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
             ),
           ],
         ),
+        floatingActionButton: _confirmButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         bottomNavigationBar: BottomNavigationBar(
           elevation: 10.0,
           selectedItemColor: Colors.white70,
@@ -109,24 +81,59 @@ class _ItemPageState extends State<ItemPage> {
     );
   }
 
+  Widget _confirmButton() {
+    return  Builder(
+              builder: (context) => RaisedButton(
+                padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
+                onPressed: () async {
+                  bool isEmpty = await dbService.isBillEmpty();
+                  if (isEmpty) {
+                    showDialog(
+                      context: context,
+                      child: _buildWarningDialog(),
+                    );
+                  } else {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => BillBreakdown(
+                            dbService: dbService, billName: billName)));
+                  }
+                },
+                color: Colors.orange[300],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(29),
+                ),
+                child: Text(
+                  'Confirm'.toUpperCase(),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            );
+  }
+
   Widget _buildWarningDialog() {
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
       child: Container(
-        height: 220,
+        height: 150,
         padding: EdgeInsets.all(20),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: 60),
             Text(
-              'You cannot submit an empty bill!',
+              'Please add an Item to the Bill!',
               style: TextStyle(fontSize: 20),
             ),
-            SizedBox(height: 45),
+            SizedBox(height :25),
             FlatButton(
                 color: Colors.teal,
+                shape :  RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(29),
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                 },

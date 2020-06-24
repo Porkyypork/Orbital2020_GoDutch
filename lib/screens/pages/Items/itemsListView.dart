@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 class ItemListView extends StatefulWidget {
   final DataBaseService dbService;
-  List<ItemDetails> itemList;
+  final List<ItemDetails> itemList;
 
   ItemListView({this.dbService, this.itemList});
 
@@ -88,11 +88,13 @@ class _ItemListViewState extends State<ItemListView> {
     return Container(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 120),
+              SizedBox(height: 250),
               Text(
                 "Choose one of our functions",
                 style: TextStyle(fontSize: 22.0, color: Colors.white),

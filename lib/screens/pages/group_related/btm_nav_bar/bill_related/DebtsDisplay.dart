@@ -1,8 +1,6 @@
-import 'package:app/constants/colour.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
-import 'package:gradient_app_bar/gradient_app_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:app/screens/pages/group_related/btm_nav_bar/bill_related/DebtListView.dart';
 
@@ -17,6 +15,7 @@ class DebtsDisplay extends StatefulWidget {
 
 class _DebtsDisplayState extends State<DebtsDisplay> {
   final DataBaseService dbService;
+  String output;
 
   _DebtsDisplayState({this.dbService});
 

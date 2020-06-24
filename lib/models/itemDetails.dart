@@ -1,13 +1,13 @@
-class ItemDetails{
+class ItemDetails {
   String name;
   String itemUID;
   double totalPrice;
-  List<String> sharingMembers;
-
+  int numSharing;
+  
   ItemDetails({
     this.name,
     this.itemUID,
     this.totalPrice,
-    this.sharingMembers,
+    this.numSharing,
   });
 }

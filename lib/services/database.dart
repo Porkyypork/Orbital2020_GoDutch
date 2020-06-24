@@ -38,14 +38,14 @@ class DataBaseService {
       "groupName": groupName,
       "groupUID": groupUID,
       "groupAdmin": user.name,
-      "numMembers": 1,
+      "numMembers": 0,
     });
 
     GroupDetails groupDetails = new GroupDetails(
       groupName: groupName,
       groupUID: groupUID,
       groupAdmin: user.name,
-      numMembers: 1,
+      numMembers: 0,
     );
 
     DocumentReference userReference = db
@@ -89,6 +89,20 @@ class DataBaseService {
         .collection('members')
         .document(memberID)
         .delete();
+
+    var groupDocRef = db
+        .collection('users')
+        .document(this.uid)
+        .collection('groups')
+        .document(groupUID);
+
+    int newNumMembers = await groupDocRef.get().then((group) {
+          return group['numMembers'];
+        }) -
+        1;
+    groupDocRef.updateData({
+      'numMembers': newNumMembers,
+    });
   }
 
   void addGroupMember(Contact contact) async {
@@ -111,11 +125,12 @@ class DataBaseService {
           .collection('groups')
           .document(groupUID);
       int newNumMembers = await groupDocRef.get().then((group) {
-        return group['numMembers'];
-      });
+            return group['numMembers'];
+          }) +
+          1;
 
       groupDocRef.updateData({
-        'numMembers': newNumMembers++,
+        'numMembers': newNumMembers,
       });
     } catch (e) {
       print(e.toString());
@@ -260,7 +275,7 @@ class DataBaseService {
         name: doc['Name'] ?? '',
         itemUID: doc.documentID,
         totalPrice: doc['totalPrice'] ?? -1.0,
-        sharingMembers: doc['sharedWith'] ?? [],
+        numSharing: doc['numSharing'] ?? -1,
       );
     }).toList();
   }
@@ -280,10 +295,11 @@ class DataBaseService {
 
   Future<ItemDetails> createItem(
       String itemName, double itemPrice, List<MemberDetails> members) async {
-    List<String> memberNames = [];
+    int numMembers = 0;
     for (MemberDetails member in members) {
-      memberNames.add(member.name);
+      numMembers = numMembers + 1;
     }
+    // print(numMembers); THIS IS WORKING
     DocumentReference itemReference = db
         .collection("users")
         .document(this.uid)
@@ -293,11 +309,12 @@ class DataBaseService {
         .document(this.billUID)
         .collection('items')
         .document();
+
     itemReference.setData({
       'Name': itemName,
       'itemUID': itemReference.documentID,
       'totalPrice': itemPrice,
-      'sharedWith': memberNames,
+      'numSharing': numMembers,
     });
 
     var billsDocRef = db
@@ -340,7 +357,8 @@ class DataBaseService {
     return new ItemDetails(
         name: itemName,
         itemUID: itemReference.documentID,
-        totalPrice: itemPrice);
+        totalPrice: itemPrice,
+        numSharing: numMembers);
   }
 
   void shareItemWith(MemberDetails member) async {
@@ -366,7 +384,8 @@ class DataBaseService {
       return new ItemDetails(
           name: doc.data['Name'],
           itemUID: doc.data['itemUID'],
-          totalPrice: doc.data["totalPrice"]);
+          totalPrice: doc.data['totalPrice'],
+          numSharing: doc.data['numSharing']);
     }).toList();
   }
 

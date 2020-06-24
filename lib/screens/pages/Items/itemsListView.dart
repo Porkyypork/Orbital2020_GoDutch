@@ -39,7 +39,9 @@ class _ItemListViewState extends State<ItemListView> {
     String itemUID = item.itemUID;
     String name = item.name;
     String totalPrice = item.totalPrice.toStringAsFixed(2);
-    print(itemUID);
+    int numSharing = item.numSharing;
+
+    // print(itemUID);
     return Dismissible(
         key: UniqueKey(),
         direction: DismissDirection.endToStart,
@@ -53,7 +55,12 @@ class _ItemListViewState extends State<ItemListView> {
         },
         background: _deletionBackground(item),
         child: Container(
+          // basically this is prep for OCR implementation, since we cannot split the members from there
+          // we highlight any undone items in a light red, so that users know that they still have to manually split
+          // the members, validation is a necessity
+          decoration: item.numSharing == 0 ? BoxDecoration(color: Colors.red[300]) : BoxDecoration(),
           child: ListTile(
+            onLongPress: () => print(numSharing), // to debug
               leading: Icon(
                 Icons.restaurant,
                 color: Colors.white70,
@@ -94,7 +101,7 @@ class _ItemListViewState extends State<ItemListView> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 250),
+              SizedBox(height: 220),
               Text(
                 "Choose one of our functions",
                 style: TextStyle(fontSize: 22.0, color: Colors.white),

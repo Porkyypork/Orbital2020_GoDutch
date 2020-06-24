@@ -26,11 +26,62 @@ class _ContactListViewState extends State<ContactListView> {
   @override
   Widget build(BuildContext context) {
     final members = Provider.of<List<MemberDetails>>(context);
+    final user = Provider.of<UserDetails>(context);
 
-    return ListView.builder(
-      padding: EdgeInsets.all(10),
-      itemCount: members.length,
-      itemBuilder: (context, index) => _buildMemberTile(members[index]),
+    return Column(
+      children: <Widget>[
+        _buildAdminTile(user),
+        Container(
+          height: MediaQuery.of(context).size.height - 305,
+          child: ListView.builder(
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+            itemCount: members.length,
+            itemBuilder: (context, index) => members[index].name != user.name
+                ? _buildMemberTile(members[index])
+                : SizedBox(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAdminTile(UserDetails user) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+      child: Column(
+        children: <Widget>[
+          Card(
+            color: tileColour,
+            child: Container(
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
+                  child: Icon(Icons.star, color: Colors.grey),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width - 130,
+                  child: Column(
+                    children: <Widget>[
+                      Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            user.name,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontFamily: 'Montserrat'),
+                          )),
+                    ],
+                  ),
+                ),
+              ],
+            )),
+          ),
+          Divider(color: Colors.white),
+        ],
+      ),
     );
   }
 
@@ -39,79 +90,41 @@ class _ContactListViewState extends State<ContactListView> {
     final DataBaseService dbService =
         DataBaseService(uid: user.uid, groupUID: groupdata.groupUID);
 
-    return Dismissible(
-      key: UniqueKey(),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        if (direction == DismissDirection.endToStart) {
-          dbService.removeGroupMember(member.memberID);
-        }
-      },
-      background: _deletionBackground(member),
-      child: GestureDetector(
-        onTap: () {},
-        child: Card(
-          color: tileColour,
-          child: Container(
-              child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
-                child: Icon(Icons.important_devices, color: Colors.grey),
+    return GestureDetector(
+      onTap: () {},
+      child: Card(
+        color: tileColour,
+        child: Container(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(15, 20, 15, 20),
+              child: Icon(Icons.person, color: Colors.grey),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width - 130,
+              child: Column(
+                children: <Widget>[
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        member.name,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontFamily: 'Montserrat'),
+                      )),
+                ],
               ),
-              Container(
-                width: MediaQuery.of(context).size.width - 130,
-                child: Column(
-                  children: <Widget>[
-                    Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          member.name,
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontFamily: 'Montserrat'),
-                        )),
-                    // SizedBox(height: 2),
-                    // Align(
-                    //     alignment: Alignment.centerLeft,
-                    //     child: Text(
-                    //       'Amount owed: ${member.debt}',
-                    //       style: TextStyle(
-                    //           color: Colors.grey[600],
-                    //           fontSize: 14,
-                    //           fontFamily: 'OpenSans'),
-                    //     )),
-                  ],
-                ),
-              ),
-              IconButton(
-                  icon: Icon(Icons.check, color: Colors.green[900]),
-                  onPressed: () {
-                    // member has settled
-                  }),
-            ],
-          )),
-        ),
-      ),
-    );
-  }
-
-  Widget _deletionBackground(MemberDetails member) {
-    return Container(
-      alignment: AlignmentDirectional.centerEnd,
-      padding: EdgeInsets.only(right: 15.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Text(
-            'Removing ${member.name}',
-            style: TextStyle(color: Colors.red),
-          ),
-          SizedBox(width: 16),
-          Icon(Icons.delete, color: Colors.red),
-        ],
+            ),
+            IconButton(
+                icon: Icon(Icons.clear, color: Colors.red[900]),
+                onPressed: () {
+                  dbService.removeGroupMember(member.memberID);
+                })
+          ],
+        )),
       ),
     );
   }

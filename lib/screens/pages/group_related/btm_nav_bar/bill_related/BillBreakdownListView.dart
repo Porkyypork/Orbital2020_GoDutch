@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BillBreakdownListView extends StatefulWidget {
+  
   @override
   _BillBreakdownListViewState createState() => _BillBreakdownListViewState();
 }
 
 class _BillBreakdownListViewState extends State<BillBreakdownListView> {
+
   @override
   Widget build(BuildContext context) {
     final items = Provider.of<List<ItemDetails>>(context);
-
+    
     return items == null || items.length == 0
         ? _initialState()
         : SingleChildScrollView(

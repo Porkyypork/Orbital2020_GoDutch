@@ -1,5 +1,4 @@
 import 'package:app/models/itemDetails.dart';
-import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +37,7 @@ class _ItemListViewState extends State<ItemListView> {
   Widget _buildItemTile(ItemDetails item) {
     String itemUID = item.itemUID;
     String name = item.name;
-    String totalPrice = item.totalPrice.toStringAsFixed(2);
+    double totalPrice = item.totalPrice;
     int numSharing = item.numSharing;
 
     // print(itemUID);
@@ -47,8 +46,8 @@ class _ItemListViewState extends State<ItemListView> {
         direction: DismissDirection.endToStart,
         onDismissed: (direction) {
           if (direction == DismissDirection.endToStart) {
-            setState(() async {
-              await dbService.deleteItem(itemUID);
+            setState(()  {
+               dbService.deleteItem(itemUID, totalPrice, numSharing);
               _deletionMessage(context, name);
             });
           }
@@ -70,24 +69,10 @@ class _ItemListViewState extends State<ItemListView> {
                     color: Colors.white,
                   )),
               subtitle: Text(
-                "\$$totalPrice",
+                "\$${totalPrice.toStringAsFixed(2)}",
                 style: TextStyle(color: Colors.white54),
               ),
-              onTap: () {
-                dbService = new DataBaseService(
-                    uid: dbService.uid,
-                    groupUID: dbService.groupUID,
-                    billUID: dbService.billUID,
-                    owedBillUID: dbService.owedBillUID,
-                    itemUID: itemUID);
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ItemCreation(
-                            dbService: dbService,
-                            item: item,
-                            itemList: itemList)));
-              }),
+             ),
         ));
   }
 

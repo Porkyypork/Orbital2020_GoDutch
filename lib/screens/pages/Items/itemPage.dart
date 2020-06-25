@@ -36,6 +36,7 @@ class _ItemPageState extends State<ItemPage> {
       child: Scaffold(
         backgroundColor: bodyColour,
         appBar: AppBar(
+          leading: _backButton(),
           backgroundColor: headerColour,
           title: Text(billName),
           centerTitle: true,
@@ -81,37 +82,54 @@ class _ItemPageState extends State<ItemPage> {
     );
   }
 
+  Widget _backButton() {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () async {
+        bool isEmpty = await dbService.isBillEmpty();
+        if (isEmpty) {
+          showDialog(
+            context: context,
+            child: _backWarningDialog(),
+          );
+        } else {
+          Navigator.pop(context);
+        }
+      },
+    );
+  }
+
   Widget _confirmButton() {
-    return  Builder(
-              builder: (context) => RaisedButton(
-                padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
-                onPressed: () async {
-                  bool isEmpty = await dbService.isBillEmpty();
-                  if (isEmpty) {
-                    showDialog(
-                      context: context,
-                      child: _buildWarningDialog(),
-                    );
-                  } else {
-                    Navigator.pop(context);
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => BillBreakdown(
-                            dbService: dbService, billName: billName)));
-                  }
-                },
-                color: Colors.orange[300],
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(29),
-                ),
-                child: Text(
-                  'Confirm'.toUpperCase(),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                  ),
-                ),
-              ),
+    return Builder(
+      builder: (context) => RaisedButton(
+        padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
+        onPressed: () async {
+          bool isEmpty = await dbService.isBillEmpty();
+          if (isEmpty) {
+            showDialog(
+              context: context,
+              child: _buildWarningDialog(),
             );
+          } else {
+            Navigator.pop(context);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) =>
+                    BillBreakdown(dbService: dbService, billName: billName)));
+          }
+        },
+        color: Colors.orange[300],
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(29),
+        ),
+        child: Text(
+          'Confirm'.toUpperCase(),
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildWarningDialog() {
@@ -128,16 +146,65 @@ class _ItemPageState extends State<ItemPage> {
               'Please add an Item to the Bill!',
               style: TextStyle(fontSize: 20),
             ),
-            SizedBox(height :25),
+            SizedBox(height: 25),
             FlatButton(
                 color: Colors.teal,
-                shape :  RoundedRectangleBorder(
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(29),
                 ),
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 child: Text('OK'))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _backWarningDialog() {
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      child: Container(
+        height: 160,
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Going back will delete \ncurrent bill!',
+              textAlign : TextAlign.center,
+              style: TextStyle(fontSize: 20, wordSpacing: 1),
+            ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                FlatButton(
+                    color: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(29),
+                    ),
+                    onPressed: () {
+                      String billUID = dbService.billUID;
+                      dbService.removeBill(billUID);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK')),
+                SizedBox(width: 35),
+                FlatButton(
+                    color: Colors.teal,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(29),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Close')),
+              ],
+            )
           ],
         ),
       ),

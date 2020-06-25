@@ -23,6 +23,7 @@ class _BillBreakdownState extends State<BillBreakdown> {
     initialPage: 0,
   );
   int _selectedIndex = 0;
+  static int billsCount = 0;
 
   String billName;
   DataBaseService dbService;
@@ -67,9 +68,7 @@ class _BillBreakdownState extends State<BillBreakdown> {
         ),
       ),
     );
-  }
-
- 
+  } 
 
   void _onItemTapped(int index) {
     setState(() {

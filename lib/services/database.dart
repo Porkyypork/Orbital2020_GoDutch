@@ -362,21 +362,22 @@ class DataBaseService {
   }
 
   void shareItemWith(MemberDetails member) async {
-    try {
-      await db
-          .collection('users')
-          .document(this.uid)
-          .collection('groups')
-          .document(groupUID)
-          .collection('bills')
-          .document(billUID)
-          .collection('items')
-          .document(itemUID)
-          .collection('sharingList')
-          .add({'Name': member.name, 'Number': member.number});
-    } catch (e) {
-      print(e.toString());
-    }
+    await db
+        .collection('users')
+        .document(this.uid)
+        .collection('groups')
+        .document(groupUID)
+        .collection('bills')
+        .document(billUID)
+        .collection('items')
+        .document(itemUID)
+        .collection('sharingList')
+        .add({
+      'Name': member.name,
+      'Number': member.number,
+      "memberUID": member.memberID
+    });
+    print("share");
   }
 
   List<ItemDetails> _itemDetailsFromSnapShot(QuerySnapshot snap) {
@@ -402,17 +403,77 @@ class DataBaseService {
         .map(_itemDetailsFromSnapShot);
   }
 
-  Future<void> deleteItem(String itemUID) async {
-    await db
+  void deleteItem(String itemUID, double itemPrice, int numSharing) async {
+    List<String> sharingUID = [];
+    DocumentReference billRef = db
         .collection('users')
         .document(uid)
         .collection('groups')
         .document(groupUID)
         .collection('bills')
-        .document(this.billUID)
+        .document(this.billUID);
+
+    CollectionReference memRef = db
+        .collection('users')
+        .document(uid)
+        .collection('groups')
+        .document(groupUID)
+        .collection('members');
+
+    //delete item
+    await billRef.collection('items').document(itemUID).delete();
+
+    //updating total Price
+    double currentPrice =
+        await billRef.get().then((bill) => bill['totalPrice']);
+    billRef.updateData({'totalPrice': currentPrice - itemPrice});
+
+    String owedBillUID =
+        await billRef.get().then((bill) => bill['owedBillUID']);
+
+    // updating individual owedBill
+    QuerySnapshot sharingSnap = await billRef
         .collection('items')
         .document(itemUID)
-        .delete();
+        .collection('sharingList')
+        .getDocuments();
+    List<DocumentSnapshot> sharingDoc = sharingSnap.documents;
+    for (DocumentSnapshot doc in sharingDoc) {
+      sharingUID.add(doc.data['memberUID']);
+    }
+
+    String memberUID = sharingUID.elementAt(0);
+
+    double currentTotal = await memRef
+        .document(memberUID)
+        .collection('owedBills')
+        .document(owedBillUID)
+        .get()
+        .then((bill) => bill['totalPrice']);
+
+    for (String uid in sharingUID) {
+      double currentOwed = await memRef
+          .document(uid)
+          .collection('owedBills')
+          .document(owedBillUID)
+          .get()
+          .then((bill) => bill['totalOwed']);
+
+      memRef
+          .document(uid)
+          .collection('owedBills')
+          .document(owedBillUID)
+          .updateData({
+        "totalPrice": currentTotal - itemPrice,
+        "totalOwed": currentOwed - (itemPrice / numSharing),
+      });
+    }
+
+    // checking if collection is empty, if it's empty change isEmpty to true
+    QuerySnapshot snapshot = await billRef.collection('items').getDocuments();
+    if (snapshot.documents.length == 0) {
+      billRef.updateData({'isEmpty': true});
+    }
   }
 
   Future<List<OwedBills>> getDebt(List<MemberDetails> members) async {

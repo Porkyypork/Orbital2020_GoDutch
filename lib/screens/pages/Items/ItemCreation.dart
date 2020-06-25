@@ -59,11 +59,10 @@ class _ItemCreationState extends State<ItemCreation> {
       child: Scaffold(
         backgroundColor: bodyColour,
         appBar: AppBar(
-          title: Text('Edit Item'),
+          title: Text('Create Item'),
           backgroundColor: headerColour,
         ),
         body: Padding(
-            //edit accordingly
             padding: EdgeInsets.only(
               top: 15.0,
               left: 10.0,
@@ -110,6 +109,7 @@ class _ItemCreationState extends State<ItemCreation> {
                 billUID: dbService.billUID,
                 owedBillUID: dbService.owedBillUID,
                 itemUID: itemDetails.itemUID);
+                 addMembers(selectedMembers);
             Navigator.pop(context);
           },
         ));
@@ -194,7 +194,6 @@ class _ItemCreationState extends State<ItemCreation> {
 
   Future<void> addMembers(List<MemberDetails> members) async {
     for (MemberDetails member in members) {
-      print(member.name);
       dbService.shareItemWith(member);
     }
   }

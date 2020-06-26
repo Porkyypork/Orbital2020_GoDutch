@@ -38,7 +38,7 @@ class DataBaseService {
       "groupName": groupName,
       "groupUID": groupUID,
       "groupAdmin": user.name,
-      "numMembers": 0,
+      "numMembers": 1,
     });
 
     GroupDetails groupDetails = new GroupDetails(
@@ -58,7 +58,6 @@ class DataBaseService {
     userReference.setData({
       'Name': user.name,
       'Number': user.number,
-      //'Debt' : 0
     });
 
     return groupDetails;
@@ -116,7 +115,6 @@ class DataBaseService {
           .add({
         'Name': contact.displayName,
         'Number': contact.phones.first.value.toString(),
-        'Debt': 0,
       });
 
       var groupDocRef = db
@@ -125,9 +123,8 @@ class DataBaseService {
           .collection('groups')
           .document(groupUID);
       int newNumMembers = await groupDocRef.get().then((group) {
-            return group['numMembers'];
-          }) +
-          1;
+        return group['numMembers'] + 1;
+      });
 
       groupDocRef.updateData({
         'numMembers': newNumMembers,

@@ -107,6 +107,7 @@ class _GroupListViewState extends State<GroupListView> {
         child: Center(
             child: Text(
       "You are not currently in any groups!\n\nCreate one to get started",
+      textAlign: TextAlign.center,
       style: TextStyle(
         fontSize: 24.0,
         color: Colors.white70,

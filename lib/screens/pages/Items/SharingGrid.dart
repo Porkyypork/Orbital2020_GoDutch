@@ -21,7 +21,7 @@ class _SharingGridState extends State<SharingGrid> {
     final members = Provider.of<List<MemberDetails>>(context);
 
     return SizedBox(
-      height: 150,
+      height: 175,
       child: GridView.count(
           crossAxisCount: 2,
           childAspectRatio: MediaQuery.of(context).size.width /

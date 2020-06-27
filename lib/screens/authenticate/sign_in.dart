@@ -247,10 +247,8 @@ class _SignInState extends State<SignIn> {
         }
       },
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      // highlightElevation: 0,
-      // borderSide: BorderSide(color: secondary),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+        padding: const EdgeInsets.fromLTRB(0, 5, 5, 5),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,

@@ -28,21 +28,26 @@ class _ContactListViewState extends State<ContactListView> {
     final members = Provider.of<List<MemberDetails>>(context);
     final user = Provider.of<UserDetails>(context);
 
-    return Column(
-      children: <Widget>[
-        _buildAdminTile(user),
-        Container(
-          height: MediaQuery.of(context).size.height - 305,
-          child: ListView.builder(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-            itemCount: members.length,
-            itemBuilder: (context, index) => members[index].name != user.name
-                ? _buildMemberTile(members[index])
-                : ListTile(),
-          ),
-        ),
-      ],
-    );
+    return (members.length == null)
+        ? Container()
+        : SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                _buildAdminTile(user),
+                Container(
+                  height: MediaQuery.of(context).size.height - 305,
+                  child: ListView.builder(
+                    padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    itemCount: members.length,
+                    itemBuilder: (context, index) =>
+                        members[index].name != user.name
+                            ? _buildMemberTile(members[index])
+                            : ListTile(),
+                  ),
+                ),
+              ],
+            ),
+          );
   }
 
   Widget _buildAdminTile(UserDetails user) {

@@ -11,12 +11,13 @@ class ItemCreation extends StatefulWidget {
   final DataBaseService dbService;
   final List<ItemDetails> itemList;
   final BillDetails billDetails;
+  final ItemDetails item;
 
-  ItemCreation({this.dbService, this.itemList, this.billDetails});
+  ItemCreation({this.dbService, this.itemList, this.item, this.billDetails});
 
   @override
   _ItemCreationState createState() => _ItemCreationState(
-      dbService: dbService, itemList: itemList, billDetails: billDetails);
+      dbService: dbService, itemList: itemList, item: item, billDetails: billDetails);
 }
 
 class _ItemCreationState extends State<ItemCreation> {
@@ -32,14 +33,14 @@ class _ItemCreationState extends State<ItemCreation> {
   ItemDetails item;
   List<ItemDetails> itemList;
 
-  _ItemCreationState({this.dbService, this.itemList, this.billDetails});
+  _ItemCreationState({this.dbService, this.itemList, this.item, this.billDetails});
 
   @override
   void initState() {
     super.initState();
     if (item != null) {
       nameController.text = item.name;
-      priceController.text = item.totalPrice.toString();
+      priceController.text = item.totalPrice.toStringAsFixed(2);
       itemName = item.name;
       totalPrice = item.totalPrice.toString();
     }
@@ -101,18 +102,16 @@ class _ItemCreationState extends State<ItemCreation> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           onPressed: () async {
+            //TODO
+            // need add delete item from itemlist here if you are editing. 
+            // so if item != null delete the item and the code below will add the edited item into the list
             int extraCharges = 100 + billDetails.gst + billDetails.svc;
             double price = double.parse(totalPrice) * (extraCharges / 100);
-            itemDetails =
-                await dbService.createItem(itemName, price, selectedMembers);
+            itemDetails = new ItemDetails(
+                name: itemName,
+                totalPrice: price,
+                selectedMembers: selectedMembers);
             itemList.add(itemDetails);
-            dbService = new DataBaseService(
-                uid: dbService.uid,
-                groupUID: dbService.groupUID,
-                billUID: dbService.billUID,
-                owedBillUID: dbService.owedBillUID,
-                itemUID: itemDetails.itemUID);
-            addMembers(selectedMembers);
             Navigator.pop(context);
           },
         ));
@@ -193,12 +192,6 @@ class _ItemCreationState extends State<ItemCreation> {
         style: TextStyle(color: Colors.white),
       ),
     );
-  }
-
-  Future<void> addMembers(List<MemberDetails> members) async {
-    for (MemberDetails member in members) {
-      dbService.shareItemWith(member);
-    }
   }
 
   void _nameListener() {

@@ -1,4 +1,6 @@
+import 'package:app/constants/loading.dart';
 import 'package:app/models/BillDetails.dart';
+import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:app/screens/pages/Items/itemsListView.dart';
 import 'package:flutter/material.dart';
@@ -23,8 +25,9 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
-  final DataBaseService dbService;
+  DataBaseService dbService;
   final BillDetails billDetails;
+  bool loading = false;
 
   List<ItemDetails> itemList = [];
 
@@ -32,63 +35,62 @@ class _ItemPageState extends State<ItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<List<ItemDetails>>.value(
-      value: dbService.items,
-      child: Scaffold(
-        backgroundColor: bodyColour,
-        appBar: AppBar(
-          leading: _backButton(),
-          backgroundColor: headerColour,
-          title: Text(billDetails.billName),
-          centerTitle: true,
-        ),
-        body: Column(
-          children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height - 330,
-              child: ItemListView(dbService: dbService, itemList: itemList),
+    return loading
+        ? Loading()
+        : Scaffold(
+            backgroundColor: bodyColour,
+            appBar: AppBar(
+              leading: _backButton(),
+              backgroundColor: headerColour,
+              title: Text(billDetails.billName),
+              centerTitle: true,
             ),
-          ],
-        ),
-        floatingActionButton: _confirmButton(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        bottomNavigationBar: BottomNavigationBar(
-          elevation: 10.0,
-          selectedItemColor: Colors.white70,
-          unselectedItemColor: Colors.white70,
-          backgroundColor: headerColour,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-                icon: Icon(Icons.camera_alt),
-                title: Text(
-                  'Take a Photo',
-                  style: TextStyle(fontSize: 14),
-                )),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.edit),
-                title: Text(
-                  'Manual entry',
-                  style: TextStyle(fontSize: 14),
-                )),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.perm_media),
-                title: Text(
-                  'Gallery',
-                  style: TextStyle(fontSize: 14),
-                )),
-          ],
-          onTap: _onItemTapped,
-        ),
-      ),
-    );
+            body: Column(
+              children: <Widget>[
+                Container(
+                  height: MediaQuery.of(context).size.height - 330,
+                  child: ItemListView(dbService: dbService, itemList: itemList, billDetails : billDetails),
+                ),
+              ],
+            ),
+            floatingActionButton: _confirmButton(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            bottomNavigationBar: BottomNavigationBar(
+              elevation: 10.0,
+              selectedItemColor: Colors.white70,
+              unselectedItemColor: Colors.white70,
+              backgroundColor: headerColour,
+              items: <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.camera_alt),
+                    title: Text(
+                      'Take a Photo',
+                      style: TextStyle(fontSize: 14),
+                    )),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.edit),
+                    title: Text(
+                      'Manual entry',
+                      style: TextStyle(fontSize: 14),
+                    )),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.perm_media),
+                    title: Text(
+                      'Gallery',
+                      style: TextStyle(fontSize: 14),
+                    )),
+              ],
+              onTap: _onItemTapped,
+            ),
+          );
   }
 
   Widget _backButton() {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () async {
-        bool isEmpty = await dbService.isBillEmpty();
-        if (isEmpty) {
+        if (itemList.isEmpty) {
           showDialog(
             context: context,
             child: _backWarningDialog(),
@@ -105,17 +107,28 @@ class _ItemPageState extends State<ItemPage> {
       builder: (context) => RaisedButton(
         padding: EdgeInsets.fromLTRB(30, 15, 30, 15),
         onPressed: () async {
-          bool isEmpty = await dbService.isBillEmpty();
-          if (isEmpty) {
+          if (itemList.isEmpty) {
             showDialog(
               context: context,
               child: _buildWarningDialog(),
             );
           } else {
+            loading = true;
+            for (ItemDetails item in itemList) {
+              ItemDetails itemDetails = await dbService.createItem(
+                  item.name, item.totalPrice, item.selectedMembers);
+              dbService = new DataBaseService(
+                  uid: dbService.uid,
+                  groupUID: dbService.groupUID,
+                  billUID: dbService.billUID,
+                  owedBillUID: dbService.owedBillUID,
+                  itemUID: itemDetails.itemUID);
+              addMembers(item.selectedMembers);
+            }
             Navigator.pop(context);
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>
-                    BillBreakdown(dbService: dbService, billName: billDetails.billName)));
+                builder: (context) => BillBreakdown(
+                    dbService: dbService, billName: billDetails.billName)));
           }
         },
         color: Colors.orange[300],
@@ -175,7 +188,7 @@ class _ItemPageState extends State<ItemPage> {
           children: <Widget>[
             Text(
               'Going back will delete \ncurrent bill!',
-              textAlign : TextAlign.center,
+              textAlign: TextAlign.center,
               style: TextStyle(fontSize: 20, wordSpacing: 1),
             ),
             SizedBox(height: 20),
@@ -223,14 +236,22 @@ class _ItemPageState extends State<ItemPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  ItemCreation(dbService: dbService, itemList: itemList, billDetails : billDetails)));
+              builder: (context) => ItemCreation(
+                  dbService: dbService,
+                  itemList: itemList,
+                  billDetails: billDetails)));
     } else {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) =>
                   PhotoPreviewPage(initialSource: ImageSource.gallery)));
+    }
+  }
+
+  Future<void> addMembers(List<MemberDetails> members) async {
+    for (MemberDetails member in members) {
+      dbService.shareItemWith(member);
     }
   }
 }

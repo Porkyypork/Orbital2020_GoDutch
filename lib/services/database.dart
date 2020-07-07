@@ -192,17 +192,6 @@ class DataBaseService {
         .map(_billDetailsFromSnapshot);
   }
 
-  Future<bool> isBillEmpty() {
-    DocumentReference billReference = db
-        .collection("users")
-        .document(this.uid)
-        .collection("groups")
-        .document(this.groupUID)
-        .collection('bills')
-        .document(this.billUID);
-
-    return billReference.get().then((bill) => bill['isEmpty']);
-  }
 
   Future<BillDetails> createBill(
       String billName, List<MemberDetails> members, int gst, int serviceCharge) async {
@@ -251,7 +240,6 @@ class DataBaseService {
       'owedBillUID': owedBillUID,
       'totalPrice': 0.0,
       'Date': DateTime.now(),
-      'isEmpty': true,
       'GST' : gst,
       'SVC' : serviceCharge
     });
@@ -270,32 +258,8 @@ class DataBaseService {
         .delete();
   }
 
-  List<ItemDetails> _itemDetailsFromSnapshot(QuerySnapshot snap) {
-    return snap.documents.map((doc) {
-      return new ItemDetails(
-        name: doc['Name'] ?? '',
-        itemUID: doc.documentID,
-        totalPrice: doc['totalPrice'] ?? -1.0,
-        numSharing: doc['numSharing'] ?? -1,
-      );
-    }).toList();
-  }
-
-  Stream<List<ItemDetails>> get item {
-    return db
-        .collection('users')
-        .document(this.uid)
-        .collection('groups')
-        .document(this.groupUID)
-        .collection('bills')
-        .document(this.billUID)
-        .collection('items')
-        .snapshots()
-        .map(_itemDetailsFromSnapshot);
-  }
-
   Future<ItemDetails> createItem(
-      String itemName, double itemPrice, List<MemberDetails> members) async {
+    String itemName, double itemPrice, List<MemberDetails> members) async {
     int numMembers = 0;
     for (MemberDetails member in members) {
       numMembers = numMembers + 1;
@@ -333,7 +297,6 @@ class DataBaseService {
 
     billsDocRef.updateData({
       'totalPrice': totalPrice,
-      'isEmpty': false,
     });
 
     for (MemberDetails member in members) {
@@ -359,7 +322,7 @@ class DataBaseService {
         name: itemName,
         itemUID: itemReference.documentID,
         totalPrice: itemPrice,
-        numSharing: numMembers);
+        selectedMembers: members);
   }
 
   void shareItemWith(MemberDetails member) async {
@@ -378,7 +341,6 @@ class DataBaseService {
       'Number': member.number,
       "memberUID": member.memberID
     });
-    print("share");
   }
 
   List<ItemDetails> _itemDetailsFromSnapShot(QuerySnapshot snap) {
@@ -386,8 +348,8 @@ class DataBaseService {
       return new ItemDetails(
           name: doc.data['Name'],
           itemUID: doc.data['itemUID'],
-          totalPrice: doc.data['totalPrice'],
-          numSharing: doc.data['numSharing']);
+          totalPrice: doc.data['totalPrice']
+        );
     }).toList();
   }
 
@@ -468,12 +430,6 @@ class DataBaseService {
         "totalPrice": currentTotal - itemPrice,
         "totalOwed": currentOwed - (itemPrice / numSharing),
       });
-    }
-
-    // checking if collection is empty, if it's empty change isEmpty to true
-    QuerySnapshot snapshot = await billRef.collection('items').getDocuments();
-    if (snapshot.documents.length == 0) {
-      billRef.updateData({'isEmpty': true});
     }
   }
 

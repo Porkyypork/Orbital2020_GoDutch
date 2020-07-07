@@ -45,13 +45,18 @@ class _ItemPageState extends State<ItemPage> {
               title: Text(billDetails.billName),
               centerTitle: true,
             ),
-            body: Column(
-              children: <Widget>[
-                Container(
-                  height: MediaQuery.of(context).size.height - 330,
-                  child: ItemListView(dbService: dbService, itemList: itemList, billDetails : billDetails),
-                ),
-              ],
+            body: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.height - 330,
+                    child: ItemListView(
+                        dbService: dbService,
+                        itemList: itemList,
+                        billDetails: billDetails),
+                  ),
+                ],
+              ),
             ),
             floatingActionButton: _confirmButton(),
             floatingActionButtonLocation:
@@ -230,23 +235,37 @@ class _ItemPageState extends State<ItemPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  PhotoPreviewPage(initialSource: ImageSource.camera)));
+              builder: (context) => PhotoPreviewPage(
+                    initialSource: ImageSource.camera,
+                    itemList: itemList,
+                    billDetails: billDetails,
+                    refreshItemPage: refresh,
+                  )));
     } else if (index == 1) {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => ItemCreation(
-                  dbService: dbService,
-                  itemList: itemList,
-                  billDetails: billDetails)));
+                    dbService: dbService,
+                    itemList: itemList,
+                    billDetails: billDetails,
+                    refreshItemPage: refresh,
+                  )));
     } else {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  PhotoPreviewPage(initialSource: ImageSource.gallery)));
+              builder: (context) => PhotoPreviewPage(
+                    initialSource: ImageSource.gallery,
+                    itemList: itemList,
+                    billDetails: billDetails,
+                    refreshItemPage: refresh,
+                  )));
     }
+  }
+
+  refresh() {
+    setState(() {});
   }
 
   Future<void> addMembers(List<MemberDetails> members) async {

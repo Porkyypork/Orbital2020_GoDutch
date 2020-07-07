@@ -1,16 +1,27 @@
 import 'dart:io';
+import 'package:app/models/itemDetails.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 
 class ImageToText {
-
-  Future readText(File image) async {
+  Future<List<ItemDetails>> generateItemDetails(File image) async {
     TextRecognizer recognizeText = FirebaseVision.instance.textRecognizer();
-    FirebaseVisionImage toRead = FirebaseVisionImage.fromFile(image);
-    VisionText readThis = await recognizeText.processImage(toRead);
+    FirebaseVisionImage toProcess = FirebaseVisionImage.fromFile(image);
+    VisionText receiptBlock = await recognizeText.processImage(toProcess);
 
-    for (TextBlock block in readThis.blocks) {
-      print(block.text);
+    List<ItemDetails> items = [
+      new ItemDetails(name: 'test item', totalPrice: 22.22, selectedMembers: [])
+    ];
+
+    for (TextBlock block in receiptBlock.blocks) {
+      for (TextLine line in block.lines) {
+        for (TextElement word in line.elements) {
+          print(word.text);
+        }
+      }
     }
-    
+
+    recognizeText.close();
+
+    return items;
   }
 }

@@ -28,8 +28,8 @@ class _SharingGridState extends State<SharingGrid> {
               (MediaQuery.of(context).size.height / 10),
           children: List.generate(members.length, (index) {
             return CheckboxListTile(
-              activeColor: Colors.green,
-              checkColor: Colors.white,
+                activeColor: Colors.green,
+                checkColor: Colors.white,
                 title: Text(
                   members[index].name,
                   style: TextStyle(color: Colors.white),
@@ -48,7 +48,7 @@ class _SharingGridState extends State<SharingGrid> {
     if (select) {
       selectedMembers.add(member);
     } else {
-      selectedMembers.remove(member);
+      selectedMembers.removeWhere((element) => element.name == member.name);
     }
   }
 }

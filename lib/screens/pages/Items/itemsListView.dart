@@ -1,36 +1,38 @@
+import 'package:app/models/BillDetails.dart';
 import 'package:app/models/itemDetails.dart';
+import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class ItemListView extends StatefulWidget {
   final DataBaseService dbService;
   final List<ItemDetails> itemList;
+  final BillDetails billDetails;
 
-  ItemListView({this.dbService, this.itemList});
+  ItemListView({this.dbService, this.itemList, this.billDetails});
 
   @override
   _ItemListViewState createState() =>
-      _ItemListViewState(dbService: dbService, itemList: itemList);
+      _ItemListViewState(dbService: dbService, itemList: itemList, billDetails : this.billDetails);
 }
 
 class _ItemListViewState extends State<ItemListView> {
   DataBaseService dbService;
   List<ItemDetails> itemList;
+  BillDetails billDetails;
 
-  _ItemListViewState({this.dbService, this.itemList});
+  _ItemListViewState({this.dbService, this.itemList, this.billDetails});
   @override
   Widget build(BuildContext context) {
-    final _items = Provider.of<List<ItemDetails>>(context);
 
-    return _items == null || _items.length == 0
+    return itemList == null || itemList.length == 0
         ? _initialState()
         : ListView.builder(
-            itemCount: _items.length,
+            itemCount: itemList.length,
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
             itemBuilder: (context, index) {
               return _buildItemTile(
-                  _items[index]); // to ensure latest item at the bottom
+                  itemList[index]); // to ensure latest item at the bottom
             });
   }
 
@@ -38,7 +40,7 @@ class _ItemListViewState extends State<ItemListView> {
     String itemUID = item.itemUID;
     String name = item.name;
     double totalPrice = item.totalPrice;
-    int numSharing = item.numSharing;
+    int numSharing = item.selectedMembers.length;
 
     // print(itemUID);
     return Dismissible(
@@ -47,19 +49,22 @@ class _ItemListViewState extends State<ItemListView> {
         onDismissed: (direction) {
           if (direction == DismissDirection.endToStart) {
             setState(()  {
-               dbService.deleteItem(itemUID, totalPrice, numSharing);
+               itemList.remove(item);
               _deletionMessage(context, name);
+              print(itemList.length);
             });
           }
         },
         background: _deletionBackground(item),
         child: Container(
-          // basically this is prep for OCR implementation, since we cannot split the members from there
-          // we highlight any undone items in a light red, so that users know that they still have to manually split
-          // the members, validation is a necessity
-          decoration: item.numSharing == 0 ? BoxDecoration(color: Colors.red[300]) : BoxDecoration(),
+          decoration: item.selectedMembers.length == 0 ? BoxDecoration(color: Colors.red[300]) : BoxDecoration(),
           child: ListTile(
             onLongPress: () => print(numSharing), // to debug
+            onTap: () {
+               Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => ItemCreation(
+                    dbService: dbService, itemList: itemList, item : item, billDetails : billDetails)));
+            },
               leading: Icon(
                 Icons.restaurant,
                 color: Colors.white70,

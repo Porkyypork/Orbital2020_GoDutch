@@ -42,7 +42,7 @@ class _ContactListViewState extends State<ContactListView> {
                     itemBuilder: (context, index) =>
                         members[index].name != user.name
                             ? _buildMemberTile(members[index])
-                            : ListTile(),
+                            : Container(),
                   ),
                 ),
               ],

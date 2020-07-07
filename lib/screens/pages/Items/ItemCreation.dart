@@ -11,12 +11,14 @@ class ItemCreation extends StatefulWidget {
   final DataBaseService dbService;
   final List<ItemDetails> itemList;
   final BillDetails billDetails;
+  final ItemDetails item;
+  final Function refreshItemPage;
 
-  ItemCreation({this.dbService, this.itemList, this.billDetails});
+  ItemCreation({this.dbService, this.itemList, this.item, this.billDetails, this.refreshItemPage});
 
   @override
   _ItemCreationState createState() => _ItemCreationState(
-      dbService: dbService, itemList: itemList, billDetails: billDetails);
+      dbService: dbService, itemList: itemList, item: item, billDetails: billDetails);
 }
 
 class _ItemCreationState extends State<ItemCreation> {
@@ -31,15 +33,16 @@ class _ItemCreationState extends State<ItemCreation> {
   List<MemberDetails> selectedMembers = [];
   ItemDetails item;
   List<ItemDetails> itemList;
+  final Function refreshItemPage;
 
-  _ItemCreationState({this.dbService, this.itemList, this.billDetails});
+  _ItemCreationState({this.dbService, this.itemList, this.item, this.billDetails, this.refreshItemPage,});
 
   @override
   void initState() {
     super.initState();
     if (item != null) {
       nameController.text = item.name;
-      priceController.text = item.totalPrice.toString();
+      priceController.text = item.totalPrice.toStringAsFixed(2);
       itemName = item.name;
       totalPrice = item.totalPrice.toString();
     }
@@ -72,9 +75,6 @@ class _ItemCreationState extends State<ItemCreation> {
             ),
             child: ListView(
               children: <Widget>[
-                Container(
-                    //add if need any
-                    ),
                 _itemText(),
                 _priceText(),
                 _shareTextWidget(),
@@ -103,16 +103,12 @@ class _ItemCreationState extends State<ItemCreation> {
           onPressed: () async {
             int extraCharges = 100 + billDetails.gst + billDetails.svc;
             double price = double.parse(totalPrice) * (extraCharges / 100);
-            itemDetails =
-                await dbService.createItem(itemName, price, selectedMembers);
+            itemDetails = new ItemDetails(
+                name: itemName,
+                totalPrice: price,
+                selectedMembers: selectedMembers);
             itemList.add(itemDetails);
-            dbService = new DataBaseService(
-                uid: dbService.uid,
-                groupUID: dbService.groupUID,
-                billUID: dbService.billUID,
-                owedBillUID: dbService.owedBillUID,
-                itemUID: itemDetails.itemUID);
-            addMembers(selectedMembers);
+            widget.refreshItemPage();
             Navigator.pop(context);
           },
         ));
@@ -193,12 +189,6 @@ class _ItemCreationState extends State<ItemCreation> {
         style: TextStyle(color: Colors.white),
       ),
     );
-  }
-
-  Future<void> addMembers(List<MemberDetails> members) async {
-    for (MemberDetails member in members) {
-      dbService.shareItemWith(member);
-    }
   }
 
   void _nameListener() {

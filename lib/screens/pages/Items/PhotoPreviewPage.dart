@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:app/constants/loading.dart';
+import 'package:app/models/BillDetails.dart';
+import 'package:app/models/itemDetails.dart';
 import 'package:app/services/ImageToText.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_app_bar/gradient_app_bar.dart';
@@ -9,21 +11,28 @@ import 'package:app/constants/colour.dart';
 
 class PhotoPreviewPage extends StatefulWidget {
   final ImageSource initialSource;
+  final List<ItemDetails> itemList;
+  final BillDetails billDetails;
+  final Function refreshItemPage;
 
-  PhotoPreviewPage({this.initialSource});
+  PhotoPreviewPage({this.initialSource, this.itemList, this.billDetails, this.refreshItemPage});
 
   @override
   _PhotoPreviewPageState createState() =>
-      _PhotoPreviewPageState(initialSource: this.initialSource);
+      _PhotoPreviewPageState(initialSource: this.initialSource, itemList: this.itemList, billDetails: this.billDetails, refreshItemPage: this.refreshItemPage);
 }
 
 class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
   final ImageSource initialSource;
+  final List<ItemDetails> itemList;
+  final BillDetails billDetails;
+  final Function refreshItemPage;
 
   File _image;
   bool _inProcess = false;
 
-  _PhotoPreviewPageState({this.initialSource});
+  _PhotoPreviewPageState(
+      {this.initialSource, this.itemList, this.billDetails, this.refreshItemPage});
 
   Future getImage(ImageSource source) async {
     setState(() {
@@ -81,7 +90,6 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
                   Center(
                     child: Container(
                       color: Colors.black,
-                      // padding: EdgeInsets.all(20),
                       height: 500,
                       child: _image == null
                           ? Text("no image selected",
@@ -150,11 +158,13 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
         shape: CircleBorder(),
         elevation: 2.0,
         padding: EdgeInsets.all(20),
-        onPressed: () {
-          ImageToText().readText(_image);
-          // run image to text class
-          // Navigator.push(
-          //     context, MaterialPageRoute(builder: (context) => DisplayPage()));
+        onPressed: () async {
+          List<ItemDetails> items = await ImageToText().generateItemDetails(_image);
+          for (ItemDetails item in items) {
+            itemList.add(item);
+          }
+          widget.refreshItemPage();
+          Navigator.pop(context);
         },
         child: Icon(
           Icons.arrow_forward,

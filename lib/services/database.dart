@@ -174,7 +174,9 @@ class DataBaseService {
           doc.documentID,
           doc.data['owedBillUID'],
           doc.data['totalPrice'] ?? -1.0,
-          doc.data['Date'].toDate());
+          doc.data['Date'].toDate(),
+          doc.data['GST'],
+          doc.data['SVC']);
     }).toList();
   }
 
@@ -203,7 +205,7 @@ class DataBaseService {
   }
 
   Future<BillDetails> createBill(
-      String billName, List<MemberDetails> members) async {
+      String billName, List<MemberDetails> members, int gst, int serviceCharge) async {
     DocumentReference billReference = db
         .collection("users")
         .document(this.uid)
@@ -250,9 +252,11 @@ class DataBaseService {
       'totalPrice': 0.0,
       'Date': DateTime.now(),
       'isEmpty': true,
+      'GST' : gst,
+      'SVC' : serviceCharge
     });
 
-    return new BillDetails(billName, billUID, owedBillUID, 0.0, DateTime.now());
+    return new BillDetails(billName, billUID, owedBillUID, 0.0, DateTime.now(), gst, serviceCharge);
   }
 
   Future<void> removeBill(String billUID) async {

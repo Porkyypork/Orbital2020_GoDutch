@@ -1,4 +1,5 @@
 import 'package:app/constants/colour.dart';
+import 'package:app/models/BillDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:app/services/database.dart';
@@ -8,14 +9,14 @@ import 'package:app/screens/pages/Items/SharingGrid.dart';
 
 class ItemCreation extends StatefulWidget {
   final DataBaseService dbService;
-  final ItemDetails item;
   final List<ItemDetails> itemList;
+  final BillDetails billDetails;
 
-  ItemCreation({this.dbService, this.item, this.itemList});
+  ItemCreation({this.dbService, this.itemList, this.billDetails});
 
   @override
-  _ItemCreationState createState() =>
-      _ItemCreationState(dbService: dbService, item: item, itemList: itemList);
+  _ItemCreationState createState() => _ItemCreationState(
+      dbService: dbService, itemList: itemList, billDetails: billDetails);
 }
 
 class _ItemCreationState extends State<ItemCreation> {
@@ -25,12 +26,13 @@ class _ItemCreationState extends State<ItemCreation> {
   String itemName = "";
   String totalPrice = "";
   ItemDetails itemDetails;
+  final BillDetails billDetails;
   final _formKey = GlobalKey<FormState>();
   List<MemberDetails> selectedMembers = [];
   ItemDetails item;
   List<ItemDetails> itemList;
 
-  _ItemCreationState({this.dbService, this.item, this.itemList});
+  _ItemCreationState({this.dbService, this.itemList, this.billDetails});
 
   @override
   void initState() {
@@ -99,7 +101,8 @@ class _ItemCreationState extends State<ItemCreation> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           onPressed: () async {
-            double price = double.parse(totalPrice);
+            int extraCharges = 100 + billDetails.gst + billDetails.svc;
+            double price = double.parse(totalPrice) * (extraCharges / 100);
             itemDetails =
                 await dbService.createItem(itemName, price, selectedMembers);
             itemList.add(itemDetails);
@@ -109,7 +112,7 @@ class _ItemCreationState extends State<ItemCreation> {
                 billUID: dbService.billUID,
                 owedBillUID: dbService.owedBillUID,
                 itemUID: itemDetails.itemUID);
-                 addMembers(selectedMembers);
+            addMembers(selectedMembers);
             Navigator.pop(context);
           },
         ));

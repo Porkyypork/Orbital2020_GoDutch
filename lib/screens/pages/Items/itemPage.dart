@@ -1,3 +1,4 @@
+import 'package:app/models/BillDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:app/screens/pages/Items/itemsListView.dart';
 import 'package:flutter/material.dart';
@@ -11,23 +12,23 @@ import '../group_related/btm_nav_bar/bill_related/BillBreakdown.dart';
 import 'PhotoPreviewPage.dart';
 
 class ItemPage extends StatefulWidget {
-  final String billName;
+  final BillDetails billDetails;
   final DataBaseService dbService;
 
-  ItemPage({this.dbService, this.billName});
+  ItemPage({this.dbService, this.billDetails});
 
   @override
   _ItemPageState createState() =>
-      _ItemPageState(dbService: dbService, billName: billName);
+      _ItemPageState(dbService: dbService, billDetails: billDetails);
 }
 
 class _ItemPageState extends State<ItemPage> {
   final DataBaseService dbService;
-  final String billName;
+  final BillDetails billDetails;
 
   List<ItemDetails> itemList = [];
 
-  _ItemPageState({this.dbService, this.billName});
+  _ItemPageState({this.dbService, this.billDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class _ItemPageState extends State<ItemPage> {
         appBar: AppBar(
           leading: _backButton(),
           backgroundColor: headerColour,
-          title: Text(billName),
+          title: Text(billDetails.billName),
           centerTitle: true,
         ),
         body: Column(
@@ -114,7 +115,7 @@ class _ItemPageState extends State<ItemPage> {
             Navigator.pop(context);
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) =>
-                    BillBreakdown(dbService: dbService, billName: billName)));
+                    BillBreakdown(dbService: dbService, billName: billDetails.billName)));
           }
         },
         color: Colors.orange[300],
@@ -223,7 +224,7 @@ class _ItemPageState extends State<ItemPage> {
           context,
           MaterialPageRoute(
               builder: (context) =>
-                  ItemCreation(dbService: dbService, itemList: itemList)));
+                  ItemCreation(dbService: dbService, itemList: itemList, billDetails : billDetails)));
     } else {
       Navigator.push(
           context,

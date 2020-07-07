@@ -52,7 +52,7 @@ class _SignInState extends State<SignIn> {
                       _buildForgotPassword(),
                       SizedBox(height: 15),
                       _buildSignInButton(),
-                      SizedBox(height: 2),
+                      SizedBox(height: 5),
                       Text(
                         "- OR -",
                         style: TextStyle(

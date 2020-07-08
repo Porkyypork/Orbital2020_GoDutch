@@ -9,23 +9,29 @@ class ItemListView extends StatefulWidget {
   final DataBaseService dbService;
   final List<ItemDetails> itemList;
   final BillDetails billDetails;
+  final Function refreshItemPage;
 
-  ItemListView({this.dbService, this.itemList, this.billDetails});
+  ItemListView(
+      {this.dbService, this.itemList, this.billDetails, this.refreshItemPage});
 
   @override
-  _ItemListViewState createState() =>
-      _ItemListViewState(dbService: dbService, itemList: itemList, billDetails : this.billDetails);
+  _ItemListViewState createState() => _ItemListViewState(
+      dbService: dbService,
+      itemList: itemList,
+      billDetails: this.billDetails,
+      refreshItemPage: refreshItemPage);
 }
 
 class _ItemListViewState extends State<ItemListView> {
   DataBaseService dbService;
   List<ItemDetails> itemList;
   BillDetails billDetails;
+  final Function refreshItemPage;
 
-  _ItemListViewState({this.dbService, this.itemList, this.billDetails});
+  _ItemListViewState(
+      {this.dbService, this.itemList, this.billDetails, this.refreshItemPage});
   @override
   Widget build(BuildContext context) {
-
     return itemList == null || itemList.length == 0
         ? _initialState()
         : ListView.builder(
@@ -49,7 +55,7 @@ class _ItemListViewState extends State<ItemListView> {
         direction: DismissDirection.endToStart,
         onDismissed: (direction) {
           if (direction == DismissDirection.endToStart) {
-            setState(()  {
+            setState(() {
               itemList.remove(item);
               _deletionMessage(context, name);
               print(itemList.length);
@@ -58,32 +64,38 @@ class _ItemListViewState extends State<ItemListView> {
         },
         background: _deletionBackground(item),
         child: Container(
-          decoration: item.selectedMembers.length == 0 ? BoxDecoration(color: Colors.red[300]) : BoxDecoration(),
+          decoration: item.selectedMembers.length == 0
+              ? BoxDecoration(color: Colors.red[300])
+              : BoxDecoration(),
           child: ListTile(
             onLongPress: () {
               for (MemberDetails member in item.selectedMembers) {
-                print(member.name); 
+                print(member.name);
               }
               print(item.name);
             }, // to debug
             onTap: () {
-               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => ItemCreation(
-                    dbService: dbService, itemList: itemList, item : item, billDetails : billDetails)));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => ItemCreation(
+                        dbService: dbService,
+                        itemList: itemList,
+                        item: item,
+                        billDetails: billDetails
+                      )));
             },
-              leading: Icon(
-                Icons.restaurant,
-                color: Colors.white70,
-              ),
-              title: Text(name,
-                  style: TextStyle(
-                    color: Colors.white,
-                  )),
-              subtitle: Text(
-                "\$${totalPrice.toStringAsFixed(2)}",
-                style: TextStyle(color: Colors.white54),
-              ),
-             ),
+            leading: Icon(
+              Icons.restaurant,
+              color: Colors.white70,
+            ),
+            title: Text(name,
+                style: TextStyle(
+                  color: Colors.white,
+                )),
+            subtitle: Text(
+              "\$${totalPrice.toStringAsFixed(2)}",
+              style: TextStyle(color: Colors.white54),
+            ),
+          ),
         ));
   }
 

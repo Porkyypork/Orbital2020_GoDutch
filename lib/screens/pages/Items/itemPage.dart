@@ -8,7 +8,6 @@ import 'package:app/constants/colour.dart';
 import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 import '../group_related/btm_nav_bar/bill_related/BillBreakdown.dart';
 import 'PhotoPreviewPage.dart';
@@ -53,7 +52,8 @@ class _ItemPageState extends State<ItemPage> {
             child: ItemListView(
                 dbService: dbService,
                 itemList: itemList,
-                billDetails: billDetails),
+                billDetails: billDetails,
+                ),
           ),
         ],
       ),
@@ -130,8 +130,8 @@ class _ItemPageState extends State<ItemPage> {
                   itemUID: itemDetails.itemUID);
               addMembers(item.selectedMembers);
             }
-            Navigator.pop(context);
-            Navigator.pop(context);
+            Navigator.pop(context); // pop loading 
+            Navigator.pop(context); // pop itempage
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => BillBreakdown(
                     dbService: dbService, billName: billDetails.billName)));
@@ -239,8 +239,7 @@ class _ItemPageState extends State<ItemPage> {
               builder: (context) => PhotoPreviewPage(
                     initialSource: ImageSource.camera,
                     itemList: itemList,
-                    billDetails: billDetails,
-                    refreshItemPage: refresh,
+                    billDetails: billDetails
                   )));
     } else if (index == 1) {
       Navigator.push(
@@ -249,8 +248,7 @@ class _ItemPageState extends State<ItemPage> {
               builder: (context) => ItemCreation(
                     dbService: dbService,
                     itemList: itemList,
-                    billDetails: billDetails,
-                    refreshItemPage: refresh,
+                    billDetails: billDetails
                   )));
     } else {
       Navigator.push(
@@ -259,16 +257,10 @@ class _ItemPageState extends State<ItemPage> {
               builder: (context) => PhotoPreviewPage(
                     initialSource: ImageSource.gallery,
                     itemList: itemList,
-                    billDetails: billDetails,
-                    refreshItemPage: refresh,
+                    billDetails: billDetails
                   )));
     }
   }
-
-  refresh() {
-    setState(() {});
-  }
-
   Future<void> addMembers(List<MemberDetails> members) async {
     for (MemberDetails member in members) {
       dbService.shareItemWith(member);

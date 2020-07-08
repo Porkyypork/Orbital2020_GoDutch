@@ -13,9 +13,8 @@ class ItemCreation extends StatefulWidget {
   final List<ItemDetails> itemList;
   final BillDetails billDetails;
   final ItemDetails item;
-  final Function refreshItemPage;
 
-  ItemCreation({this.dbService, this.itemList, this.item, this.billDetails, this.refreshItemPage});
+  ItemCreation({this.dbService, this.itemList, this.item, this.billDetails});
 
   @override
   _ItemCreationState createState() => _ItemCreationState(
@@ -36,8 +35,6 @@ class _ItemCreationState extends State<ItemCreation> {
   List<MemberDetails> selectedMembers = [];
   ItemDetails item;
   List<ItemDetails> itemList;
-  final Function refreshItemPage;
-
 
   _ItemCreationState(
       {this.dbService, this.itemList, this.item, this.billDetails});
@@ -107,7 +104,6 @@ class _ItemCreationState extends State<ItemCreation> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           onPressed: () async {
-
             int extraCharges = 100 + billDetails.extraCharges;
             double price = double.parse(totalPrice) * (extraCharges / 100);
             ItemDetails itemDetails = ItemDetails(
@@ -119,7 +115,6 @@ class _ItemCreationState extends State<ItemCreation> {
               itemList.remove(item);
             }
             itemList.add(itemDetails);
-            widget.refreshItemPage();
             Navigator.pop(context);
             Navigator.pop(context);
             Navigator.push(

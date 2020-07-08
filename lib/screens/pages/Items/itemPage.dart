@@ -238,6 +238,7 @@ class _ItemPageState extends State<ItemPage> {
           MaterialPageRoute(
               builder: (context) => PhotoPreviewPage(
                     initialSource: ImageSource.camera,
+                    dbService: dbService,
                     itemList: itemList,
                     billDetails: billDetails
                   )));
@@ -256,6 +257,7 @@ class _ItemPageState extends State<ItemPage> {
           MaterialPageRoute(
               builder: (context) => PhotoPreviewPage(
                     initialSource: ImageSource.gallery,
+                    dbService: dbService,
                     itemList: itemList,
                     billDetails: billDetails
                   )));

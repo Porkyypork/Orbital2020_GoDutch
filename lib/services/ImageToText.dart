@@ -13,11 +13,7 @@ class ImageToText {
     ];
 
     for (TextBlock block in receiptBlock.blocks) {
-      for (TextLine line in block.lines) {
-        for (TextElement word in line.elements) {
-          print(word.text);
-        }
-      }
+      print(block.text);
     }
 
     recognizeText.close();

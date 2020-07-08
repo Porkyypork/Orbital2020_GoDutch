@@ -1,4 +1,5 @@
 import 'package:app/models/BillDetails.dart';
+import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
@@ -37,10 +38,10 @@ class _ItemListViewState extends State<ItemListView> {
   }
 
   Widget _buildItemTile(ItemDetails item) {
-    String itemUID = item.itemUID;
     String name = item.name;
     double totalPrice = item.totalPrice;
-    int numSharing = item.selectedMembers.length;
+    // int numSharing = item.selectedMembers.length;
+    // String itemUID = item.itemUID;
 
     // print(itemUID);
     return Dismissible(
@@ -49,7 +50,8 @@ class _ItemListViewState extends State<ItemListView> {
         onDismissed: (direction) {
           if (direction == DismissDirection.endToStart) {
             setState(()  {
-               dbService.deleteItem(itemUID, totalPrice, numSharing);
+              itemList.remove(item);
+               //dbService.deleteItem(itemUID, totalPrice, numSharing);
               _deletionMessage(context, name);
             });
           }
@@ -61,7 +63,12 @@ class _ItemListViewState extends State<ItemListView> {
           // the members, validation is a necessity
           decoration: item.selectedMembers.length == 0 ? BoxDecoration(color: Colors.red[300]) : BoxDecoration(),
           child: ListTile(
-            onLongPress: () => print(numSharing), // to debug
+            onLongPress: () {
+              for (MemberDetails member in item.selectedMembers) {
+                print(member.name); 
+              }
+              print(item.name);
+            }, // to debug
             onTap: () {
                Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => ItemCreation(

@@ -2,6 +2,7 @@ import 'package:app/constants/colour.dart';
 import 'package:app/models/BillDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/itemDetails.dart';
+import 'package:app/screens/pages/Items/itemPage.dart';
 import 'package:app/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,7 +18,10 @@ class ItemCreation extends StatefulWidget {
 
   @override
   _ItemCreationState createState() => _ItemCreationState(
-      dbService: dbService, itemList: itemList, item: item, billDetails: billDetails);
+      dbService: dbService,
+      itemList: itemList,
+      item: item,
+      billDetails: billDetails);
 }
 
 class _ItemCreationState extends State<ItemCreation> {
@@ -26,23 +30,24 @@ class _ItemCreationState extends State<ItemCreation> {
   DataBaseService dbService;
   String itemName = "";
   String totalPrice = "";
-  ItemDetails itemDetails;
   final BillDetails billDetails;
   final _formKey = GlobalKey<FormState>();
   List<MemberDetails> selectedMembers = [];
   ItemDetails item;
   List<ItemDetails> itemList;
 
-  _ItemCreationState({this.dbService, this.itemList, this.item, this.billDetails});
+  _ItemCreationState(
+      {this.dbService, this.itemList, this.item, this.billDetails});
 
   @override
   void initState() {
     super.initState();
     if (item != null) {
       nameController.text = item.name;
-      priceController.text = item.totalPrice.toStringAsFixed(2);
+      double displayPrice = item.totalPrice/ ((100 + billDetails.extraCharges) / 100);
+      priceController.text = displayPrice.toStringAsFixed(2);
       itemName = item.name;
-      totalPrice = item.totalPrice.toString();
+      totalPrice = displayPrice.toStringAsFixed(2);
     }
     nameController.addListener(_nameListener);
     priceController.addListener(_priceListener);
@@ -102,17 +107,26 @@ class _ItemCreationState extends State<ItemCreation> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           onPressed: () async {
-            //TODO
-            // need add delete item from itemlist here if you are editing. 
-            // so if item != null delete the item and the code below will add the edited item into the list
-            int extraCharges = 100 + billDetails.gst + billDetails.svc;
+            int extraCharges = 100 + billDetails.extraCharges;
             double price = double.parse(totalPrice) * (extraCharges / 100);
-            itemDetails = new ItemDetails(
+            ItemDetails itemDetails = ItemDetails(
                 name: itemName,
                 totalPrice: price,
                 selectedMembers: selectedMembers);
+            
+            if (item != null) {
+              itemList.remove(item);
+            }
             itemList.add(itemDetails);
             Navigator.pop(context);
+            Navigator.pop(context);
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ItemPage(
+                        dbService: dbService,
+                        itemList: itemList,
+                        billDetails: billDetails)));
           },
         ));
   }

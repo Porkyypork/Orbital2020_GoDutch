@@ -8,7 +8,6 @@ import 'package:app/constants/colour.dart';
 import 'package:app/screens/pages/Items/ItemCreation.dart';
 import 'package:app/services/database.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 
 import '../group_related/btm_nav_bar/bill_related/BillBreakdown.dart';
 import 'PhotoPreviewPage.dart';
@@ -16,79 +15,79 @@ import 'PhotoPreviewPage.dart';
 class ItemPage extends StatefulWidget {
   final BillDetails billDetails;
   final DataBaseService dbService;
+  final List<ItemDetails> itemList;
 
-  ItemPage({this.dbService, this.billDetails});
+  ItemPage({this.dbService, this.billDetails, this.itemList});
 
   @override
-  _ItemPageState createState() =>
-      _ItemPageState(dbService: dbService, billDetails: billDetails);
+  _ItemPageState createState() => _ItemPageState(
+      dbService: dbService, billDetails: billDetails, itemList: itemList);
 }
 
 class _ItemPageState extends State<ItemPage> {
   DataBaseService dbService;
   final BillDetails billDetails;
-  bool loading = false;
 
-  List<ItemDetails> itemList = [];
+  List<ItemDetails> itemList;
 
-  _ItemPageState({this.dbService, this.billDetails});
+  _ItemPageState({this.dbService, this.billDetails, this.itemList});
 
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? Loading()
-        : Scaffold(
-            backgroundColor: bodyColour,
-            appBar: AppBar(
-              leading: _backButton(),
-              backgroundColor: headerColour,
-              title: Text(billDetails.billName),
-              centerTitle: true,
-            ),
-            body: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  Container(
-                    height: MediaQuery.of(context).size.height - 330,
-                    child: ItemListView(
-                        dbService: dbService,
-                        itemList: itemList,
-                        billDetails: billDetails),
-                  ),
-                ],
-              ),
-            ),
-            floatingActionButton: _confirmButton(),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            bottomNavigationBar: BottomNavigationBar(
-              elevation: 10.0,
-              selectedItemColor: Colors.white70,
-              unselectedItemColor: Colors.white70,
-              backgroundColor: headerColour,
-              items: <BottomNavigationBarItem>[
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.camera_alt),
-                    title: Text(
-                      'Take a Photo',
-                      style: TextStyle(fontSize: 14),
-                    )),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.edit),
-                    title: Text(
-                      'Manual entry',
-                      style: TextStyle(fontSize: 14),
-                    )),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.perm_media),
-                    title: Text(
-                      'Gallery',
-                      style: TextStyle(fontSize: 14),
-                    )),
-              ],
-              onTap: _onItemTapped,
-            ),
-          );
+    if (itemList == null) {
+      itemList = [];
+    }
+    return Scaffold(
+      backgroundColor: bodyColour,
+      appBar: AppBar(
+        leading: _backButton(),
+        backgroundColor: headerColour,
+        title: Text(billDetails.billName),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height - 330,
+            child: ItemListView(
+                dbService: dbService,
+                itemList: itemList,
+                billDetails: billDetails,
+                ),
+          ),
+        ],
+      ),
+      floatingActionButton: _confirmButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      bottomNavigationBar: BottomNavigationBar(
+        elevation: 10.0,
+        selectedItemColor: Colors.white70,
+        unselectedItemColor: Colors.white70,
+        backgroundColor: headerColour,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+              icon: Icon(Icons.camera_alt),
+              title: Text(
+                'Take a Photo',
+                style: TextStyle(fontSize: 14),
+              )),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.edit),
+              title: Text(
+                'Manual entry',
+                style: TextStyle(fontSize: 14),
+              )),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.perm_media),
+              title: Text(
+                'Gallery',
+                style: TextStyle(fontSize: 14),
+              )),
+        ],
+        onTap: _onItemTapped,
+      ),
+    );
+
   }
 
   Widget _backButton() {
@@ -118,7 +117,8 @@ class _ItemPageState extends State<ItemPage> {
               child: _buildWarningDialog(),
             );
           } else {
-            loading = true;
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => Loading()));
             for (ItemDetails item in itemList) {
               ItemDetails itemDetails = await dbService.createItem(
                   item.name, item.totalPrice, item.selectedMembers);
@@ -130,7 +130,8 @@ class _ItemPageState extends State<ItemPage> {
                   itemUID: itemDetails.itemUID);
               addMembers(item.selectedMembers);
             }
-            Navigator.pop(context);
+            Navigator.pop(context); // pop loading 
+            Navigator.pop(context); // pop itempage
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => BillBreakdown(
                     dbService: dbService, billName: billDetails.billName)));
@@ -238,8 +239,7 @@ class _ItemPageState extends State<ItemPage> {
               builder: (context) => PhotoPreviewPage(
                     initialSource: ImageSource.camera,
                     itemList: itemList,
-                    billDetails: billDetails,
-                    refreshItemPage: refresh,
+                    billDetails: billDetails
                   )));
     } else if (index == 1) {
       Navigator.push(
@@ -248,8 +248,7 @@ class _ItemPageState extends State<ItemPage> {
               builder: (context) => ItemCreation(
                     dbService: dbService,
                     itemList: itemList,
-                    billDetails: billDetails,
-                    refreshItemPage: refresh,
+                    billDetails: billDetails
                   )));
     } else {
       Navigator.push(
@@ -258,16 +257,10 @@ class _ItemPageState extends State<ItemPage> {
               builder: (context) => PhotoPreviewPage(
                     initialSource: ImageSource.gallery,
                     itemList: itemList,
-                    billDetails: billDetails,
-                    refreshItemPage: refresh,
+                    billDetails: billDetails
                   )));
     }
   }
-
-  refresh() {
-    setState(() {});
-  }
-
   Future<void> addMembers(List<MemberDetails> members) async {
     for (MemberDetails member in members) {
       dbService.shareItemWith(member);

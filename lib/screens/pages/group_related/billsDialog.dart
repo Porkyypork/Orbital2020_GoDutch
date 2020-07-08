@@ -22,8 +22,7 @@ class _BillsDialogState extends State<BillsDialog> {
   String billName;
   BillDetails billDetails;
   final List<MemberDetails> members;
-  int gst = 0;
-  int serviceCharge = 0;
+  int extra = 0;
 
   _BillsDialogState({this.dbService, this.billName, this.members});
 
@@ -33,7 +32,7 @@ class _BillsDialogState extends State<BillsDialog> {
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         child: Container(
-          height: 280,
+          height: 290,
           child: Padding(
               padding: EdgeInsets.only(top: 20, left: 20, right: 20),
               child: Column(
@@ -71,55 +70,28 @@ class _BillsDialogState extends State<BillsDialog> {
                       ),
                     ),
                   ),
-                  Row(
-                    children: <Widget>[
-                      Padding(
-                        padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                        child: Container(
-                          width: 116,
-                          height: 50,
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            initialValue: gst.toString(),
-                            onChanged: (value) {
-                              setState(() {
-                                gst = int.parse(value);
-                              });
-                            },
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    borderSide: BorderSide(
-                                      color: Colors.black,
-                                    )),
-                                labelText: 'GST'),
-                          ),
-                        ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 20, left: 10, right: 130),
+                    child: Container(
+                      width: 140,
+                      height: 50,
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        initialValue: extra.toString(),
+                        onChanged: (value) {
+                          setState(() {
+                            extra = int.parse(value);
+                          });
+                        },
+                        decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(30.0),
+                                borderSide: BorderSide(
+                                  color: Colors.black,
+                                )),
+                            labelText: 'GST/SVC'),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 20, left: 10, right: 10),
-                        child: Container(
-                          width: 116,
-                          height: 50,
-                          child: TextFormField(
-                            keyboardType: TextInputType.number,
-                            initialValue: serviceCharge.toString(),
-                            onChanged: (value) {
-                              setState(() {
-                                serviceCharge = int.parse(value);
-                              });
-                            },
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30.0),
-                                    borderSide: BorderSide(
-                                      color: Colors.black,
-                                    )),
-                                labelText: 'SVC'),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                   Row(
                     children: <Widget>[
@@ -139,7 +111,7 @@ class _BillsDialogState extends State<BillsDialog> {
                             onPressed: () async {
                               if (_formKey.currentState.validate()) {
                                 billDetails = await dbService.createBill(
-                                    billName, members, gst, serviceCharge);
+                                    billName, members, extra);
                                 dbService = new DataBaseService(
                                     uid: dbService.uid,
                                     groupUID: dbService.groupUID,

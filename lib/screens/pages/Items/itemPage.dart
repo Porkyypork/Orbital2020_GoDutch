@@ -87,6 +87,7 @@ class _ItemPageState extends State<ItemPage> {
         onTap: _onItemTapped,
       ),
     );
+
   }
 
   Widget _backButton() {
@@ -235,23 +236,37 @@ class _ItemPageState extends State<ItemPage> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  PhotoPreviewPage(initialSource: ImageSource.camera)));
+              builder: (context) => PhotoPreviewPage(
+                    initialSource: ImageSource.camera,
+                    itemList: itemList,
+                    billDetails: billDetails,
+                    refreshItemPage: refresh,
+                  )));
     } else if (index == 1) {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => ItemCreation(
-                  dbService: dbService,
-                  itemList: itemList,
-                  billDetails: billDetails)));
+                    dbService: dbService,
+                    itemList: itemList,
+                    billDetails: billDetails,
+                    refreshItemPage: refresh,
+                  )));
     } else {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  PhotoPreviewPage(initialSource: ImageSource.gallery)));
+              builder: (context) => PhotoPreviewPage(
+                    initialSource: ImageSource.gallery,
+                    itemList: itemList,
+                    billDetails: billDetails,
+                    refreshItemPage: refresh,
+                  )));
     }
+  }
+
+  refresh() {
+    setState(() {});
   }
 
   Future<void> addMembers(List<MemberDetails> members) async {

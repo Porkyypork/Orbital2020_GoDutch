@@ -51,16 +51,13 @@ class _ItemListViewState extends State<ItemListView> {
           if (direction == DismissDirection.endToStart) {
             setState(()  {
               itemList.remove(item);
-               //dbService.deleteItem(itemUID, totalPrice, numSharing);
               _deletionMessage(context, name);
+              print(itemList.length);
             });
           }
         },
         background: _deletionBackground(item),
         child: Container(
-          // basically this is prep for OCR implementation, since we cannot split the members from there
-          // we highlight any undone items in a light red, so that users know that they still have to manually split
-          // the members, validation is a necessity
           decoration: item.selectedMembers.length == 0 ? BoxDecoration(color: Colors.red[300]) : BoxDecoration(),
           child: ListTile(
             onLongPress: () {

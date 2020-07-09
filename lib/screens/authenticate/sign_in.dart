@@ -61,7 +61,7 @@ class _SignInState extends State<SignIn> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 7),
                       _buildGoogleSignInButton(),
                       SizedBox(height: 10),
                       _buildNewUser(),

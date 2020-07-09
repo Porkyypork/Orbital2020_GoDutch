@@ -114,7 +114,7 @@ class DataBaseService {
           .collection('members')
           .add({
         'Name': contact.displayName,
-        'Number': contact.phones.first.value.toString(),
+        'Number': contact.phones.isEmpty ? "" : contact.phones.first.value.toString(),
       });
 
       var groupDocRef = db

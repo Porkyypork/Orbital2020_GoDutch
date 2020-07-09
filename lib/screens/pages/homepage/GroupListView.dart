@@ -55,7 +55,7 @@ class _GroupListViewState extends State<GroupListView> {
           ));
         },
         child: Card(
-          margin: EdgeInsets.only(left: 8, right: 8, bottom: 8),
+          margin: EdgeInsets.only(left: 8, right: 8, bottom: 8, top : 10),
           color: tileColour,
           child: Container(
             padding: EdgeInsets.fromLTRB(0, 20, 5, 20),
@@ -80,7 +80,7 @@ class _GroupListViewState extends State<GroupListView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        'Members:',
+                        'Members',
                         style: TextStyle(
                           fontSize: 10,
                           fontFamily: 'OpenSans',

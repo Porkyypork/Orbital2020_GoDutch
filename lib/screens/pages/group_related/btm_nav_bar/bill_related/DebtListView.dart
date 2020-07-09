@@ -20,6 +20,8 @@ class _DebtListViewState extends State<DebtListView>
     with AutomaticKeepAliveClientMixin<DebtListView> {
   final DataBaseService dbService;
   String output;
+  double total = 0;
+  bool first = true;
 
   @override
   bool get wantKeepAlive => true;
@@ -36,6 +38,13 @@ class _DebtListViewState extends State<DebtListView>
         future: dbService.getDebt(members),
         builder: (BuildContext context, AsyncSnapshot<List<OwedBills>> snap) {
           if (snap.hasData) {
+            String name = snap.data.elementAt(0).billName;
+            if (first) {
+              for (OwedBills bills in snap.data) {
+                total += bills.totalOwed;
+              }
+              first = false;
+            }
             return SingleChildScrollView(
               physics: ScrollPhysics(),
               child: Column(
@@ -49,7 +58,7 @@ class _DebtListViewState extends State<DebtListView>
                             fontWeight: FontWeight.bold,
                             fontFamily: 'OpenSans')),
                   ),
-                  _heading(snap),
+                  _heading(name, total),
                   ListView.builder(
                       shrinkWrap: true,
                       padding: EdgeInsets.symmetric(
@@ -139,11 +148,9 @@ class _DebtListViewState extends State<DebtListView>
     );
   }
 
-  Widget _heading(AsyncSnapshot<List<OwedBills>> snap) {
-    output = "${snap.data.elementAt(0).billName}\n";
-    output += "Total : \$" +
-        "${snap.data.elementAt(0).totalPrice.toStringAsFixed(2)}" +
-        "\n";
+  Widget _heading(String name, double total) {
+    output = "$name\n";
+    output += "Total : \$" + "${total.toStringAsFixed(2)}" + "\n";
     return Container(
         padding: EdgeInsets.only(left: 15, right: 10),
         decoration: BoxDecoration(
@@ -161,7 +168,7 @@ class _DebtListViewState extends State<DebtListView>
                       fontWeight: FontWeight.bold,
                       fontFamily: 'OpenSans')),
               Spacer(),
-              Text('\$${snap.data.elementAt(0).totalPrice.toStringAsFixed(2)}',
+              Text('\$${total.toStringAsFixed(2)}',
                   style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,

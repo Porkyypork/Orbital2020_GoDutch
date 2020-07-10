@@ -61,7 +61,7 @@ class _GroupListViewState extends State<GroupListView> {
                   borderRadius: BorderRadius.circular(40.0)),
               child: Container(
                 height: 275,
-                width : 275,
+                width: 275,
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Column(
@@ -88,14 +88,20 @@ class _GroupListViewState extends State<GroupListView> {
                                   child: Container(
                                       child: Text("${index + 1}.",
                                           style: TextStyle(
-                                            fontSize: 20,
-                                          ))),
+                                              fontSize: 20,
+                                              fontFamily: 'OpenSans'))),
                                 ),
-                                Padding(
-                                    padding: const EdgeInsets.only(
-                                        bottom: 20, left: 10, right: 20),
-                                    child: Text(group.members.elementAt(index),
-                                        style: TextStyle(fontSize: 20))),
+                                Flexible(
+                                  child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 20, left: 10, right: 20),
+                                      child: Text(
+                                          group.members.elementAt(index),
+                                          overflow: TextOverflow.visible,
+                                          style: TextStyle(
+                                              fontSize: 20,
+                                              fontFamily: 'OpenSans'))),
+                                ),
                               ],
                             );
                           },

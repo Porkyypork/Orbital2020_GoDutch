@@ -37,71 +37,69 @@ class _ItemPageState extends State<ItemPage> {
     if (itemList == null) {
       itemList = [];
     }
-    return Scaffold(
-      backgroundColor: bodyColour,
-      appBar: AppBar(
-        leading: _backButton(),
-        backgroundColor: headerColour,
-        title: Text(billDetails.billName),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: <Widget>[
-          Container(
-            height: MediaQuery.of(context).size.height - 330,
-            child: ItemListView(
+    return WillPopScope(
+      onWillPop: () => _onWillPop(),
+      child: Scaffold(
+        backgroundColor: bodyColour,
+        appBar: AppBar(
+          leading: _backButton(),
+          backgroundColor: headerColour,
+          title: Text(billDetails.billName),
+          centerTitle: true,
+        ),
+        body: Column(
+          children: <Widget>[
+            Container(
+              height: MediaQuery.of(context).size.height - 330,
+              child: ItemListView(
                 dbService: dbService,
                 itemList: itemList,
                 billDetails: billDetails,
-                ),
-          ),
-        ],
-      ),
-      floatingActionButton: _confirmButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 10.0,
-        selectedItemColor: Colors.white70,
-        unselectedItemColor: Colors.white70,
-        backgroundColor: headerColour,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(Icons.camera_alt),
-              title: Text(
-                'Take a Photo',
-                style: TextStyle(fontSize: 14),
-              )),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.edit),
-              title: Text(
-                'Manual entry',
-                style: TextStyle(fontSize: 14),
-              )),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.perm_media),
-              title: Text(
-                'Gallery',
-                style: TextStyle(fontSize: 14),
-              )),
-        ],
-        onTap: _onItemTapped,
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: _confirmButton(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        bottomNavigationBar: BottomNavigationBar(
+          elevation: 10.0,
+          selectedItemColor: Colors.white70,
+          unselectedItemColor: Colors.white70,
+          backgroundColor: headerColour,
+          items: <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+                icon: Icon(Icons.camera_alt),
+                title: Text(
+                  'Take a Photo',
+                  style: TextStyle(fontSize: 14),
+                )),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.edit),
+                title: Text(
+                  'Manual entry',
+                  style: TextStyle(fontSize: 14),
+                )),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.perm_media),
+                title: Text(
+                  'Gallery',
+                  style: TextStyle(fontSize: 14),
+                )),
+          ],
+          onTap: _onItemTapped,
+        ),
       ),
     );
-
   }
 
   Widget _backButton() {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () async {
-        if (itemList.isEmpty) {
-          showDialog(
-            context: context,
-            child: _backWarningDialog(),
-          );
-        } else {
-          Navigator.pop(context);
-        }
+        showDialog(
+          context: context,
+          child: _backWarningDialog(),
+        );
       },
     );
   }
@@ -117,8 +115,8 @@ class _ItemPageState extends State<ItemPage> {
               child: _buildWarningDialog(),
             );
           } else {
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => Loading()));
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (context) => Loading()));
             for (ItemDetails item in itemList) {
               ItemDetails itemDetails = await dbService.createItem(
                   item.name, item.totalPrice, item.selectedMembers);
@@ -130,7 +128,7 @@ class _ItemPageState extends State<ItemPage> {
                   itemUID: itemDetails.itemUID);
               addMembers(item.selectedMembers);
             }
-            Navigator.pop(context); // pop loading 
+            Navigator.pop(context); // pop loading
             Navigator.pop(context); // pop itempage
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => BillBreakdown(
@@ -209,7 +207,7 @@ class _ItemPageState extends State<ItemPage> {
                     onPressed: () {
                       String billUID = dbService.billUID;
                       dbService.removeBill(billUID);
-                      Navigator.pop(context);
+                      Navigator.pop(context, true);
                       Navigator.pop(context);
                     },
                     child: Text('OK')),
@@ -220,7 +218,7 @@ class _ItemPageState extends State<ItemPage> {
                       borderRadius: BorderRadius.circular(29),
                     ),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(context, false);
                     },
                     child: Text('Close')),
               ],
@@ -237,35 +235,39 @@ class _ItemPageState extends State<ItemPage> {
           context,
           MaterialPageRoute(
               builder: (context) => PhotoPreviewPage(
-                    initialSource: ImageSource.camera,
-                    dbService: dbService,
-                    itemList: itemList,
-                    billDetails: billDetails
-                  )));
+                  initialSource: ImageSource.camera,
+                  dbService: dbService,
+                  itemList: itemList,
+                  billDetails: billDetails)));
     } else if (index == 1) {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => ItemCreation(
-                    dbService: dbService,
-                    itemList: itemList,
-                    billDetails: billDetails
-                  )));
+                  dbService: dbService,
+                  itemList: itemList,
+                  billDetails: billDetails)));
     } else {
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => PhotoPreviewPage(
-                    initialSource: ImageSource.gallery,
-                    dbService: dbService,
-                    itemList: itemList,
-                    billDetails: billDetails
-                  )));
+                  initialSource: ImageSource.gallery,
+                  dbService: dbService,
+                  itemList: itemList,
+                  billDetails: billDetails)));
     }
   }
+
   Future<void> addMembers(List<MemberDetails> members) async {
     for (MemberDetails member in members) {
       dbService.shareItemWith(member);
     }
+  }
+
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+            context: context,
+            builder: (context) => _backWarningDialog())) ?? false;
   }
 }

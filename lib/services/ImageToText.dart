@@ -8,16 +8,48 @@ class ImageToText {
     FirebaseVisionImage toProcess = FirebaseVisionImage.fromFile(image);
     VisionText receiptBlock = await recognizeText.processImage(toProcess);
 
-    List<ItemDetails> items = [
-      new ItemDetails(name: 'test item', totalPrice: 22.22, selectedMembers: [])
-    ];
+    List<ItemDetails> items = [];
+    // new ItemDetails(name: 'test item', totalPrice: 22.22, selectedMembers: [])
+    // ];
+
+    List<String> itemNames = [];
+    List<double> itemPrice = [];
 
     for (TextBlock block in receiptBlock.blocks) {
-      print(block.text);
+      for (TextLine line in block.lines) {
+        String element = line.text;
+        print('$element is one line');
+        if (!isNumeric(element)) {
+          itemNames.add(element);
+        } else {
+          itemPrice.add(double.parse(element));
+        }
+      }
+    }
+
+    for (int i = 0; i < itemNames.length; i++) {
+      String name = itemNames[i];
+      double price = itemPrice[i];
+      ItemDetails item = new ItemDetails(
+        name: name ?? 'error detecting name',
+        totalPrice: price ?? '99.99',
+        selectedMembers: [],
+      );
+
+      items.add(item);
     }
 
     recognizeText.close();
 
     return items;
+  }
+
+  //returns false if element does not exist or is not a double. True otherwise.
+  bool isNumeric(String element) {
+    if (element == null) {
+      return false;
+    }
+
+    return double.tryParse(element) != null;
   }
 }

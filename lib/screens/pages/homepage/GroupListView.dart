@@ -34,7 +34,6 @@ class _GroupListViewState extends State<GroupListView> {
     final user = Provider.of<UserDetails>(context);
     DataBaseService dbService =
         new DataBaseService(uid: user.uid, groupUID: group.groupUID);
-
     return Dismissible(
       key: UniqueKey(),
       direction: DismissDirection.endToStart,
@@ -54,8 +53,63 @@ class _GroupListViewState extends State<GroupListView> {
             builder: (context) => Group(data: group),
           ));
         },
+        onLongPress: () {
+          showDialog(
+            context: context,
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40.0)),
+              child: Container(
+                height: 275,
+                width : 275,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 20.0, left: 20.0, right: 20.0),
+                        child: Text("Members",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20.0)),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(
+                              bottom: 10.0, left: 10.0, right: 10.0),
+                          itemCount: group.members.length,
+                          itemBuilder: (context, index) {
+                            return Row(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      bottom: 20, left: 15, right: 20),
+                                  child: Container(
+                                      child: Text("${index + 1}.",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                          ))),
+                                ),
+                                Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 20, left: 10, right: 20),
+                                    child: Text(group.members.elementAt(index),
+                                        style: TextStyle(fontSize: 20))),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
         child: Card(
-          margin: EdgeInsets.only(left: 8, right: 8, bottom: 8, top : 10),
+          margin: EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 10),
           color: tileColour,
           child: Container(
             padding: EdgeInsets.fromLTRB(0, 20, 5, 20),
@@ -103,16 +157,16 @@ class _GroupListViewState extends State<GroupListView> {
 
   Widget _buildNoGroupDisplay() {
     return Container(
-      height: MediaQuery.of(context).size.height - 250,
+        height: MediaQuery.of(context).size.height - 250,
         child: Center(
             child: Text(
-      "You are not currently in any groups!\n\nCreate one to get started",
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 24.0,
-        color: Colors.white70,
-      ),
-    )));
+          "You are not currently in any groups!\n\nCreate one to get started",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 24.0,
+            color: Colors.white70,
+          ),
+        )));
   }
 
   Widget _deletionBackground(String groupName) {

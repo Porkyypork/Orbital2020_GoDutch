@@ -126,7 +126,7 @@ class _ContactListViewState extends State<ContactListView> {
             IconButton(
                 icon: Icon(Icons.clear, color: Colors.red[900]),
                 onPressed: () {
-                  dbService.removeGroupMember(member.memberID);
+                  dbService.removeGroupMember(member);
                 })
           ],
         )),

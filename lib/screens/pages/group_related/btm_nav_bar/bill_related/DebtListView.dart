@@ -45,21 +45,20 @@ class _DebtListViewState extends State<DebtListView>
               }
               first = false;
             }
-            return SingleChildScrollView(
-              physics: ScrollPhysics(),
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text('Cash Breakdown',
-                        style: TextStyle(
-                            letterSpacing: 1,
-                            fontSize: 27,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'OpenSans')),
-                  ),
-                  _heading(name, total),
-                  ListView.builder(
+            return Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text('Cash Breakdown',
+                      style: TextStyle(
+                          letterSpacing: 1,
+                          fontSize: 27,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'OpenSans')),
+                ),
+                _heading(name, total),
+                Expanded(
+                  child: ListView.builder(
                       shrinkWrap: true,
                       padding: EdgeInsets.symmetric(
                         vertical: 10.0,
@@ -73,10 +72,11 @@ class _DebtListViewState extends State<DebtListView>
                           return _buildYourListTile(snap.data[index]);
                         }
                       }),
-                  SizedBox(height: 30),
-                  _shareButton(),
-                ],
-              ),
+                ),
+                SizedBox(height: 15),
+                _shareButton(),
+                SizedBox(height: 15),
+              ],
             );
           } else {
             return Loading();

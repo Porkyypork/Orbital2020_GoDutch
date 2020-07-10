@@ -1,7 +1,6 @@
 import 'package:app/models/UserDetails.dart';
 import 'package:app/screens/pages/ContactsPage.dart';
 import 'package:app/screens/pages/group_related/group.dart';
-import 'package:app/screens/pages/group_related/group_creation.dart';
 import 'package:app/screens/pages/sideFunctions/aboutus.dart';
 import 'package:app/screens/pages/sideFunctions/debts.dart';
 import 'package:app/screens/pages/homepage/home.dart';
@@ -26,7 +25,6 @@ class GoDutch extends StatelessWidget {
           '/home': (context) => Home(),
           '/debts': (context) => Debts(),
           '/profile': (context) => Profile(),
-          '/group_creation': (context) => GroupCreation(),
           '/group': (context) => Group(),
           '/about': (context) => AboutUs(),
           '/contacts': (context) => ContactsPage(),

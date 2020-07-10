@@ -92,7 +92,47 @@ class _ContactsPageState extends State<ContactsPage> {
                           ? contactsFiltered.length
                           : _contactsAll?.length ?? 0,
                       itemBuilder: (BuildContext context, int index) {
-                        return _buildContactTile(index, isSearching, dbService);
+                        Contact contact = isSearching
+                            ? contactsFiltered[index]
+                            : _contactsAll?.elementAt(index);
+                        return Dismissible(
+                            key: UniqueKey(),
+                            background: _addBackground(),
+                            onDismissed: (direction) {
+                              dbService.addGroupMember(contact);
+                              _addMessage(context, contact.displayName);
+                            },
+                            child: contact.phones.isEmpty
+                                ? ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 18),
+                                    leading: CircleAvatar(
+                                      child: Text(
+                                        contact.initials(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      backgroundColor: Colors.teal[300],
+                                    ),
+                                    title: Text(contact.displayName ?? ''),
+                                  )
+                                : ListTile(
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 2, horizontal: 18),
+                                    leading: CircleAvatar(
+                                      child: Text(
+                                        contact.initials(),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      backgroundColor: Colors.teal[300],
+                                    ),
+                                    title: Text(contact.displayName ?? ''),
+                                    subtitle: Text(
+                                        contact.phones.first.value.toString()),
+                                  ));
                       },
                     ),
                   ),
@@ -100,49 +140,6 @@ class _ContactsPageState extends State<ContactsPage> {
               ),
             ))
         : Loading();
-  }
-
-  Widget _buildContactTile(
-      int index, bool isSearching, DataBaseService dbService) {
-    Contact contact =
-        isSearching ? contactsFiltered[index] : _contactsAll?.elementAt(index);
-    return Dismissible(
-        key: UniqueKey(),
-        background: _addBackground(),
-        onDismissed: (direction) {
-          dbService.addGroupMember(contact);
-          _addMessage(context, contact.displayName);
-        },
-        child: contact.phones.isEmpty
-            ? ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 2, horizontal: 18),
-                leading: CircleAvatar(
-                  child: Text(
-                    contact.initials(),
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  backgroundColor: Colors.teal[300],
-                ),
-                title: Text(contact.displayName ?? ''),
-              )
-            : ListTile(
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 2, horizontal: 18),
-                leading: CircleAvatar(
-                  child: Text(
-                    contact.initials(),
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  backgroundColor: Colors.teal[300],
-                ),
-                title: Text(contact.displayName ?? ''),
-                subtitle: Text(contact.phones.first.value.toString()),
-              ));
   }
 
   Widget _addBackground() {

@@ -34,18 +34,25 @@ class DataBaseService {
     DocumentReference groups = groupsReference.document();
     String groupUID = groups.documentID;
 
+    List<String> members = [];
+    members.add(user.name);
+
     groups.setData({
       "groupName": groupName,
       "groupUID": groupUID,
       "groupAdmin": user.name,
       "numMembers": 1,
+      "members" : members,
     });
+
+    
 
     GroupDetails groupDetails = new GroupDetails(
       groupName: groupName,
       groupUID: groupUID,
       groupAdmin: user.name,
-      numMembers: 0,
+      numMembers: 1,
+      members: members,
     );
 
     DocumentReference userReference = db
@@ -75,18 +82,19 @@ class DataBaseService {
         groupName: doc.data['groupName'] ?? 'No name exists',
         groupUID: doc.documentID,
         numMembers: doc.data['numMembers'],
+        members: doc.data['members']
       );
     }).toList();
   }
 
-  void removeGroupMember(String memberID) async {
+  void removeGroupMember(MemberDetails member) async {
     await db
         .collection('users')
         .document(uid)
         .collection('groups')
         .document(groupUID)
         .collection('members')
-        .document(memberID)
+        .document(member.memberID)
         .delete();
 
     var groupDocRef = db
@@ -97,10 +105,18 @@ class DataBaseService {
 
     int newNumMembers = await groupDocRef.get().then((group) {
           return group['numMembers'];
-        }) -
-        1;
+        }) - 1;
     groupDocRef.updateData({
       'numMembers': newNumMembers,
+    });
+    List<dynamic> members =  await groupDocRef.get().then((group) {
+          return group['members'];
+        });
+    
+    members.remove(member.name);
+
+    groupDocRef.updateData({
+      'members': members,
     });
   }
 
@@ -114,7 +130,8 @@ class DataBaseService {
           .collection('members')
           .add({
         'Name': contact.displayName,
-        'Number': contact.phones.isEmpty ? "" : contact.phones.first.value.toString(),
+        'Number':
+            contact.phones.isEmpty ? "" : contact.phones.first.value.toString(),
       });
 
       var groupDocRef = db
@@ -129,6 +146,19 @@ class DataBaseService {
       groupDocRef.updateData({
         'numMembers': newNumMembers,
       });
+
+      List<dynamic> members = await groupDocRef.get().then((group) {
+        return group['members'];
+      });
+      for(String member in members) {
+        print(member);
+      }
+      members.add(contact.displayName);
+
+        groupDocRef.updateData({
+        'members': members,
+      });
+
     } catch (e) {
       print(e.toString());
     }
@@ -191,7 +221,6 @@ class DataBaseService {
         .map(_billDetailsFromSnapshot);
   }
 
-
   Future<BillDetails> createBill(
       String billName, List<MemberDetails> members, int extraCharges) async {
     DocumentReference billReference = db
@@ -239,10 +268,11 @@ class DataBaseService {
       'owedBillUID': owedBillUID,
       'totalPrice': 0.0,
       'Date': DateTime.now(),
-      'extraCharges' : extraCharges
+      'extraCharges': extraCharges
     });
 
-    return new BillDetails(billName, billUID, owedBillUID, 0.0, DateTime.now(), extraCharges);
+    return new BillDetails(
+        billName, billUID, owedBillUID, 0.0, DateTime.now(), extraCharges);
   }
 
   Future<void> removeBill(String billUID) async {
@@ -257,7 +287,7 @@ class DataBaseService {
   }
 
   Future<ItemDetails> createItem(
-    String itemName, double itemPrice, List<MemberDetails> members) async {
+      String itemName, double itemPrice, List<MemberDetails> members) async {
     int numMembers = 0;
     for (MemberDetails member in members) {
       numMembers = numMembers + 1;
@@ -346,8 +376,7 @@ class DataBaseService {
       return new ItemDetails(
           name: doc.data['Name'],
           itemUID: doc.data['itemUID'],
-          totalPrice: doc.data['totalPrice']
-        );
+          totalPrice: doc.data['totalPrice']);
     }).toList();
   }
 

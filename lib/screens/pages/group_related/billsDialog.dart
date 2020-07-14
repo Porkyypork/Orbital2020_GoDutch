@@ -49,9 +49,10 @@ class _BillsDialogState extends State<BillsDialog> {
                     child: Form(
                       key: _formKey,
                       child: TextFormField(
+                        maxLength: 12,
                         validator: (value) {
                           if (value.isEmpty) {
-                            return 'Bill Name cannot be Empty';
+                            return 'Bill Name cannot be empty!';
                           }
                           return null;
                         },

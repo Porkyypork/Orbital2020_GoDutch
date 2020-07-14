@@ -49,8 +49,7 @@ class _ItemPageState extends State<ItemPage> {
         ),
         body: Column(
           children: <Widget>[
-            Container(
-              height: MediaQuery.of(context).size.height - 330,
+            Expanded(
               child: ItemListView(
                 dbService: dbService,
                 itemList: itemList,

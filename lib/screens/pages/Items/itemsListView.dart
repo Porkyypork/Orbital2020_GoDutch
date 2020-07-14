@@ -46,57 +46,65 @@ class _ItemListViewState extends State<ItemListView> {
   Widget _buildItemTile(ItemDetails item) {
     String name = item.name;
     double totalPrice = item.totalPrice;
-    // int numSharing = item.selectedMembers.length;
-    // String itemUID = item.itemUID;
 
-    // print(itemUID);
-    return Dismissible(
-        key: UniqueKey(),
-        direction: DismissDirection.endToStart,
-        onDismissed: (direction) {
-          if (direction == DismissDirection.endToStart) {
-            setState(() {
-              itemList.remove(item);
-              _deletionMessage(context, name);
-              print(itemList.length);
-            });
-          }
-        },
-        background: _deletionBackground(item),
-        child: Container(
-          decoration: item.selectedMembers.length == 0
-              ? BoxDecoration(color: Colors.red[300])
-              : BoxDecoration(),
-          child: ListTile(
-            onLongPress: () {
-              for (MemberDetails member in item.selectedMembers) {
-                print(member.name);
-              }
-              print(item.name);
-            }, // to debug
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => ItemCreation(
+    return Padding(
+      padding: item.selectedMembers.length == 0
+          ? const EdgeInsets.only(bottom: 2, left: 10, right: 10)
+          : const EdgeInsets.symmetric(horizontal: 10),
+      child: Dismissible(
+          key: UniqueKey(),
+          direction: DismissDirection.endToStart,
+          onDismissed: (direction) {
+            if (direction == DismissDirection.endToStart) {
+              setState(() {
+                itemList.remove(item);
+                _deletionMessage(context, name);
+                print(itemList.length);
+              });
+            }
+          },
+          background: _deletionBackground(item),
+          child: Container(
+            decoration: item.selectedMembers.length == 0
+                ? BoxDecoration(
+                    color: Colors.red[300],
+                    borderRadius: BorderRadius.circular(15))
+                : BoxDecoration(),
+            child: ListTile(
+              onLongPress: () {
+                for (MemberDetails member in item.selectedMembers) {
+                  print(member.name);
+                }
+                print(item.name);
+              }, // to debug
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => ItemCreation(
                         dbService: dbService,
                         itemList: itemList,
                         item: item,
-                        billDetails: billDetails
-                      )));
-            },
-            leading: Icon(
-              Icons.restaurant,
-              color: Colors.white70,
+                        billDetails: billDetails)));
+              },
+              leading: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Icon(
+                    Icons.restaurant,
+                    color: Colors.white70,
+                  ),
+                ],
+              ),
+              title: Text(name,
+                  style: TextStyle(
+                    color: Colors.white,
+                  )),
+              subtitle: Text(
+                "\$${totalPrice.toStringAsFixed(2)}",
+                style: TextStyle(color: Colors.white54),
+              ),
             ),
-            title: Text(name,
-                style: TextStyle(
-                  color: Colors.white,
-                )),
-            subtitle: Text(
-              "\$${totalPrice.toStringAsFixed(2)}",
-              style: TextStyle(color: Colors.white54),
-            ),
-          ),
-        ));
+          )),
+    );
   }
 
   Widget _initialState() {
@@ -114,7 +122,7 @@ class _ItemListViewState extends State<ItemListView> {
                 "Choose one of our functions",
                 style: TextStyle(fontSize: 22.0, color: Colors.white),
               ),
-              Text("to get Started!",
+              Text("to get started!",
                   style: TextStyle(fontSize: 22.0, color: Colors.white)),
               SizedBox(height: 60),
             ],

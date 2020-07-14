@@ -87,6 +87,7 @@ class _BillsListViewState extends State<BillsListView> {
                     ],
                   ),
                   Flexible(
+                    fit: FlexFit.tight,
                     child: Padding(
                       padding:
                           EdgeInsets.only(top: 5.0, bottom: 5.0, left: 15.0),
@@ -100,7 +101,7 @@ class _BillsListViewState extends State<BillsListView> {
                   ),
                   Padding(
                       padding: EdgeInsets.only(
-                          top: 5.0, bottom: 5.0, left: 20.0, right: 10.0),
+                          top: 5.0, bottom: 5.0, left: 10.0),
                       child: Container(
                         child: Text(
                           '\$${bill.totalPrice.toStringAsFixed(2)}',

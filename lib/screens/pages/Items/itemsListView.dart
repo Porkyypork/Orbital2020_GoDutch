@@ -117,14 +117,14 @@ class _ItemListViewState extends State<ItemListView> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 220),
+              SizedBox(height: 160),
               Text(
                 "Choose one of our functions",
                 style: TextStyle(fontSize: 22.0, color: Colors.white),
               ),
               Text("to get started!",
                   style: TextStyle(fontSize: 22.0, color: Colors.white)),
-              SizedBox(height: 60),
+              SizedBox(height: 40),
             ],
           ),
         ],

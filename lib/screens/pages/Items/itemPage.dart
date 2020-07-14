@@ -46,6 +46,22 @@ class _ItemPageState extends State<ItemPage> {
           backgroundColor: headerColour,
           title: Text(billDetails.billName),
           centerTitle: true,
+          actions: <Widget>[
+            Builder(
+              builder: (context) => IconButton(
+                icon:
+                    Icon(Icons.delete_sweep, color: Colors.black, size: 28),
+                onPressed: () {
+                  setState(() {
+                    itemList.clear();
+                  });
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text('All items have been deleted'),
+                  ));
+                },
+              ),
+            ),
+          ],
         ),
         body: Column(
           children: <Widget>[
@@ -56,6 +72,7 @@ class _ItemPageState extends State<ItemPage> {
                 billDetails: billDetails,
               ),
             ),
+            Container(height: 80),
           ],
         ),
         floatingActionButton: _confirmButton(),
@@ -266,7 +283,7 @@ class _ItemPageState extends State<ItemPage> {
 
   Future<bool> _onWillPop() async {
     return (await showDialog(
-            context: context,
-            builder: (context) => _backWarningDialog())) ?? false;
+            context: context, builder: (context) => _backWarningDialog())) ??
+        false;
   }
 }

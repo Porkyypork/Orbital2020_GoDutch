@@ -18,40 +18,44 @@ class AccessContacts extends StatelessWidget {
               MaterialPageRoute(
                   builder: (context) => ContactsPage(groupUID: groupUID)));
         } else {
-          AlertDialog(
-            title: Text('Permission Error!'),
-            content: Text(
-                'Please enable contacts access in Settings > Privacy ' +
-                    '> Permission manager > Contacts > \'GoDutch \' > Allow'),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          );
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    child: Container(
+                      height: 185,
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                        child: Column(
+                          children: <Widget>[
+                            Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 40),
+                                child: Text(
+                                  "Permission Error!",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20.0),
+                                )),
+                            Padding(
+                                padding: EdgeInsets.only(
+                                    top: 10, left: 30, right: 20),
+                                child: Text(
+                                    'Please enable contacts access in Settings > Apps ' +
+                                        '> \'GoDutch \' > \'Contacts\' > Allow',
+                                    style: TextStyle(
+                                        fontSize: 20, wordSpacing: 2))),
+                          ],
+                        ),
+                      ),
+                    ));
+              });
         }
       },
       backgroundColor: Colors.orange[300],
       label: Text('Add members', style: TextStyle(color: Colors.black)),
       elevation: 0,
-      // backgroundColor: Colors.orange[500],
-      // child : Container(
-      //   height: 70,
-      //   width: 70,
-      //   decoration: BoxDecoration(
-      //     border: Border.all (
-      //       color: Colors.teal[500],
-      //       width: 5
-      //     ),
-      //     shape : BoxShape.circle,
-      //     color : Color(0xFF48D1CC), // CHANGE HERE
-      //   ),
-      //   child : Icon(Icons.add, size :30, color: Colors.black,),
-      // ),
-      //  elevation: 0,
     );
   }
 

@@ -9,8 +9,6 @@ class ImageToText {
     VisionText receiptBlock = await recognizeText.processImage(toProcess);
 
     List<ItemDetails> items = [];
-    // new ItemDetails(name: 'test item', totalPrice: 22.22, selectedMembers: [])
-    // ];
 
     List<String> itemNames = [];
     List<double> itemPrice = [];
@@ -22,7 +20,16 @@ class ImageToText {
         if (!isNumeric(element)) {
           itemNames.add(element);
         } else {
-          itemPrice.add(double.parse(element));
+          var checkDecimal = element.split('');
+          bool isInteger = true;
+          checkDecimal.forEach((char) {
+            if (char == '.') {
+              isInteger = false;
+            }
+          });
+          if (!isInteger) {
+            itemPrice.add(double.parse(element));
+          }
         }
       }
     }

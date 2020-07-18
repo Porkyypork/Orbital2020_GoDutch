@@ -20,17 +20,19 @@ class AuthService {
 
   // create user object base on FirebaseUser
   UserDetails _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? UserDetails(
-      name: user.displayName,
-      uid: user.uid,
-      email: user.email,
-      number: user.phoneNumber,
-      groups : []
-      ) : null;
+    return user != null
+        ? UserDetails(
+            name: user.displayName,
+            uid: user.uid,
+            email: user.email,
+            number: user.phoneNumber,
+            groups: [])
+        : null;
   }
 
   //sign in with email and passowrd
-  Future<UserDetails> signInWithEmailAndPassword(String email, String password) async {
+  Future<UserDetails> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -50,29 +52,32 @@ class AuthService {
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: googleAuth.accessToken, 
-        idToken: googleAuth.idToken,
-      );
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
 
     AuthResult _authResult = await _auth.signInWithCredential(credential);
     user = _authResult.user;
-    await DataBaseService(uid: user.uid).updateUserData(user.displayName, user.email, user.phoneNumber);
+    await DataBaseService(uid: user.uid)
+        .updateUserData(user.displayName, user.email, user.phoneNumber);
     return _userFromFirebaseUser(user);
   }
 
   // register with email and password
-  Future<UserDetails> registerWithEmailAndPassword(UserDetails newUser, String password) async {
+  Future<UserDetails> registerWithEmailAndPassword(
+      UserDetails newUser, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(
-          email: newUser.email, 
-          password: password,
-        );
+        email: newUser.email,
+        password: password,
+      );
       UserDetails user = _userFromFirebaseUser(result.user);
-      await DataBaseService(uid: result.user.uid).updateUserData(newUser.name, newUser.email, "");
+      await DataBaseService(uid: result.user.uid)
+          .updateUserData(newUser.name, newUser.email, "");
       return user;
     } catch (error) {
       if (error.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
-        return UserDetails(uid : 'Error_1');
+        return UserDetails(uid: 'Error_1');
       }
       return null;
     }

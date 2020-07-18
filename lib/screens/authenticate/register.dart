@@ -148,11 +148,13 @@ class _RegisterState extends State<Register> {
       splashColor: Colors.grey,
       onPressed: () async {
         if (_formKey.currentState.validate()) {
+          print('attempting to register user');
           setState(() => loading = true);
           UserDetails newUser =
               new UserDetails(name: name, number: phoneNumber, email: email);
           dynamic result =
               await _auth.registerWithEmailAndPassword(newUser, password);
+          print('registration complete');
           if (result.uid == 'Error_1') {
             setState(() {
               error = 'Email already in use';

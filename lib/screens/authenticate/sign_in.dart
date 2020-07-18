@@ -1,5 +1,6 @@
 import 'package:app/constants/colour.dart';
 import 'package:app/constants/loading.dart';
+import 'package:app/screens/authenticate/resetPassword.dart';
 import 'package:app/services/auth.dart';
 import 'package:flutter/material.dart';
 
@@ -31,42 +32,52 @@ class _SignInState extends State<SignIn> {
               child: Container(
                 height: double.infinity,
                 child: SingleChildScrollView(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 120),
-                      Text("logo here",
-                          style: TextStyle(
-                            color: Colors.white,
-                          )),
-                      SizedBox(height: 120),
-                      Container(
-                          padding: EdgeInsets.only(left: 22, bottom: 2),
-                          alignment: Alignment.centerLeft,
-                          child: Text("Sign in",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.white,
-                              ))),
-                      SizedBox(height: 2),
-                      _buildLoginForm(),
-                      _buildForgotPassword(),
-                      SizedBox(height: 15),
-                      _buildSignInButton(),
-                      SizedBox(height: 5),
-                      Text(
-                        "- OR -",
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                  child: Stack(children: <Widget>[
+                    Image(
+                      image: AssetImage('assets/godutch_logo.PNG'),
+                      height: 400,
+                    ),
+                    Positioned(
+                      top: 150,
+                      left: MediaQuery.of(context).size.width / 4,
+                      child: Text(
+                        'GoDutch',
+                        style: TextStyle(color: Colors.green, fontSize: 48),
                       ),
-                      SizedBox(height: 7),
-                      _buildGoogleSignInButton(),
-                      SizedBox(height: 10),
-                      _buildNewUser(),
-                    ],
-                  ),
+                    ),
+                    Column(
+                      children: <Widget>[
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height - 400),
+                        Container(
+                            padding: EdgeInsets.only(left: 22, bottom: 2),
+                            alignment: Alignment.centerLeft,
+                            child: Text("Sign in",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                ))),
+                        SizedBox(height: 2),
+                        _buildLoginForm(),
+                        _buildForgotPassword(),
+                        SizedBox(height: 15),
+                        _buildSignInButton(),
+                        SizedBox(height: 5),
+                        Text(
+                          "- OR -",
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 7),
+                        _buildGoogleSignInButton(),
+                        SizedBox(height: 10),
+                        _buildNewUser(),
+                      ],
+                    ),
+                  ]),
                 ),
               ),
             ),
@@ -80,7 +91,8 @@ class _SignInState extends State<SignIn> {
         alignment: Alignment.centerRight,
         child: InkWell(
           onTap: () {
-            // insert forgot password here
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => ResetPassword()));
           },
           child: Text.rich(
             TextSpan(

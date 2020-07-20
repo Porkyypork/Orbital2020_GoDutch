@@ -35,14 +35,14 @@ class _SignInState extends State<SignIn> {
                   child: Stack(children: <Widget>[
                     Image(
                       image: AssetImage('assets/godutch_logo.PNG'),
-                      height: 400,
+                      height: 420,
                     ),
                     Positioned(
-                      top: 150,
-                      left: MediaQuery.of(context).size.width / 4,
+                      top: 30,
+                      left: MediaQuery.of(context).size.width / 6,
                       child: Text(
                         'GoDutch',
-                        style: TextStyle(color: Colors.green, fontSize: 48),
+                        style: TextStyle(color: Colors.green[600], fontSize: 56, fontFamily: 'Montserrat'),
                       ),
                     ),
                     Column(

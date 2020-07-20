@@ -29,7 +29,13 @@ class _ResetPasswordState extends State<ResetPassword> {
         ),
         Divider(color: secondary),
         _buildEmailField(),
-        _buildSubmitButton()
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            _buildReturnButton(),
+            _buildSubmitButton(),
+          ],
+        ),
       ],
     )));
   }
@@ -76,22 +82,47 @@ class _ResetPasswordState extends State<ResetPassword> {
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 10, 10, 10),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  'Reset',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: secondary,
-                  ),
+          padding: const EdgeInsets.all(10),
+          child: Container(
+            width: 65,
+            child: Center(
+              child: Text(
+                'Reset',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: secondary,
                 ),
-              )
-            ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReturnButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: FlatButton(
+        color: Colors.orange[300],
+        splashColor: Colors.grey,
+        onPressed: () async {
+          Navigator.pop(context);
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Container(
+            width: 65,
+            child: Center(
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 20,
+                  color: secondary,
+                ),
+              ),
+            ),
           ),
         ),
       ),

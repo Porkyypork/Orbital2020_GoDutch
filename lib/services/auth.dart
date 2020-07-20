@@ -67,12 +67,18 @@ class AuthService {
   Future<UserDetails> registerWithEmailAndPassword(
       UserDetails newUser, String password) async {
     try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
-        email: newUser.email,
-        password: password,
-      );
-      UserDetails user = _userFromFirebaseUser(result.user);
-      await DataBaseService(uid: result.user.uid)
+      UserUpdateInfo updateInfo = new UserUpdateInfo();
+      updateInfo.displayName = newUser.name;
+      FirebaseUser fUser = await _auth
+          .createUserWithEmailAndPassword(
+              email: newUser.email, password: password)
+          .then((result) async {
+        await result.user.updateProfile(updateInfo);
+        print(result.user.displayName);
+        return _auth.currentUser();
+      });
+      UserDetails user = _userFromFirebaseUser(fUser);
+      await DataBaseService(uid: fUser.uid)
           .updateUserData(newUser.name, newUser.email, "");
       return user;
     } catch (error) {

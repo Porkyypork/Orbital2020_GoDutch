@@ -27,7 +27,6 @@ class _HomeState extends State<Home> {
               builder: (BuildContext context, AsyncSnapshot<UserDetails> snap) {
                 if (snap.hasData) {
                   user = snap.data;
-                  print(user.name + "asa");
                   return buildScaffold(context);
                 } 
                 return Loading();               

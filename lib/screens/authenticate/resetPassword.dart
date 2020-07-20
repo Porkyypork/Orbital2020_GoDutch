@@ -49,19 +49,22 @@ class _ResetPasswordState extends State<ResetPassword> {
           borderRadius: BorderRadius.circular(29),
           color: tileColour,
         ),
-        child: TextFormField(
-          validator: (val) => val.isEmpty ? 'Enter an Email' : null,
-          decoration: InputDecoration(
-            hintText: 'Please enter your email address',
-            labelText: 'Email address',
-            icon: Icon(Icons.person),
-            border: InputBorder.none,
+        child: Form(
+          key: _formKey,
+          child: TextFormField(
+            validator: (val) => val.isEmpty ? 'Enter an Email' : null,
+            decoration: InputDecoration(
+              hintText: 'Please enter your email address',
+              labelText: 'Email address',
+              icon: Icon(Icons.person),
+              border: InputBorder.none,
+            ),
+            onChanged: (val) {
+              setState(() {
+                email = val;
+              });
+            },
           ),
-          onChanged: (val) {
-            setState(() {
-              email = val;
-            });
-          },
         ),
       ),
     );
@@ -84,7 +87,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Container(
-            width: 65,
+            width: 70,
             child: Center(
               child: Text(
                 'Reset',
@@ -113,7 +116,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Container(
-            width: 65,
+            width: 70,
             child: Center(
               child: Text(
                 'Cancel',

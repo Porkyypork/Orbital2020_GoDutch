@@ -33,22 +33,30 @@ class _SignInState extends State<SignIn> {
                 height: double.infinity,
                 child: SingleChildScrollView(
                   child: Stack(children: <Widget>[
-                    Image(
-                      image: AssetImage('assets/godutch_logo.PNG'),
-                      height: 600,
+                    Positioned(top: 45, child: showAlert()),
+                    Positioned(
+                      top: 75,
+                      left: 50,
+                      child: Image(
+                          image: AssetImage('assets/godutch_logo.PNG'),
+                          height: 420,
+                          width: 300),
                     ),
                     Positioned(
-                      top: 90,
+                      top: 100,
                       left: MediaQuery.of(context).size.width / 7,
                       child: Text(
                         'GoDutch',
-                        style: TextStyle(color: Colors.green[600], fontSize: 56, fontFamily: 'Montserrat'),
+                        style: TextStyle(
+                            color: Colors.orange[300],
+                            fontSize: 56,
+                            fontFamily: 'Montserrat'),
                       ),
                     ),
                     Column(
                       children: <Widget>[
                         SizedBox(
-                            height: MediaQuery.of(context).size.height - 400),
+                            height: MediaQuery.of(context).size.height - 450),
                         Container(
                             padding: EdgeInsets.only(left: 22, bottom: 2),
                             alignment: Alignment.centerLeft,
@@ -84,6 +92,44 @@ class _SignInState extends State<SignIn> {
           );
   }
 
+  void setWarning(String newError) {
+    setState(() {
+      error = newError;
+    });
+  }
+
+  Widget showAlert() {
+    if (error.isNotEmpty) {
+      return Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.orange[300]),
+          width: 390,
+          padding: EdgeInsets.all(8),
+          child: Row(
+            children: <Widget>[
+              Icon(Icons.error_outline),
+              Flexible(
+                fit: FlexFit.tight,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(error),
+                ),
+              ),
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  setState(() {
+                    error = "";
+                  });
+                },
+              )
+            ],
+          ));
+    }
+    return SizedBox(height: 0);
+  }
+
   Widget _buildForgotPassword() {
     return Padding(
       padding: EdgeInsets.only(right: 8),
@@ -91,8 +137,11 @@ class _SignInState extends State<SignIn> {
         alignment: Alignment.centerRight,
         child: InkWell(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ResetPassword()));
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        ResetPassword(setWarning: setWarning)));
           },
           child: Text.rich(
             TextSpan(
@@ -212,9 +261,9 @@ class _SignInState extends State<SignIn> {
           setState(() => loading = true);
           dynamic result =
               await _auth.signInWithEmailAndPassword(email, password);
-          if (result == null) {
+          if (result is String) {
             setState(() {
-              error = 'Invalid Email or Password';
+              error = result;
               loading = false;
             });
           }

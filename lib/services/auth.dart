@@ -31,7 +31,7 @@ class AuthService {
   }
 
   //sign in with email and passowrd
-  Future<UserDetails> signInWithEmailAndPassword(
+  Future<dynamic> signInWithEmailAndPassword(
       String email, String password) async {
     try {
       AuthResult result = await _auth.signInWithEmailAndPassword(
@@ -39,8 +39,7 @@ class AuthService {
       UserDetails user = _userFromFirebaseUser(result.user);
       return user;
     } catch (e) {
-      print(e.toString());
-      return null;
+      return e.message;
     }
   }
 
@@ -78,7 +77,6 @@ class AuthService {
       await fUser.updateProfile(updateInfo);
       fUser.reload();
       fUser = await _auth.currentUser();
-      print(fUser.displayName);
       UserDetails user = _userFromFirebaseUser(fUser);
       await DataBaseService(uid: fUser.uid)
           .updateUserData(newUser.name, newUser.email, newUser.number);
@@ -91,8 +89,18 @@ class AuthService {
     }
   }
 
-  Future<void> resetPassword(String email) async {
-    await _auth.sendPasswordResetEmail(email: email);
+  Future<int> resetPassword(String email) async {
+    try{
+      await _auth.sendPasswordResetEmail(email: email);
+      return 1;
+    } catch (error) {
+      if (error.code == "ERROR_INVALID_EMAIL") {
+        return -1;
+      } else if (error.code == "ERROR_USER_NOT_FOUND") {
+        return 0;
+      }
+      return null;
+    }
   }
 
   //sign out

@@ -27,6 +27,22 @@ class DataBaseService {
         .setData({"name": name, "email": email, 'Number': number});
   }
 
+  Future<UserDetails> get user async {
+    await Future.delayed(Duration(seconds: 1));
+    print(uid);
+    UserDetails user =
+        await db.collection('users').document(uid).get().then((snap) {
+      return UserDetails(
+          email: snap.data['email'],
+          name: snap.data['name'],
+          number: snap.data['Number'],
+          uid: snap.documentID,
+          groups: []);
+    });
+    print(user.name);
+    return user;
+  }
+
   Future<GroupDetails> createGroupData(
       String groupName, UserDetails user) async {
     CollectionReference groupsReference =
@@ -42,10 +58,8 @@ class DataBaseService {
       "groupUID": groupUID,
       "groupAdmin": user.name,
       "numMembers": 1,
-      "members" : members,
+      "members": members,
     });
-
-    
 
     GroupDetails groupDetails = new GroupDetails(
       groupName: groupName,
@@ -79,11 +93,10 @@ class DataBaseService {
   List<GroupDetails> _groupDetailsFromSnapshot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new GroupDetails(
-        groupName: doc.data['groupName'] ?? 'No name exists',
-        groupUID: doc.documentID,
-        numMembers: doc.data['numMembers'],
-        members: doc.data['members']
-      );
+          groupName: doc.data['groupName'] ?? 'No name exists',
+          groupUID: doc.documentID,
+          numMembers: doc.data['numMembers'],
+          members: doc.data['members']);
     }).toList();
   }
 
@@ -105,14 +118,15 @@ class DataBaseService {
 
     int newNumMembers = await groupDocRef.get().then((group) {
           return group['numMembers'];
-        }) - 1;
+        }) -
+        1;
     groupDocRef.updateData({
       'numMembers': newNumMembers,
     });
-    List<dynamic> members =  await groupDocRef.get().then((group) {
-          return group['members'];
-        });
-    
+    List<dynamic> members = await groupDocRef.get().then((group) {
+      return group['members'];
+    });
+
     members.remove(member.name);
 
     groupDocRef.updateData({
@@ -150,15 +164,14 @@ class DataBaseService {
       List<dynamic> members = await groupDocRef.get().then((group) {
         return group['members'];
       });
-      for(String member in members) {
+      for (String member in members) {
         print(member);
       }
       members.add(contact.displayName);
 
-        groupDocRef.updateData({
+      groupDocRef.updateData({
         'members': members,
       });
-
     } catch (e) {
       print(e.toString());
     }
@@ -173,7 +186,6 @@ class DataBaseService {
         .map(_groupDetailsFromSnapshot);
   }
 
-  //TODO fetching debt from collection
   List<MemberDetails> _memberDetailsFromSnapShot(QuerySnapshot snap) {
     return snap.documents.map((doc) {
       return new MemberDetails(

@@ -1,4 +1,5 @@
 import 'package:app/constants/colour.dart';
+import 'package:app/constants/loading.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/models/GroupDetails.dart';
 import 'package:app/screens/pages/group_related/group.dart';
@@ -12,77 +13,94 @@ import '../../../services/database.dart';
 
 class _HomeState extends State<Home> {
   AuthService _auth = AuthService();
+  UserDetails user; 
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserDetails>(context);
+    user = Provider.of<UserDetails>(context);
 
     return StreamProvider<List<GroupDetails>>.value(
-      value: DataBaseService(uid: user.uid).groups,
-      child: Scaffold(
-        drawer: _buildDrawerMenu(context),
-        body: SingleChildScrollView(
-          child: Stack(
-            children: <Widget>[
-              Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                color: headerColour,
-                child: _buildCustomAppBar(),
-              ),
-              Positioned(
-                top: 30,
-                child: Container(
-                  height: 50,
-                  width: 50,
-                  child: Builder(
-                    builder: (context) => _buildDrawerIcon(context),
+            value: DataBaseService(uid: user.uid).groups,
+            child: (user.name == null) ?
+            FutureBuilder<UserDetails> (
+              future : DataBaseService(uid : user.uid).user,
+              builder: (BuildContext context, AsyncSnapshot<UserDetails> snap) {
+                if (snap.hasData) {
+                  user = snap.data;
+                  print(user.name + "asa");
+                  return buildScaffold(context);
+                } 
+                return Loading();               
+              } 
+            ) :
+            buildScaffold(context),
+          );
+  }
+
+  Scaffold buildScaffold(BuildContext context) {
+    return Scaffold(
+            drawer: _buildDrawerMenu(context),
+            body: SingleChildScrollView(
+              child: Stack(
+                children: <Widget>[
+                  Container(
+                    height: MediaQuery.of(context).size.height,
+                    width: MediaQuery.of(context).size.width,
+                    color: headerColour,
+                    child: _buildCustomAppBar(),
                   ),
-                ),
-              ),
-              Positioned(
-                top: 130,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: bodyColour,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
+                  Positioned(
+                    top: 30,
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      child: Builder(
+                        builder: (context) => _buildDrawerIcon(context),
+                      ),
                     ),
                   ),
-                  height: MediaQuery.of(context).size.height - 130,
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        padding: EdgeInsets.only(top: 5),
-                        height: 45,
-                        child: Center(
-                          child: Text('Your groups',
-                              style: TextStyle(
-                                fontSize: 32,
-                                color: Colors.white70,
-                                fontFamily: 'Montserrat',
-                              )),
+                  Positioned(
+                    top: 130,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: bodyColour,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
                         ),
                       ),
-                      GroupListView(),
-                    ],
+                      height: MediaQuery.of(context).size.height - 130,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: <Widget>[
+                          Container(
+                            padding: EdgeInsets.only(top: 5),
+                            height: 45,
+                            child: Center(
+                              child: Text('Your groups',
+                                  style: TextStyle(
+                                    fontSize: 32,
+                                    color: Colors.white70,
+                                    fontFamily: 'Montserrat',
+                                  )),
+                            ),
+                          ),
+                          GroupListView(),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
-        floatingActionButton: _buildCreateGroupButton(),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      ),
-    );
+            ),
+            floatingActionButton: _buildCreateGroupButton(),
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+          );
   }
 
   Widget _buildCustomAppBar() {
-    final user = Provider.of<UserDetails>(context);
-
+  
     return Container(
       padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
       height: 100,
@@ -128,7 +146,7 @@ class _HomeState extends State<Home> {
 
   Future<dynamic> _groupsDialog() {
     final _formKey = GlobalKey<FormState>();
-    final user = Provider.of<UserDetails>(context, listen: false);
+    //final user = Provider.of<UserDetails>(context, listen: false);
     DataBaseService dbService = DataBaseService(uid: user.uid);
     String groupName = "";
 
@@ -234,8 +252,7 @@ class _HomeState extends State<Home> {
   }
 
   Drawer _buildDrawerMenu(BuildContext context) {
-    final user = Provider.of<UserDetails>(context);
-
+  
     return Drawer(
       child: ListView(
         children: <Widget>[

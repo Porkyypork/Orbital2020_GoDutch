@@ -20,7 +20,7 @@ class AuthService {
 
   // create user object base on FirebaseUser
   UserDetails _userFromFirebaseUser(FirebaseUser user) {
-    return user != null
+    return user != null 
         ? UserDetails(
             name: user.displayName,
             uid: user.uid,
@@ -69,17 +69,19 @@ class AuthService {
     try {
       UserUpdateInfo updateInfo = new UserUpdateInfo();
       updateInfo.displayName = newUser.name;
-      FirebaseUser fUser = await _auth
+      AuthResult result = await _auth
           .createUserWithEmailAndPassword(
-              email: newUser.email, password: password)
-          .then((result) async {
-        await result.user.updateProfile(updateInfo);
-        print(result.user.displayName);
-        return _auth.currentUser();
-      });
+        email: newUser.email,
+        password: password,
+      );
+      FirebaseUser fUser = await _auth.currentUser();
+      await fUser.updateProfile(updateInfo);
+      fUser.reload();
+      fUser = await _auth.currentUser();
+      print(fUser.displayName);
       UserDetails user = _userFromFirebaseUser(fUser);
       await DataBaseService(uid: fUser.uid)
-          .updateUserData(newUser.name, newUser.email, "");
+          .updateUserData(newUser.name, newUser.email, newUser.number);
       return user;
     } catch (error) {
       if (error.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
@@ -89,7 +91,6 @@ class AuthService {
     }
   }
 
-  @override
   Future<void> resetPassword(String email) async {
     await _auth.sendPasswordResetEmail(email: email);
   }

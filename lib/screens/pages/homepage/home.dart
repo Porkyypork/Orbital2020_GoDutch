@@ -274,16 +274,17 @@ class _HomeState extends State<Home> {
               ),
             ),
           ),
-          ListTile(
-            title: Text("Profile"),
-            onTap: () => Navigator.pushNamed(context, '/profile'),
-            trailing: Icon(Icons.person),
-          ),
-          ListTile(
-            title: Text("Unsettled"),
-            onTap: () => Navigator.pushNamed(context, '/debts'),
-            trailing: Icon(Icons.local_atm),
-          ),
+          // both turned off due to irrelevance
+          // ListTile(
+          //   title: Text("Profile"),
+          //   onTap: () => Navigator.pushNamed(context, '/profile'),
+          //   trailing: Icon(Icons.person),
+          // ),
+          // ListTile(
+          //   title: Text("Unsettled"),
+          //   onTap: () => Navigator.pushNamed(context, '/debts'),
+          //   trailing: Icon(Icons.local_atm),
+          // ),
           ListTile(
             title: Text("About Us"),
             onTap: () => Navigator.pushNamed(context, '/about'),

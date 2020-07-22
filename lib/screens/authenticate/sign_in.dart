@@ -33,26 +33,15 @@ class _SignInState extends State<SignIn> {
                 height: double.infinity,
                 child: SingleChildScrollView(
                   child: Stack(children: <Widget>[
-                    Positioned(top: 45, child: showAlert()),
                     Positioned(
-                      top: 60,
-                      left: 40,
+                      top: 40,
+                      left: 0,
                       child: Image(
-                          image: AssetImage('assets/godutch_logo.PNG'),
-                          height: 420,
-                          width: 300),
-                    ),
-                    Positioned(
-                      top: 100,
-                      left: MediaQuery.of(context).size.width / 7,
-                      child: Text(
-                        'GoDutch',
-                        style: TextStyle(
-                            color: Colors.orange[300],
-                            fontSize: 56,
-                            fontFamily: 'Montserrat'),
+                        image: AssetImage('assets/godutch_logo.PNG'),
+                        height: 300,
                       ),
                     ),
+                    Positioned(top: 45, child: showAlert()),
                     Column(
                       children: <Widget>[
                         SizedBox(

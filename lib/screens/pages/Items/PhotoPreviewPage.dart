@@ -104,7 +104,11 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
                               style: TextStyle(
                                 color: Colors.white,
                               ))
-                          : Image.file(_image),
+                          : FittedBox(
+                            child: Image.file(_image),
+                            fit: BoxFit.fitWidth,
+                          ),
+                          // Image.file(_image),
                     ),
                   ),
                   Row(

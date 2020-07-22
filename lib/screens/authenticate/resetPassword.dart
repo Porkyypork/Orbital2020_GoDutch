@@ -14,6 +14,7 @@ class ResetPassword extends StatefulWidget {
 
 class _ResetPasswordState extends State<ResetPassword> {
   String email = '';
+  String error = '';
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
 
@@ -36,6 +37,10 @@ class _ResetPasswordState extends State<ResetPassword> {
             _buildSubmitButton(),
           ],
         ),
+        SizedBox(
+            height: 16,
+            child: Text(error,
+                style: TextStyle(color: Colors.red, fontSize: 14.0))),
       ],
     )));
   }
@@ -78,9 +83,20 @@ class _ResetPasswordState extends State<ResetPassword> {
         splashColor: Colors.grey,
         onPressed: () async {
           if (_formKey.currentState.validate()) {
-            _auth.resetPassword(email);
-            widget.setWarning("A password reset link has been sent to $email");
-            Navigator.pop(context);
+            int result = await _auth.resetPassword(email);
+            if (result == 1) {
+              widget
+                  .setWarning("A password reset link has been sent to $email");
+              Navigator.pop(context);
+            } else if (result == -1) {
+              setState(() {
+                error = 'Please supply a valid email';
+              });
+            } else {
+              setState(() {
+                error = "Email not found";
+              });
+            }
           }
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),

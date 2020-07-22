@@ -35,8 +35,8 @@ class _SignInState extends State<SignIn> {
                   child: Stack(children: <Widget>[
                     Positioned(top: 45, child: showAlert()),
                     Positioned(
-                      top: 75,
-                      left: 50,
+                      top: 60,
+                      left: 40,
                       child: Image(
                           image: AssetImage('assets/godutch_logo.PNG'),
                           height: 420,
@@ -56,7 +56,7 @@ class _SignInState extends State<SignIn> {
                     Column(
                       children: <Widget>[
                         SizedBox(
-                            height: MediaQuery.of(context).size.height - 450),
+                            height: MediaQuery.of(context).size.height - 400),
                         Container(
                             padding: EdgeInsets.only(left: 22, bottom: 2),
                             alignment: Alignment.centerLeft,
@@ -104,7 +104,7 @@ class _SignInState extends State<SignIn> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Colors.orange[300]),
-          width: 390,
+          width: MediaQuery.of(context).size.height / 2,
           padding: EdgeInsets.all(8),
           child: Row(
             children: <Widget>[

@@ -39,7 +39,15 @@ class AuthService {
       UserDetails user = _userFromFirebaseUser(result.user);
       return user;
     } catch (e) {
-      return e.message;
+      if (e.code == "ERROR_INVALID_EMAIL") {
+        return "The email address is badly formatted.";
+      } else if (e.code == 'ERROR_WRONG_PASSWORD') {
+        return "Wrong Password!";
+      } else if (e.code == "ERROR_USER_NOT_FOUND") {
+        return "User not found!";
+      } else {
+        return e.message;
+      }
     }
   }
 
@@ -47,7 +55,12 @@ class AuthService {
   Future<UserDetails> signInWithGoogle() async {
     FirebaseUser user;
 
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    final GoogleSignInAccount googleUser = await _googleSignIn.signIn().catchError((onError) {
+      return null;
+    });
+    if (googleUser == null) {
+      return null;
+    }
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
@@ -73,12 +86,8 @@ class AuthService {
         email: newUser.email,
         password: password,
       );
-      FirebaseUser fUser = await _auth.currentUser();
-      await fUser.updateProfile(updateInfo);
-      fUser.reload();
-      fUser = await _auth.currentUser();
-      UserDetails user = _userFromFirebaseUser(fUser);
-      await DataBaseService(uid: fUser.uid)
+      UserDetails user = _userFromFirebaseUser(result.user);
+      await DataBaseService(uid: user.uid)
           .updateUserData(newUser.name, newUser.email, newUser.number);
       return user;
     } catch (error) {

@@ -154,14 +154,14 @@ class _RegisterState extends State<Register> {
               new UserDetails(name: name, number: phoneNumber, email: email);
           dynamic result =
               await _auth.registerWithEmailAndPassword(newUser, password);
-          if (result.uid == 'Error_1') {
-            setState(() {
-              error = 'Email already in use';
-              loading = false;
-            });
-          } else if (result == null) {
+          if (result == null) {
             setState(() {
               error = 'Please supply a valid email';
+              loading = false;
+            });
+          } else if (result.uid == 'Error_1') {
+            setState(() {
+              error = 'Email already in use';
               loading = false;
             });
           }

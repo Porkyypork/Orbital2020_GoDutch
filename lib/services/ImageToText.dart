@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:app/models/BillDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 
 class ImageToText {
-  Future<List<ItemDetails>> generateItemDetails(File image) async {
+  Future<List<ItemDetails>> generateItemDetails(
+      File image, BillDetails bill) async {
     TextRecognizer recognizeText = FirebaseVision.instance.textRecognizer();
     FirebaseVisionImage toProcess = FirebaseVisionImage.fromFile(image);
     VisionText receiptBlock = await recognizeText.processImage(toProcess);
@@ -28,7 +30,8 @@ class ImageToText {
             }
           });
           if (!isInteger) {
-            itemPrice.add(double.parse(element));
+            itemPrice
+                .add(double.parse(element) * ((100 + bill.extraCharges) / 100));
           }
         }
       }

@@ -34,8 +34,8 @@ class _SignInState extends State<SignIn> {
                 child: SingleChildScrollView(
                   child: Stack(children: <Widget>[
                     Positioned(
-                      top: 40,
-                      left: -15,
+                      top: MediaQuery.of(context).size.height - 725,
+                      left: MediaQuery.of(context).size.width - 410,
                       child: Image(
                         image: AssetImage('assets/godutch_logo.PNG'),
                         height: 300,

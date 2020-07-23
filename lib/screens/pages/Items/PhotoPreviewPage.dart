@@ -172,7 +172,7 @@ class _PhotoPreviewPageState extends State<PhotoPreviewPage> {
         padding: EdgeInsets.all(20),
         onPressed: () async {
           List<ItemDetails> items =
-              await ImageToText().generateItemDetails(_image);
+              await ImageToText().generateItemDetails(_image, billDetails);
           for (ItemDetails item in items) {
             itemList.add(item);
           }

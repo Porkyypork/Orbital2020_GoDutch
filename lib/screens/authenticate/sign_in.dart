@@ -34,7 +34,7 @@ class _SignInState extends State<SignIn> {
                 child: SingleChildScrollView(
                   child: Stack(children: <Widget>[
                     Positioned(
-                      top: MediaQuery.of(context).size.height - 725,
+                      top: MediaQuery.of(context).size.height - 650,
                       left: MediaQuery.of(context).size.width - 410,
                       child: Image(
                         image: AssetImage('assets/godutch_logo.PNG'),
@@ -45,7 +45,7 @@ class _SignInState extends State<SignIn> {
                     Column(
                       children: <Widget>[
                         SizedBox(
-                            height: MediaQuery.of(context).size.height - 450),
+                            height: MediaQuery.of(context).size.height - 400),
                         Container(
                             padding: EdgeInsets.only(left: 22, bottom: 2),
                             alignment: Alignment.centerLeft,
@@ -91,8 +91,7 @@ class _SignInState extends State<SignIn> {
     if (error.isNotEmpty) {
       return Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.red[300]),
+              borderRadius: BorderRadius.circular(10), color: Colors.red[300]),
           width: MediaQuery.of(context).size.height / 2,
           padding: EdgeInsets.all(8),
           child: Row(

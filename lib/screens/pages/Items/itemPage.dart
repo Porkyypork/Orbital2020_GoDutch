@@ -49,8 +49,7 @@ class _ItemPageState extends State<ItemPage> {
           actions: <Widget>[
             Builder(
               builder: (context) => IconButton(
-                icon:
-                    Icon(Icons.delete_sweep, color: Colors.black, size: 28),
+                icon: Icon(Icons.delete_sweep, color: Colors.black, size: 28),
                 onPressed: () {
                   setState(() {
                     itemList.clear();
@@ -131,24 +130,42 @@ class _ItemPageState extends State<ItemPage> {
               child: _buildWarningDialog(),
             );
           } else {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => Loading()));
+            bool isValid = true;
+
             for (ItemDetails item in itemList) {
-              ItemDetails itemDetails = await dbService.createItem(
-                  item.name, item.totalPrice, item.selectedMembers);
-              dbService = new DataBaseService(
-                  uid: dbService.uid,
-                  groupUID: dbService.groupUID,
-                  billUID: dbService.billUID,
-                  owedBillUID: dbService.owedBillUID,
-                  itemUID: itemDetails.itemUID);
-              addMembers(item.selectedMembers);
+              // if any item detail has no selected members, it is empty
+              if (item.selectedMembers.isEmpty) {
+                isValid = false;
+                break; // as long as there is one itemDetail object that has no selected members, the bill is invalid
+              }
             }
-            Navigator.pop(context); // pop loading
-            Navigator.pop(context); // pop itempage
-            Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => BillBreakdown(
-                    dbService: dbService, billName: billDetails.billName)));
+
+            if (!isValid) {
+              // print('bill is not valid');
+              showDialog(
+                context: context,
+                child: _inValidBillWarningDialog(),
+              );
+            } else {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (context) => Loading()));
+              for (ItemDetails item in itemList) {
+                ItemDetails itemDetails = await dbService.createItem(
+                    item.name, item.totalPrice, item.selectedMembers);
+                dbService = new DataBaseService(
+                    uid: dbService.uid,
+                    groupUID: dbService.groupUID,
+                    billUID: dbService.billUID,
+                    owedBillUID: dbService.owedBillUID,
+                    itemUID: itemDetails.itemUID);
+                addMembers(item.selectedMembers);
+              }
+              Navigator.pop(context); // pop loading
+              Navigator.pop(context); // pop itempage
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => BillBreakdown(
+                      dbService: dbService, billName: billDetails.billName)));
+            }
           }
         },
         color: Colors.orange[300],
@@ -161,6 +178,36 @@ class _ItemPageState extends State<ItemPage> {
             color: Colors.black,
             fontSize: 18,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _inValidBillWarningDialog() {
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+      child: Container(
+        height: 150,
+        padding: EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Some items are not shared',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 25),
+            FlatButton(
+                color: Colors.teal,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(29),
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('OK'))
+          ],
         ),
       ),
     );

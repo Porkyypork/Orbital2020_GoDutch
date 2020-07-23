@@ -33,7 +33,9 @@ class _ContactListViewState extends State<ContactListView> {
         : SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                // *** problem here
                 _buildAdminTile(user),
+                // ** problem here
                 Container(
                   height: MediaQuery.of(context).size.height - 305,
                   child: ListView.builder(
@@ -50,7 +52,7 @@ class _ContactListViewState extends State<ContactListView> {
           );
   }
 
-  Widget _buildAdminTile(UserDetails user) {
+  Widget _buildAdminTile(UserDetails user) { // user is defined as null for some reason for non-google login
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
       child: Column(

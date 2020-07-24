@@ -164,7 +164,7 @@ class _ItemPageState extends State<ItemPage> {
               Navigator.pop(context); // pop itempage
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => BillBreakdown(
-                      dbService: dbService, billName: billDetails.billName)));
+                      dbService: dbService, bill: billDetails)));
             }
           }
         },

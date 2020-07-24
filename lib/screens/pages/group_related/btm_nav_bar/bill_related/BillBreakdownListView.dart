@@ -1,20 +1,30 @@
+import 'package:app/models/BillDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class BillBreakdownListView extends StatefulWidget {
-  
+  final BillDetails bill;
+
+  BillBreakdownListView({this.bill});
+
   @override
-  _BillBreakdownListViewState createState() => _BillBreakdownListViewState();
+  _BillBreakdownListViewState createState() =>
+      _BillBreakdownListViewState(bill: bill);
 }
 
 class _BillBreakdownListViewState extends State<BillBreakdownListView> {
+  final BillDetails bill;
+  double cost = 0;
+  bool first = true;
+
+  _BillBreakdownListViewState({this.bill});
 
   @override
   Widget build(BuildContext context) {
     final items = Provider.of<List<ItemDetails>>(context);
-    
-    return items == null || items.length == 0
+
+    return items == null
         ? _initialState()
         : SingleChildScrollView(
             physics: ScrollPhysics(),
@@ -37,6 +47,7 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
                         EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
                     itemBuilder: (context, index) =>
                         _buildBreakdownTile(items[index])),
+                bill.extraCharges != 0 ? _buildGstSvc() : SizedBox(),
               ],
             ),
           );
@@ -44,9 +55,12 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
 
   Widget _heading() {
     final items = Provider.of<List<ItemDetails>>(context);
-    double cost = 0;
-    for (ItemDetails item in items) {
-      cost += item.totalPrice;
+    if (first) {
+      for (ItemDetails item in items) {
+        cost += item.totalPrice;
+      }
+      cost = cost * ((100 + bill.extraCharges) / 100);
+      first = false;
     }
 
     return Container(
@@ -90,6 +104,28 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
           Spacer(),
           Text(
             '\$${item.totalPrice.toStringAsFixed(2)}',
+            style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+          ),
+        ],
+      )),
+    );
+  }
+
+  Widget _buildGstSvc() {
+    double extra = (cost / (bill.extraCharges + 100)) * bill.extraCharges;
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
+      child: Container(
+          child: Row(
+        children: <Widget>[
+          Text("GST/ SVC",
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Montserrat',
+              )),
+          Spacer(),
+          Text(
+            '\$${extra.toStringAsFixed(2)}',
             style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
           ),
         ],

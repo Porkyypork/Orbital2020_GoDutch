@@ -1,4 +1,5 @@
 import 'package:app/constants/loading.dart';
+import 'package:app/models/BillDetails.dart';
 import 'package:app/models/MemberDetails.dart';
 import 'package:app/models/UserDetails.dart';
 import 'package:app/services/database.dart';
@@ -9,16 +10,19 @@ import 'package:share/share.dart';
 
 class DebtListView extends StatefulWidget {
   final DataBaseService dbService;
+  final BillDetails bill;
 
-  DebtListView({this.dbService});
+  DebtListView({this.dbService, this.bill});
 
   @override
-  _DebtListViewState createState() => _DebtListViewState(dbService: dbService);
+  _DebtListViewState createState() =>
+      _DebtListViewState(dbService: dbService, bill: bill);
 }
 
 class _DebtListViewState extends State<DebtListView>
     with AutomaticKeepAliveClientMixin<DebtListView> {
   final DataBaseService dbService;
+  final BillDetails bill;
   String output;
   double total = 0;
   bool first = true;
@@ -26,7 +30,7 @@ class _DebtListViewState extends State<DebtListView>
   @override
   bool get wantKeepAlive => true;
 
-  _DebtListViewState({this.dbService});
+  _DebtListViewState({this.dbService, this.bill});
 
   @override
   Widget build(BuildContext context) {
@@ -103,8 +107,9 @@ class _DebtListViewState extends State<DebtListView>
     );
   }
 
-  Widget _buildYourListTile(OwedBills bill) {
-    output += bill.name + " \$" + bill.totalOwed.toStringAsFixed(2) + "\n";
+  Widget _buildYourListTile(OwedBills owedBill) {
+    double total = owedBill.totalOwed * ((100 + bill.extraCharges) / 100);
+    output += owedBill.name + " \$" + total.toStringAsFixed(2) + "\n";
     return Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
       child: Container(
@@ -117,7 +122,7 @@ class _DebtListViewState extends State<DebtListView>
               )),
           Spacer(),
           Text(
-            '\$${bill.totalOwed.toStringAsFixed(2)}',
+            '\$${total.toStringAsFixed(2)}',
             style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
           ),
         ],
@@ -125,22 +130,23 @@ class _DebtListViewState extends State<DebtListView>
     );
   }
 
-  Widget _buildBillsListTile(OwedBills bill) {
-    output += bill.name + " \$" + bill.totalOwed.toStringAsFixed(2) + "\n";
+  Widget _buildBillsListTile(OwedBills owedBill) {
+    double total = owedBill.totalOwed * ((100 + bill.extraCharges) / 100);
+    output += owedBill.name + " \$" + total.toStringAsFixed(2) + "\n";
 
     return Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
       child: Container(
           child: Row(
         children: <Widget>[
-          Text(bill.name,
+          Text(owedBill.name,
               style: TextStyle(
                 fontSize: 20,
                 fontFamily: 'Montserrat',
               )),
           Spacer(),
           Text(
-            '\$${bill.totalOwed.toStringAsFixed(2)}',
+            '\$${total.toStringAsFixed(2)}',
             style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
           ),
         ],
@@ -150,6 +156,7 @@ class _DebtListViewState extends State<DebtListView>
 
   Widget _heading(String name, double total) {
     output = "$name\n";
+    total = total * ((100 + bill.extraCharges) / 100);
     output += "Total : \$" + "${total.toStringAsFixed(2)}" + "\n";
     return Container(
         padding: EdgeInsets.only(left: 15, right: 10),

@@ -39,7 +39,7 @@ class _ItemListViewState extends State<ItemListView> {
             padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
             itemBuilder: (context, index) {
               return _buildItemTile(
-                  itemList[index]); // to ensure latest item at the bottom
+                  itemList[index]);
             });
   }
 

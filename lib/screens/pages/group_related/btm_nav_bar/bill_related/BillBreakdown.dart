@@ -1,4 +1,5 @@
 import 'package:app/constants/colour.dart';
+import 'package:app/models/BillDetails.dart';
 import 'package:app/models/itemDetails.dart';
 import 'package:app/screens/pages/group_related/btm_nav_bar/bill_related/DebtsDisplay.dart';
 import 'package:app/services/database.dart';
@@ -10,12 +11,12 @@ import 'BillBreakdownListView.dart';
 import 'DebtsDisplay.dart';
 
 class BillBreakdown extends StatefulWidget {
-  final String billName;
+  final BillDetails bill;
   final DataBaseService dbService;
-  BillBreakdown({this.billName, this.dbService});
+  BillBreakdown({this.bill, this.dbService});
   @override
   _BillBreakdownState createState() =>
-      _BillBreakdownState(billName: this.billName, dbService: this.dbService);
+      _BillBreakdownState(bill: this.bill, dbService: this.dbService);
 }
 
 class _BillBreakdownState extends State<BillBreakdown> {
@@ -25,10 +26,10 @@ class _BillBreakdownState extends State<BillBreakdown> {
   int _selectedIndex = 0;
   static int billsCount = 0;
 
-  String billName;
+  BillDetails bill;
   DataBaseService dbService;
 
-  _BillBreakdownState({this.billName, this.dbService});
+  _BillBreakdownState({this.bill, this.dbService});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,7 @@ class _BillBreakdownState extends State<BillBreakdown> {
         backgroundColor: tileColour,
         appBar: AppBar(
           backgroundColor: headerColour,
-          title: Text('$billName'),
+          title: Text('${bill.billName}'),
           elevation: 0,
           centerTitle: true,
         ),
@@ -50,8 +51,8 @@ class _BillBreakdownState extends State<BillBreakdown> {
             });
           },
           children: <Widget>[
-            DebtsDisplay(dbService: dbService),
-            BillBreakdownListView(),
+            DebtsDisplay(dbService: dbService, bill: bill),
+            BillBreakdownListView(bill : bill),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(

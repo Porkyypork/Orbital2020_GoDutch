@@ -57,7 +57,7 @@ class _BillsListViewState extends State<BillsListView> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => BillBreakdown(
-                          billName: bill.billName,
+                          bill: bill,
                           dbService: dbService,
                         )));
           },

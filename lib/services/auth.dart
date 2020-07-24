@@ -20,7 +20,7 @@ class AuthService {
 
   // create user object base on FirebaseUser
   UserDetails _userFromFirebaseUser(FirebaseUser user) {
-    return user != null 
+    return user != null
         ? UserDetails(
             name: user.displayName,
             uid: user.uid,
@@ -55,7 +55,8 @@ class AuthService {
   Future<UserDetails> signInWithGoogle() async {
     FirebaseUser user;
 
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn().catchError((onError) {
+    final GoogleSignInAccount googleUser =
+        await _googleSignIn.signIn().catchError((onError) {
       return null;
     });
     if (googleUser == null) {
@@ -81,12 +82,15 @@ class AuthService {
     try {
       UserUpdateInfo updateInfo = new UserUpdateInfo();
       updateInfo.displayName = newUser.name;
-      AuthResult result = await _auth
-          .createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: newUser.email,
         password: password,
       );
-      UserDetails user = _userFromFirebaseUser(result.user);
+      FirebaseUser fUser = await _auth.currentUser();
+      fUser.updateProfile(updateInfo);
+      fUser.reload();
+      fUser = await _auth.currentUser();
+      UserDetails user = _userFromFirebaseUser(fUser);
       await DataBaseService(uid: user.uid)
           .updateUserData(newUser.name, newUser.email, newUser.number);
       return user;
@@ -99,7 +103,7 @@ class AuthService {
   }
 
   Future<int> resetPassword(String email) async {
-    try{
+    try {
       await _auth.sendPasswordResetEmail(email: email);
       return 1;
     } catch (error) {

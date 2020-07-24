@@ -72,7 +72,7 @@ class _BillsDialogState extends State<BillsDialog> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 20, left: 10, right: 130),
+                    padding: EdgeInsets.only(top: 5, left: 10, right: 130),
                     child: Container(
                       width: 140,
                       height: 50,
@@ -98,7 +98,7 @@ class _BillsDialogState extends State<BillsDialog> {
                     children: <Widget>[
                       Padding(
                           padding: EdgeInsets.only(
-                              top: 20.0, left: 35.0, right: 35.0),
+                              top: 20.0, left: 25.0, right: 35.0),
                           child: FlatButton(
                             child: Text(
                               "Ok",

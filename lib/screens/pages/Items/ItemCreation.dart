@@ -44,10 +44,10 @@ class _ItemCreationState extends State<ItemCreation> {
     super.initState();
     if (item != null) {
       nameController.text = item.name;
-      double displayPrice = item.totalPrice/ ((100 + billDetails.extraCharges) / 100);
-      priceController.text = displayPrice.toStringAsFixed(2);
+      //double displayPrice = item.totalPrice/ ((100 + billDetails.extraCharges) / 100);
+      priceController.text = item.totalPrice.toStringAsFixed(2);
       itemName = item.name;
-      totalPrice = displayPrice.toStringAsFixed(2);
+      totalPrice = item.totalPrice.toStringAsFixed(2);
     }
     nameController.addListener(_nameListener);
     priceController.addListener(_priceListener);
@@ -104,8 +104,7 @@ class _ItemCreationState extends State<ItemCreation> {
             borderRadius: BorderRadius.circular(30.0),
           ),
           onPressed: () async {
-            int extraCharges = 100 + billDetails.extraCharges;
-            double price = double.parse(totalPrice) * (extraCharges / 100);
+            double price = double.parse(totalPrice);
             ItemDetails itemDetails = ItemDetails(
                 name: itemName,
                 totalPrice: price,

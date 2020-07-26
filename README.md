@@ -27,14 +27,19 @@ https://developer.android.com/studio
 5. Run the command "flutter run" to start the application on your connected emulator
    or mobile device.
 
-## Deployment
-
-
 ## Built With
 
 1. Dart - the programming language used
 2. Flutter - a google framework for mobile applications
 3. Firebase/Firestore - Google's mobile application development platform
+
+## Basic Features and Examples 
+
+https://tinyurl.com/y4po5oeg
+
+## Documentation 
+
+https://tinyurl.com/y5twdmvc
 
 ## Contributing
 

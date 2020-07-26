@@ -28,8 +28,7 @@ class DataBaseService {
   }
 
   Future<UserDetails> get user async {
-    await Future.delayed(Duration(seconds: 1));
-    print(uid);
+    await Future.delayed(Duration(seconds: 2));
     UserDetails user =
         await db.collection('users').document(uid).get().then((snap) {
       return UserDetails(
@@ -39,7 +38,6 @@ class DataBaseService {
           uid: snap.documentID,
           groups: []);
     });
-    print(user.name);
     return user;
   }
 

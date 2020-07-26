@@ -145,7 +145,6 @@ class _HomeState extends State<Home> {
 
   Future<dynamic> _groupsDialog() {
     final _formKey = GlobalKey<FormState>();
-    //final user = Provider.of<UserDetails>(context, listen: false);
     DataBaseService dbService = DataBaseService(uid: user.uid);
     String groupName = "";
 

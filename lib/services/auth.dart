@@ -2,6 +2,7 @@ import 'package:app/models/UserDetails.dart';
 import 'package:app/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_user_stream/firebase_user_stream.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -9,7 +10,9 @@ class AuthService {
 
   // auth change user stream
   Stream<UserDetails> get user {
-    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
+    return FirebaseUserReloader.onAuthStateChangedOrReloaded.map(_userFromFirebaseUser);
+    //return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
+
   }
 
   // gets current UID
@@ -88,8 +91,8 @@ class AuthService {
       );
       FirebaseUser fUser = await _auth.currentUser();
       fUser.updateProfile(updateInfo);
-      fUser.reload();
-      fUser = await _auth.currentUser();
+      fUser = await FirebaseUserReloader.reloadCurrentUser();
+      print(fUser.displayName + " asda");
       UserDetails user = _userFromFirebaseUser(fUser);
       await DataBaseService(uid: user.uid)
           .updateUserData(newUser.name, newUser.email, newUser.number);

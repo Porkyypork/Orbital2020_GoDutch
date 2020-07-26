@@ -27,7 +27,11 @@ class _ContactListViewState extends State<ContactListView> {
   Widget build(BuildContext context) {
     final members = Provider.of<List<MemberDetails>>(context);
     final user = Provider.of<UserDetails>(context);
-
+    if (user.name == null) {
+      setState(() {
+        
+      });
+    }
     return (members.length == null)
         ? Container()
         : SingleChildScrollView(

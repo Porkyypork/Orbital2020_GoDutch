@@ -30,8 +30,7 @@ class ImageToText {
             }
           });
           if (!isInteger) {
-            itemPrice
-                .add(double.parse(element) * ((100 + bill.extraCharges) / 100));
+            itemPrice.add(double.parse(element));
           }
         }
       }

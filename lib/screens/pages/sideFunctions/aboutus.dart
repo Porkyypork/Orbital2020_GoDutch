@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../constants/colour.dart';
-import '../../../constants/colour.dart';
-import '../../../constants/colour.dart';
 
 class AboutUs extends StatefulWidget {
   @override

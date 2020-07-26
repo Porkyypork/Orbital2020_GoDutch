@@ -100,11 +100,11 @@ class _BillsListViewState extends State<BillsListView> {
                     ),
                   ),
                   Padding(
-                      padding: EdgeInsets.only(
-                          top: 5.0, bottom: 5.0, left: 10.0),
+                      padding:
+                          EdgeInsets.only(top: 5.0, bottom: 5.0, left: 10.0),
                       child: Container(
                         child: Text(
-                          '\$${bill.totalPrice.toStringAsFixed(2)}',
+                          '\$${(bill.totalPrice * (1 + bill.extraCharges / 100)).toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'OpenSans',

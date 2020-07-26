@@ -26,30 +26,43 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
 
     return items == null
         ? _initialState()
-        : SingleChildScrollView(
-            physics: ScrollPhysics(),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Text('Items Breakdown',
-                      style: TextStyle(
-                          letterSpacing: 1,
-                          fontSize: 27,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'OpenSans')),
-                ),
-                _heading(),
-                ListView.builder(
+        : Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text('Items Breakdown',
+                    style: TextStyle(
+                        letterSpacing: 1,
+                        fontSize: 27,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'OpenSans')),
+              ),
+              _heading(),
+              Expanded(
+                child: ListView.builder(
                     shrinkWrap: true,
-                    itemCount: items.length,
+                    itemCount: items.length + 2,
                     padding:
                         EdgeInsets.symmetric(vertical: 10.0, horizontal: 0.0),
-                    itemBuilder: (context, index) =>
-                        _buildBreakdownTile(items[index])),
-                bill.extraCharges != 0 ? _buildGstSvc() : SizedBox(),
-              ],
-            ),
+                    itemBuilder: (context, index) {
+                      if (index == items.length + 1) {
+                        if (bill.extraCharges != 0) {
+                          return _buildGstSvc();
+                        } else {
+                          return SizedBox();
+                        }
+                      } else if (index == items.length) {
+                        if (bill.disc != 0) {
+                          return _buildDiscounts();
+                        } else {
+                          return SizedBox();
+                        }
+                      } else {
+                        return _buildBreakdownTile(items[index]);
+                      }
+                    }),
+              ),
+            ],
           );
   }
 
@@ -59,7 +72,7 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
       for (ItemDetails item in items) {
         cost += item.totalPrice;
       }
-      cost = cost * ((100 + bill.extraCharges) / 100);
+      cost = cost * ((100 + bill.extraCharges) / 100) - bill.disc;
       first = false;
     }
 
@@ -126,6 +139,28 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
           Spacer(),
           Text(
             '\$${extra.toStringAsFixed(2)}',
+            style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+          ),
+        ],
+      )),
+    );
+  }
+
+  Widget _buildDiscounts() {
+    double disc = bill.disc;
+    return Padding(
+      padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
+      child: Container(
+          child: Row(
+        children: <Widget>[
+          Text("Discounts",
+              style: TextStyle(
+                fontSize: 20,
+                fontFamily: 'Montserrat',
+              )),
+          Spacer(),
+          Text(
+            '-\$${disc.toStringAsFixed(2)}',
             style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
           ),
         ],

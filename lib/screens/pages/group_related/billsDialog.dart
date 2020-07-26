@@ -23,6 +23,7 @@ class _BillsDialogState extends State<BillsDialog> {
   BillDetails billDetails;
   final List<MemberDetails> members;
   int extra = 0;
+  double disc = 0.00;
 
   _BillsDialogState({this.dbService, this.billName, this.members});
 
@@ -71,28 +72,55 @@ class _BillsDialogState extends State<BillsDialog> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 5, left: 10, right: 130),
-                    child: Container(
-                      width: 140,
-                      height: 50,
-                      child: TextFormField(
-                        keyboardType: TextInputType.number,
-                        initialValue: extra.toString(),
-                        onChanged: (value) {
-                          setState(() {
-                            extra = int.parse(value);
-                          });
-                        },
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                                borderSide: BorderSide(
-                                  color: Colors.black,
-                                )),
-                            labelText: 'GST/SVC'),
+                  Row(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.only(top: 5, left: 10, right: 10),
+                        child: Container(
+                          width: 125,
+                          height: 50,
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            initialValue: extra.toString(),
+                            onChanged: (value) {
+                              setState(() {
+                                extra = int.parse(value);
+                              });
+                            },
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.black,
+                                    )),
+                                labelText: 'GST/SVC'),
+                          ),
+                        ),
                       ),
-                    ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 5, left: 10),
+                        child: Container(
+                          width: 125,
+                          height: 50,
+                          child: TextFormField(
+                            keyboardType: TextInputType.number,
+                            initialValue: disc.toStringAsFixed(2),
+                            onChanged: (value) {
+                              setState(() {
+                                disc = double.parse(value);
+                              });
+                            },
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    borderSide: BorderSide(
+                                      color: Colors.black,
+                                    )),
+                                labelText: '\$Disc'),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   Row(
                     children: <Widget>[
@@ -112,7 +140,7 @@ class _BillsDialogState extends State<BillsDialog> {
                             onPressed: () async {
                               if (_formKey.currentState.validate()) {
                                 billDetails = await dbService.createBill(
-                                    billName, members, extra);
+                                    billName, members, extra, disc);
                                 dbService = new DataBaseService(
                                     uid: dbService.uid,
                                     groupUID: dbService.groupUID,

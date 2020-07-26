@@ -71,9 +71,11 @@ class _DebtListViewState extends State<DebtListView>
                       itemCount: snap.data.length,
                       itemBuilder: (context, index) {
                         if (user.name != snap.data[index].name) {
-                          return _buildBillsListTile(snap.data[index]);
+                          return _buildBillsListTile(
+                              snap.data[index], snap.data.length);
                         } else {
-                          return _buildYourListTile(snap.data[index]);
+                          return _buildYourListTile(
+                              snap.data[index], snap.data.length);
                         }
                       }),
                 ),
@@ -107,8 +109,9 @@ class _DebtListViewState extends State<DebtListView>
     );
   }
 
-  Widget _buildYourListTile(OwedBills owedBill) {
-    double total = owedBill.totalOwed * ((100 + bill.extraCharges) / 100);
+  Widget _buildYourListTile(OwedBills owedBill, int length) {
+    double total = owedBill.totalOwed * ((100 + bill.extraCharges) / 100) -
+        (bill.disc / length);
     output += owedBill.name + " \$" + total.toStringAsFixed(2) + "\n";
     return Padding(
       padding: EdgeInsets.only(top: 10.0, bottom: 10, left: 20, right: 20),
@@ -130,8 +133,9 @@ class _DebtListViewState extends State<DebtListView>
     );
   }
 
-  Widget _buildBillsListTile(OwedBills owedBill) {
-    double total = owedBill.totalOwed * ((100 + bill.extraCharges) / 100);
+  Widget _buildBillsListTile(OwedBills owedBill, int length) {
+    double total = owedBill.totalOwed * ((100 + bill.extraCharges) / 100) -
+        (bill.disc / length);
     output += owedBill.name + " \$" + total.toStringAsFixed(2) + "\n";
 
     return Padding(
@@ -156,7 +160,7 @@ class _DebtListViewState extends State<DebtListView>
 
   Widget _heading(String name, double total) {
     output = "$name\n";
-    total = total * ((100 + bill.extraCharges) / 100);
+    total = total * ((100 + bill.extraCharges) / 100) - bill.disc;
     output += "Total : \$" + "${total.toStringAsFixed(2)}" + "\n";
     return Container(
         padding: EdgeInsets.only(left: 15, right: 10),

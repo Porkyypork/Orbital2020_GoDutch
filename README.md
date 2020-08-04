@@ -41,8 +41,6 @@ https://tinyurl.com/y4po5oeg
 
 https://tinyurl.com/y5twdmvc
 
-## Contributing
-
 ## Authors
 • Lim Wei Lin
 • Darren Chee

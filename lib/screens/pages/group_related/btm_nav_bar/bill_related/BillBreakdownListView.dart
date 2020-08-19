@@ -109,15 +109,23 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
       child: Container(
           child: Row(
         children: <Widget>[
-          Text(item.name,
-              style: TextStyle(
-                fontSize: 20,
-                fontFamily: 'Montserrat',
-              )),
-          Spacer(),
-          Text(
-            '\$${item.totalPrice.toStringAsFixed(2)}',
-            style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+          Flexible(
+            child: Container(
+              width: 250,
+              child: Text(item.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Montserrat',
+                  )),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 45.0),
+            child: Text(
+              '\$${item.totalPrice.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+            ),
           ),
         ],
       )),
@@ -131,15 +139,20 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
       child: Container(
           child: Row(
         children: <Widget>[
-          Text("GST/ SVC",
-              style: TextStyle(
-                fontSize: 20,
-                fontFamily: 'Montserrat',
-              )),
-          Spacer(),
-          Text(
-            '\$${extra.toStringAsFixed(2)}',
-            style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+          Container(
+            width : 250,
+            child: Text("GST/ SVC",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Montserrat',
+                )),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left : 45.0),
+            child: Text(
+              '\$${extra.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+            ),
           ),
         ],
       )),
@@ -153,15 +166,20 @@ class _BillBreakdownListViewState extends State<BillBreakdownListView> {
       child: Container(
           child: Row(
         children: <Widget>[
-          Text("Discounts",
-              style: TextStyle(
-                fontSize: 20,
-                fontFamily: 'Montserrat',
-              )),
-          Spacer(),
-          Text(
-            '-\$${disc.toStringAsFixed(2)}',
-            style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+          Container(
+            width : 250,
+            child: Text("Discounts",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontFamily: 'Montserrat',
+                )),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left : 45.0),
+            child: Text(
+              '-\$${disc.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
+            ),
           ),
         ],
       )),

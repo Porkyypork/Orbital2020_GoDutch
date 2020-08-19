@@ -41,6 +41,14 @@ https://tinyurl.com/y4po5oeg
 
 https://tinyurl.com/y5twdmvc
 
+## Video Demo
+
+https://youtu.be/Z5p8-Sh5Z_Q
+
+## Poster 
+
+https://imgur.com/AQHANLP
+
 ## Authors
 • Lim Wei Lin
 • Darren Chee
